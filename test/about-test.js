@@ -13,7 +13,7 @@ describe('about', function() {
 		var output = about.get_version();
 		output.should.be.a('string');
 		// break the test in order to see how travis performs
-		output.should.equal('0.0.2');
+		output.should.equal('0.0.1');
 	});
 });
 

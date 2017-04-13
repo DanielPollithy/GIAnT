@@ -2,10 +2,3 @@ language: node_js
 
 node_js:
   - stable
-
-notifications:
-  email:
-    recipients:
-      - $ADMIN_MAIL
-    on_success: always
-    on_failure: always
