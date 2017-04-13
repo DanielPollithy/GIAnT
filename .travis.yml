@@ -6,6 +6,6 @@ node_js:
 notifications:
   email:
     recipients:
-      - ADMIN_MAIL
+      - $ADMIN_MAIL
     on_success: always
     on_failure: always
