@@ -1,13 +1,13 @@
 var neo4j = require('neo4j-driver').v1;
 
 // Todo: Move this to the environment variables
-var development = false;
+var development = true;
 
 function get_driver() {
     if (development) {
         return neo4j.driver("bolt://localhost:7687");
     }
-    return neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("travis", ""));
+    return neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "neo4j"));
 
 }
 

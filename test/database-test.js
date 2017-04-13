@@ -23,7 +23,10 @@ describe('database', function() {
         it.only("save one", function(done) {
             database.add_image(file_path).then(
                 function(result) {done();},
-                function() {done("Error creating Image");})
+                function(err) {
+                    console.log(err);
+                    done("Error creating Image");
+                })
         });
         it.only("get all images and look for ours", function(done) {
             database.get_all_images().then(
