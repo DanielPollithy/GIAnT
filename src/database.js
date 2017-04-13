@@ -1,4 +1,5 @@
 var neo4j = require('neo4j-driver').v1;
+//var config = require('../config.json');
 
 // Todo: Move this to the environment variables
 var development = true;
@@ -38,6 +39,18 @@ function remove_image(file_path) {
     return prom;
 }
 
+function remove_image_by_id(id_) {
+    var session = get_session();
+    var prom = session
+        .run("MATCH (n:Image) WHERE ID(n) = {ident} DELETE n", {ident: Number(id_)})
+        .then(function (result) {
+            session.close();
+            var number_of_deleted_nodes = result.summary.updateStatistics._stats.nodesDeleted;
+            return number_of_deleted_nodes;
+        });
+    return prom;
+}
+
 
 // TODO: add pagination
 function get_all_images() {
@@ -47,6 +60,7 @@ function get_all_images() {
             "WITH a " +
             "ORDER BY a.last_edit_date, a.upload_date " +
             "RETURN " +
+            "ID(a) as ident," +
             "a.file_path as file_path, " +
             "a.upload_date as upload_date, " +
             "a.completed as completed")
@@ -64,3 +78,4 @@ function get_all_images() {
 module.exports.add_image = add_image;
 module.exports.get_all_images = get_all_images;
 module.exports.remove_image = remove_image;
+module.exports.remove_image_by_id = remove_image_by_id;

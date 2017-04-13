@@ -6,5 +6,8 @@ language: node_js
 services:
   - neo4j
 
+#before_install:
+#  - libimage-exiftool-perl
+
 node_js:
   - stable

@@ -29,6 +29,10 @@
     "mocha": "^3.2.0"
   },
   "dependencies": {
-    "neo4j-driver": "^1.1.1"
+    "express": "^4.15.2",
+    "express-fileupload": "^0.1.2",
+    "mxgraph": "^3.7.2-2",
+    "neo4j-driver": "^1.1.1",
+    "pug": "^2.0.0-beta11"
   }
 }

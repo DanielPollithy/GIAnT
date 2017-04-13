@@ -1,0 +1,25 @@
+html
+  head
+    title= 'Hauptübersicht'
+  body
+    h1= Hauptübersicht
+    p= 'Hier sind alle Bilder aufgelistet'
+    table
+      tr
+        th= 'Id'
+        th= 'Pfad'
+        th= 'Erstellungsdatum'
+        th= 'Fertig'
+        th= 'Löschen'
+      each row in rows
+        tr
+          each cell in row
+            td= cell
+          td
+            a(href='editor?ident='+row[0])= 'Editor'
+          td
+            a(href='form?ident='+row[0])= 'Modifikation'
+          td
+            a(href='delete?ident='+row[0])= 'Löschen'
+    h2= 'Upload'
+    include upload.pug
