@@ -1,0 +1,31 @@
+{
+  "name": "transliteration_application",
+  "version": "0.0.1",
+  "description": "A graphical transliteration tool based on mxgraph and Neo4J",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielPollithy/TransliterationApplication.git"
+  },
+  "keywords": [
+    "mxgraph",
+    "transliteration",
+    "neo4j"
+  ],
+  "author": "Daniel Pollithy",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DanielPollithy/TransliterationApplication/issues"
+  },
+  "homepage": "https://github.com/DanielPollithy/TransliterationApplication#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
