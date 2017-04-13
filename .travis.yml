@@ -3,11 +3,10 @@ sudo: required
 
 language: node_js
 
-services:
-  - neo4j
+#services:
+#  - neo4j
 
-#before_install:
-#  - libimage-exiftool-perl
+before_install: ./install_neo4j.sh
 
 node_js:
   - stable
