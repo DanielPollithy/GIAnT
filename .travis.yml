@@ -1,4 +1,8 @@
 language: node_js
 
+install:
+  - ./install-dependencies.sh
+  - npm install
+
 node_js:
   - stable
