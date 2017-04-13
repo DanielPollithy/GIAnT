@@ -3,10 +3,8 @@ sudo: required
 
 language: node_js
 
-#services:
-#  - neo4j
-
-before_install: ./install_neo4j.sh
+before_install:
+  - ./install_neo4j.sh
 
 node_js:
   - stable
