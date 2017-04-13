@@ -1,8 +1,7 @@
 language: node_js
 
-install:
-  - ./install-dependencies.sh
-  - npm install
+services:
+  - neo4j
 
 node_js:
   - stable
