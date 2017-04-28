@@ -1,16 +1,48 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 var fs = require('fs');
 var database = require('./database');
 
 
-var app = module.exports = express();
 
+var app = module.exports = express();
+app.use(bodyParser());
 app.use(fileUpload());
 
 
 app.set('views', 'src/views');
 app.set('view engine', 'pug');
+
+app.post('/save_xml', function (req, res) {
+    if (req.body.filename && req.body.xml) {
+        var filename = req.body.filename;
+        var xml = req.body.xml;
+
+        if (filename.length === 0) {
+            filename = 'draft.xml';
+        }
+
+        xml = decodeURIComponent(xml);
+        filename = decodeURIComponent(filename);
+        console.log(filename);
+
+        /*res.contentType('text/plain');
+        res.header('Content-Disposition',
+            "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + filename);
+        res.status(200);
+        res.send(xml);*/
+        // TODO: check for .. and such stuff
+        fs.writeFile('media/uploaded_xmls/'+filename, xml, function(err){
+            if (err) {
+                return res.status(500).send("Error saving the file");
+            }
+            return res.status(200).send("File saved");
+        });
+    } else {
+        res.send("Missing parameter");
+    }
+});
 
 app.post('/', function (req, res) {
     if (!req.files)
@@ -29,6 +61,25 @@ app.post('/', function (req, res) {
         database.add_image(sampleFile.name).then(function () {
             res.redirect('/');
         });
+    });
+});
+
+app.get('/autocomplete/token/values', function(req, res){
+    var search_string = req.query.term || '';
+    var key = req.query.field;
+    console.log(key);
+    if (!key)
+        return res.status(400).jsonp([]);
+    var values = database.get_all_property_values_for_token(key, search_string).then(function(values){
+        res.jsonp(values);
+    });
+});
+
+
+app.get('/autocomplete/token/keys', function(req, res){
+    var search_string = req.query.term || '';
+    var keys = database.get_all_property_keys_for_token(search_string).then(function(keys){
+        res.jsonp(keys);
     });
 });
 
@@ -59,6 +110,8 @@ app.get('/delete', function (req, res) {
         res.send("Missing parameter");
     }
 });
+
+
 
 if (!module.parent) {
     app.listen(4000);

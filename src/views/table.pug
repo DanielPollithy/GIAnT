@@ -2,7 +2,7 @@ html
   head
     title= 'Hauptübersicht'
   body
-    h1= Hauptübersicht
+    h1= 'Hauptübersicht'
     p= 'Hier sind alle Bilder aufgelistet'
     table
       tr
@@ -16,7 +16,9 @@ html
           each cell in row
             td= cell
           td
-            a(href='editor?ident='+row[0])= 'Editor'
+            - image_ = row[1]
+            - ident_ = row[0]
+            a(href='http://localhost:8000/editor/www/?image=/media/uploaded_images/' + image_ + '&xml_file=/media/uploaded_xmls/'+  ident_ +'.xml')= 'Editor'
           td
             a(href='form?ident='+row[0])= 'Modifikation'
           td
