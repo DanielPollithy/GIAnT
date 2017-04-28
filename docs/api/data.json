@@ -1,0 +1,235 @@
+{
+    "project": {
+        "name": "TransliterationApplication API",
+        "description": "TransliterationApplication: A node/express/neo4j/electron application",
+        "version": "0.0.1",
+        "url": ""
+    },
+    "files": {
+        "src/database.js": {
+            "name": "src/database.js",
+            "modules": {
+                "Database": 1
+            },
+            "classes": {
+                "Database": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "Database": {
+            "name": "Database",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Database": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/database.js",
+            "line": 11,
+            "description": "Database wrapper functions for Neo4J",
+            "requires": [
+                "neo4j-driver"
+            ]
+        }
+    },
+    "classes": {
+        "Database": {
+            "name": "Database",
+            "shortname": "Database",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Database",
+            "namespace": "",
+            "file": "src/database.js",
+            "line": 11,
+            "description": "Database\n --------\n Contains all the database access methods\n <br>\n <b>Caution: The responses are promises</b>\n <p>Singleton because...</p>"
+        }
+    },
+    "elements": {},
+    "classitems": [
+        {
+            "file": "src/database.js",
+            "line": 24,
+            "description": "The development flag controls the basic auth credentials",
+            "itemtype": "property",
+            "name": "development",
+            "type": "{boolean}",
+            "default": "false",
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 33,
+            "description": "Stores the neo4j-driver for the method <_get_driver>",
+            "itemtype": "property",
+            "name": "_driver",
+            "type": "{driver}",
+            "access": "private",
+            "tagname": "",
+            "default": "null",
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 43,
+            "description": "Get the database driver\nstores the instance in _driver\nmakes use of the development flag in order to use or not use basic auth",
+            "itemtype": "method",
+            "name": "_get_driver",
+            "access": "private",
+            "tagname": "",
+            "return": {
+                "description": "Returns a bolt:// driver instance",
+                "type": "Driver"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 62,
+            "description": "Get a session to execute Neo4J Cypher code on",
+            "itemtype": "method",
+            "name": "_get_session",
+            "access": "private",
+            "tagname": "",
+            "return": {
+                "description": "",
+                "type": "Session"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 73,
+            "description": "Adds an image to the database\nSets the upload_date to now in seconds (Math.round(d.getTime() / 1000))\nSets completed to false",
+            "itemtype": "method",
+            "name": "add_image",
+            "params": [
+                {
+                    "name": "file_path",
+                    "description": "The unique identifier for an image",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 92,
+            "description": "Remove image from database\n\nPromise: success: Contains number_of_deleted_nodes as param",
+            "itemtype": "method",
+            "name": "remove_image",
+            "params": [
+                {
+                    "name": "file_path",
+                    "description": "The unique identifier for an image",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 114,
+            "description": "Removes an image by ID",
+            "itemtype": "method",
+            "name": "remove_image_by_id",
+            "params": [
+                {
+                    "name": "id_",
+                    "description": "",
+                    "type": "String|Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 133,
+            "description": "Returns a promise with an array of records of images\nordered by last_edit_date, upload_date",
+            "example": [
+                "\n      database.get_all_images().then(function (results) {\n           var row_data = [];\n           results.forEach(function (r) {\n               row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date'), r.get('completed')]);\n           });\n           res.render('table',\n               {\n                   title: 'Hey',\n                   message: 'Hello there!',\n                   rows: row_data\n               });\n           }\n       );"
+            ],
+            "itemtype": "method",
+            "name": "get_all_images",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 178,
+            "description": "Returns all possible property keys for tokens filtered by search_string\nIs used for the autocomplete function of the add-property-input\n\nPromise:success: Array of strings",
+            "itemtype": "method",
+            "name": "get_all_property_keys_for_token",
+            "params": [
+                {
+                    "name": "search_string",
+                    "description": "Empty string gives all possible values",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 206,
+            "description": "Returns all distinct values for the given property in a string list in a promise\nIs used for the autocomplete function of the property values\n\nPromise:success: Array of strings *",
+            "itemtype": "method",
+            "name": "get_all_property_values_for_token",
+            "params": [
+                {
+                    "name": "property",
+                    "description": "the name of a property of tokens",
+                    "type": "String"
+                },
+                {
+                    "name": "search_string",
+                    "description": "that filters the result (empty string is not filter)",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        }
+    ],
+    "warnings": []
+}
