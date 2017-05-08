@@ -3,10 +3,14 @@ var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 var fs = require('fs');
 var database = require('./database');
+var path = require('path');
 
 
 
 var app = module.exports = express();
+
+app.use(express.static(path.join(__dirname, '..')));
+
 app.use(bodyParser());
 app.use(fileUpload());
 
