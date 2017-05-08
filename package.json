@@ -7,14 +7,20 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000"
+    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000",
+    "docs": "yuidoc -c ./yuidoc.json src/.",
+    "server": "node src/server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DanielPollithy/TransliterationApplication.git"
   },
   "keywords": [
+    "node",
+    "yuidocs",
+    "travis-ci",
+    "electron",
     "mxgraph",
     "transliteration",
     "neo4j"

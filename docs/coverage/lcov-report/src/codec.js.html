@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">75% </span>
+        <span class="strong">27.78% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>27/36</span>
+        <span class='fraction'>10/36</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">83.33% </span>
+        <span class="strong">16.67% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>10/12</span>
+        <span class='fraction'>2/12</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>4/8</span>
+        <span class='fraction'>0/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">75% </span>
+        <span class="strong">27.78% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>27/36</span>
+        <span class='fraction'>10/36</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line low'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -216,33 +216,33 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-yes">5×</span>
-<span class="cline-any cline-yes">5×</span>
-<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -317,7 +317,7 @@
             - id
             - parent
  -&gt; then drop unnecessary attributes
- -&gt; export as GraphML
+ -&gt; export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
 &nbsp;
 &nbsp;
 MAKE SOME TDD Test Driven Development here.
@@ -332,34 +332,34 @@ var Codec = Codec || {};
 &nbsp;
 Codec.parser = new xml2js.Parser();
 &nbsp;
-Codec.mxgraph_to_object = function(filename, callback) {
-    fs.readFile(__dirname + '/' + filename, function(err, data) {
-        if (!err) {
-            Codec.parser.parseString(data, function (err, result) {
-                var root = result.mxGraphModel.root[0];
-                for (var i = 0; i&lt;root.mxCell.length; i++) {
-                    var node = root.mxCell[i];
-                    if (node.$.parent) {
-                        var parent = Codec.get_node_by_id(root, node.$.parent);
-                        if (! parent.children) {
-                            parent.children = []
+Codec.mxgraph_to_object = <span class="fstat-no" title="function not covered" >function(filename, callback) {</span>
+<span class="cstat-no" title="statement not covered" >    fs.readFile(__dirname + '/' + filename, <span class="fstat-no" title="function not covered" >function(err, data) {</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err) {</span>
+<span class="cstat-no" title="statement not covered" >            Codec.parser.parseString(data, <span class="fstat-no" title="function not covered" >function (err, result) {</span></span>
+<span class="cstat-no" title="statement not covered" >                var root = result.mxGraphModel.root[0];</span>
+<span class="cstat-no" title="statement not covered" >                for (var i = 0; i&lt;root.mxCell.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >                    var node = root.mxCell[i];</span>
+<span class="cstat-no" title="statement not covered" >                    if (node.$.parent) {</span>
+<span class="cstat-no" title="statement not covered" >                        var parent = Codec.get_node_by_id(root, node.$.parent);</span>
+<span class="cstat-no" title="statement not covered" >                        if (! parent.children) {</span>
+<span class="cstat-no" title="statement not covered" >                            parent.children = []</span>
                         }
-                        parent.children.push(node);
+<span class="cstat-no" title="statement not covered" >                        parent.children.push(node);</span>
                     }
                 }
-                callback(err, result);
+<span class="cstat-no" title="statement not covered" >                callback(err, result);</span>
             });
         } else {
-            callback(err);
+<span class="cstat-no" title="statement not covered" >            callback(err);</span>
         }
     });
 };
 &nbsp;
-Codec.get_node_by_id = function(root, id) {
-    for (var i = 0; i&lt;root.mxCell.length; i++) {
-        var node = root.mxCell[i];
-        if (node.$.id === id) {
-            return node;
+Codec.get_node_by_id = <span class="fstat-no" title="function not covered" >function(root, id) {</span>
+<span class="cstat-no" title="statement not covered" >    for (var i = 0; i&lt;root.mxCell.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >        var node = root.mxCell[i];</span>
+<span class="cstat-no" title="statement not covered" >        if (node.$.id === id) {</span>
+<span class="cstat-no" title="statement not covered" >            return node;</span>
         }
     }
 };
@@ -400,7 +400,7 @@ module.exports = Codec;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon May 08 2017 19:55:55 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon May 08 2017 20:21:57 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../prettify.js"></script>

@@ -20,7 +20,7 @@ chai.should();
 describe('database', function() {
     var file_path = 'example_filepath.jpeg';
     describe("#Image", function(){
-        it.only("save one", function(done) {
+        it("save one", function(done) {
             database.add_image(file_path).then(
                 function(result) {done();},
                 function(err) {
@@ -28,7 +28,7 @@ describe('database', function() {
                     done("Error creating Image");
                 })
         });
-        it.only("get all images and look for ours", function(done) {
+        it("get all images and look for ours", function(done) {
             database.get_all_images().then(
                 function(records) {
                     var found = false;
@@ -45,7 +45,7 @@ describe('database', function() {
                 },
                 function() {done("Error retrieving Images");})
         });
-        it.only("now remove it again", function(done) {
+        it("now remove it again", function(done) {
             database.remove_image(file_path).then(
                 function(number_of_deleted_nodes) {
                     if (number_of_deleted_nodes > 0) {

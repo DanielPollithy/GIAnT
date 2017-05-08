@@ -38,7 +38,7 @@
             - id
             - parent
  -> then drop unnecessary attributes
- -> export as GraphML
+ -> export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
 
 
 MAKE SOME TDD Test Driven Development here.
@@ -57,18 +57,23 @@ Codec.mxgraph_to_object = function(filename, callback) {
     fs.readFile(__dirname + '/' + filename, function(err, data) {
         if (!err) {
             Codec.parser.parseString(data, function (err, result) {
-                var root = result.mxGraphModel.root[0];
-                for (var i = 0; i<root.mxCell.length; i++) {
-                    var node = root.mxCell[i];
-                    if (node.$.parent) {
-                        var parent = Codec.get_node_by_id(root, node.$.parent);
-                        if (! parent.children) {
-                            parent.children = []
+                if (err) {
+                    callback(err);
+                } else {
+                    var root = result.mxGraphModel.root[0];
+                    for (var i = 0; i<root.mxCell.length; i++) {
+                        var node = root.mxCell[i];
+                        if (node.$.parent) {
+                            var parent = Codec.get_node_by_id(root, node.$.parent);
+                            if (! parent.children) {
+                                parent.children = []
+                            }
+                            parent.children.push(node);
                         }
-                        parent.children.push(node);
                     }
+                    callback(err, result);
                 }
-                callback(err, result);
+
             });
         } else {
             callback(err);
