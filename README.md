@@ -3,6 +3,10 @@
 [![Build Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](https://danielpollithy.github.io/TransliterationApplication/api/)
 <a href="https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html">Code Coverage</a>
 
+## Example workflow
+
+<img src="https://danielpollithy.github.io/TransliterationApplication/docs/images/sota-opt.gif">
+
 
 ## npm commands
 
