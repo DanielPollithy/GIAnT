@@ -105,15 +105,13 @@ describe('database', function() {
 
         });
         it("now remove the image again", function(done) {
-            database.remove_image(file_path).then(
+            database.get_image(file_path).then(function(record){
+            database.remove_image_by_id(record.get('ident')).then(
                 function(number_of_deleted_nodes) {
-                    if (number_of_deleted_nodes > 0) {
-                        done();
-                    } else {
-                        done('No Node was deleted!');
-                    }
+                    done();
                 },
                 function() {done("Error deleting Images");})
+                }, function(err){done(err);})
         });
 
     });
