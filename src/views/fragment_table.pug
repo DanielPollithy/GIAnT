@@ -1,0 +1,32 @@
+html
+  head
+    title= 'Fragment'
+  body
+    a(href='/')= '< Alle Bilder'
+    h1= 'Fragmente für Bild ' + image_id
+    p= 'Hier sind alle Fragmente für ein Bild aufgelistet'
+    table
+      tr
+        th= 'Image-Id'
+        th= 'Image-Pfad'
+        th= 'Fragment-Id'
+        th= 'Fragment-Name'
+        th= 'Erstellungsdatum'
+        th= 'Fertig'
+        th= 'Editor'
+        th= 'Neo4j Übertrag'
+        th= 'Löschen'
+      each row in rows
+        tr
+          each cell in row
+            td= cell
+          td
+            - image_path = row[1]
+            - fragment_id = row[2]
+            a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id)= 'Editor'
+          td
+            a(href='/image/' + image_id +'/fragment/' + fragment_id + '/to-db')= 'Übertragen'
+          td
+            a(href='/image/' + image_id +'/fragment/' + fragment_id + '/delete')= 'Löschen'
+    h2= 'Hinzufügen'
+    include create_fragment.pug

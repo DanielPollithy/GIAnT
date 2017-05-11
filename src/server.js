@@ -4,6 +4,7 @@ const fileUpload = require('express-fileupload');
 var fs = require('fs');
 var database = require('./database');
 var path = require('path');
+var codec = require('./codec');
 
 
 
@@ -64,6 +65,8 @@ app.post('/', function (req, res) {
 
         database.add_image(sampleFile.name).then(function () {
             res.redirect('/');
+        }, function(err){
+            return res.status(500).send(err);
         });
     });
 });
@@ -92,32 +95,102 @@ app.get('/', function (req, res) {
     database.get_all_images().then(function (results) {
             var row_data = [];
             results.forEach(function (r) {
-                row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date'), r.get('completed')]);
+                row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date')]);
             });
-            res.render('table',
+            res.render('image_table',
                 {
-                    title: 'Hey',
-                    message: 'Hello there!',
+                    message: '',
                     rows: row_data
                 });
         }
     );
 });
 
-app.get('/delete', function (req, res) {
-    if (req.query.ident) {
-        var id_ = req.query.ident;
-        database.remove_image_by_id(id_).then(function (r) {
+app.get('/image/:id(\\d+)/delete', function (req, res) {
+    if (req.params.id) {
+        var id_ = req.params.id;
+        database.remove_image_by_id(id_).then(function (result) {
             res.redirect('/');
+        }, res.send);
+    } else {
+        res.send("Missing parameter");
+    }
+});
+
+app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete', function (req, res) {
+    if (req.params.image_id && req.params.fragment_id) {
+        database.remove_fragment(req.params.image_id, req.params.fragment_id)
+            .then(function (result) {
+                res.redirect('/image/'+ req.params.image_id +'/fragments');
+            }, res.status(400).send
+            );
+    } else {
+        res.send("Missing parameter");
+    }
+});
+
+app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/to-db', function (req, res) {
+    if (req.params.image_id && req.params.fragment_id) {
+        database.remove_fragment(req.params.image_id, req.params.fragment_id, true).then(function(success){
+            codec.mxgraph_to_neo4j(req.params.image_id, req.params.fragment_id, function(err, data){
+                if (err) {
+                    return res.status(400).send(err);
+                }
+                res.redirect('/image/'+ req.params.image_id +'/fragments');
+            });
+        }, function(err){
+            res.status(500).send(err);
         });
     } else {
         res.send("Missing parameter");
     }
 });
 
+app.post('/image/:id(\\d+)/create-fragment', function (req, res) {
+    if (req.body.name && req.params.id) {
+        var name = req.body.name;
+        database.add_fragment(req.params.id, name).then(
+            function(result){
+                res.redirect('/image/'+ req.params.id +'/fragments');
+            }, function(err){
+                res.send(err);
+            });
+    } else {
+        res.status(400).send("Missing POST parameter name or image_id");
+    }
+});
+
+app.get('/image/:id(\\d+)/fragments', function (req, res) {
+    if (!req.params.id) {
+        return res.send("Missing parameter");
+    }
+    database.get_fragments_by_image_id(req.params.id).then(function (results) {
+            var row_data = [];
+            results.forEach(function (r) {
+                row_data.push(
+                    [
+                        r.get('image_id'),
+                        r.get('file_path'),
+                        r.get('fragment_id'),
+                        r.get('fragment_name'),
+                        r.get('upload_date'),
+                        r.get('completed')
+                    ]
+                );
+            });
+            res.render('fragment_table',
+                {
+                    message: '',
+                    rows: row_data,
+                    image_id: req.params.id
+                });
+        }
+    );
+});
+
 
 
 if (!module.parent) {
     app.listen(4000);
-    console.log('Express started on port 4000');
+    console.log('TransliterationApplication Server started an express server on port 4000');
 }

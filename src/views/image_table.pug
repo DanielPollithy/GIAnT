@@ -9,19 +9,16 @@ html
         th= 'Id'
         th= 'Pfad'
         th= 'Erstellungsdatum'
-        th= 'Fertig'
+        th= 'Fragmente'
         th= 'Löschen'
       each row in rows
         tr
           each cell in row
             td= cell
           td
-            - image_ = row[1]
             - ident_ = row[0]
-            a(href='/editor/www/?image=/media/uploaded_images/' + image_ + '&xml_file=/media/uploaded_xmls/'+  ident_ +'.xml')= 'Editor'
+            a(href='/image/' + ident_ + '/fragments')= 'Fragmente'
           td
-            a(href='form?ident='+row[0])= 'Modifikation'
-          td
-            a(href='delete?ident='+row[0])= 'Löschen'
+            a(href='/image/' + ident_ + '/delete')= 'Löschen'
     h2= 'Upload'
     include upload.pug
