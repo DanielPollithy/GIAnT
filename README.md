@@ -5,7 +5,7 @@
 
 ## Example workflow
 
-<img src="https://danielpollithy.github.io/TransliterationApplication/docs/images/sota-opt.gif">
+<img src="https://danielpollithy.github.io/TransliterationApplication/images/sota-opt.gif">
 
 
 ## npm commands
