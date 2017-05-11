@@ -1,0 +1,16 @@
+<mxGraphModel dx="811" dy="514" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="806" pageHeight="566" background="#ffffff">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" style="locked=1;" parent="0"/>
+    <mxCell id="14" value="Hand 1" parent="0"/>
+    <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;" edge="1" parent="14" source="30" target="31">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="30" value="Token" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1" parent="14">
+      <mxGeometry x="60" y="90" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="31" value="Token" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1" parent="14">
+      <mxGeometry x="283" y="90" width="120" height="60" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

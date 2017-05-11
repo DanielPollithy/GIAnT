@@ -1,0 +1,19 @@
+<mxGraphModel dx="811" dy="514" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="806" pageHeight="566" background="#ffffff">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" style="locked=1;" parent="0"/>
+    <mxCell id="2" value="Hand 1" parent="0"/>
+    <mxCell id="11" value="" style="group" vertex="1" connectable="0" parent="2">
+      <mxGeometry x="80" y="60" width="300" height="170" as="geometry"/>
+    </mxCell>
+    <mxCell id="8" value="Token" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1" parent="11">
+      <mxGeometry width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="9" value="Token" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1" parent="11">
+      <mxGeometry x="180" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="10" value="Token" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1" parent="11">
+      <mxGeometry x="130" y="110" width="120" height="60" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
