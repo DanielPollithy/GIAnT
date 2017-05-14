@@ -1,0 +1,146 @@
+<mxGraphModel dx="811" dy="514" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1"
+              pageScale="1" pageWidth="1068" pageHeight="469" background="#ffffff">
+    <root>
+        <mxCell id="0"/>
+        <mxCell id="1" style="locked=1;" parent="0"/>
+        <mxCell id="2" value="Hand 1" parent="0"/>
+        <mxCell id="3" value="LA" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;"
+                vertex="1" parent="2">
+            <mxGeometry x="220" y="250" width="100" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="6"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="4" target="5">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="VOSTRA" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="4">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="330" y="260" width="210" height="80" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="8"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=0;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="5" target="7">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="INVIDIA" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="5">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="550" y="270" width="140" height="70" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="10"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=0;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="7" target="9">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="E`" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="7">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="700" y="280" width="40" height="60" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="12"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="9" target="11">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="LA" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="9">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="740" y="280" width="40" height="60" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="14"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=0;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="11" target="13">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="NOSTRA" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="11">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="790" y="280" width="120" height="60" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="16"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="13" target="15">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="FORZA" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="13">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="910" y="290" width="90" height="50" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="18"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="15" target="17">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="BY" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="15">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="400" y="350" width="70" height="70" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="20"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="17" target="19">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="!" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="17">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="490" y="345" width="20" height="80" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="19" target="21">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="RAGAZZ" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="19">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="520" y="345" width="140" height="80" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="21" target="23">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="!" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="21">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="655" y="340" width="10" height="80" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="23" target="25">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="DEL" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="23">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="680" y="350" width="60" height="50" as="geometry"/>
+            </mxCell>
+        </object>
+        <mxCell id="28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;"
+                edge="1" parent="2" source="25" target="27">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <object label="KENNEDI" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="25">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="750" y="350" width="130" height="50" as="geometry"/>
+            </mxCell>
+        </object>
+        <object label="!!!" color="nero" dialect="" lang="ital" pos="" them_mak="ultra" tool="spray" id="27">
+            <mxCell style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" vertex="1"
+                    parent="2">
+                <mxGeometry x="890" y="350" width="40" height="50" as="geometry"/>
+            </mxCell>
+        </object>
+    </root>
+</mxGraphModel>
