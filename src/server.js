@@ -119,7 +119,7 @@ app.get('/image/:id(\\d+)/delete', function (req, res) {
 
 app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete', function (req, res) {
     if (req.params.image_id && req.params.fragment_id) {
-        database.remove_fragment(req.params.image_id, req.params.fragment_id)
+        database.remove_fragment(req.params.image_id, req.params.fragment_id, false)
             .then(function (result) {
                 res.redirect('/image/'+ req.params.image_id +'/fragments');
             }, res.status(400).send

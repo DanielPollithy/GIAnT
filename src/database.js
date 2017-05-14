@@ -53,10 +53,7 @@ Database._get_driver = function (){
     if (this._driver !== null) {
         return this._driver;
     }
-    if (this.development) {
-        return neo4j.driver("bolt://localhost:7687");
-    }
-    return neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "1234"));
+    return this._driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "1234"));
 };
 
 /**
@@ -123,13 +120,21 @@ Database.init = function(callback) {
  * @return {Promise}
  */
 Database.add_image = function(file_path) {
-    // TODO: Make file_path to file_name
-    // TODO: Make it unique
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime() / 1000);
-    return session.run("CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}});",
-        {file_path: file_path, upload_date: upload_date});
+    return session.run("CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;",
+        {file_path: file_path, upload_date: upload_date})
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            return records[0];
+        }, function(err) {
+            return err;
+        });
 };
 
 /**
@@ -215,8 +220,17 @@ Database.add_fragment = function(image_id, fragment_name) {
     return session.run("MATCH (i:Image) " +
         "WHERE ID(i) = {image_id} " +
         "WITH i " +
-        "CREATE (:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false})-[:image]->(i);",
-        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id)});
+        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false})-[:image]->(i)" +
+        "RETURN ID(f) as ident;",
+        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id)})
+        .then(function(result){
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            return records[0];
+        }, function(err){return err;})
 };
 
 /**
@@ -433,6 +447,7 @@ Database.get_fragments_by_image_id = function(image_id) {
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image)-[r]-(f:Fragment) " +
+            "WHERE ID(a) = {image_id}" +
             "WITH a,f " +
             "ORDER BY f.upload_date " +
             "RETURN " +
@@ -441,7 +456,8 @@ Database.get_fragments_by_image_id = function(image_id) {
             "ID(f) as fragment_id, " +
             "f.fragment_name as fragment_name, " +
             "f.upload_date as upload_date," +
-            "f.completed as completed;"
+            "f.completed as completed;",
+            {image_id: Number(image_id)}
         )
         .then(function (result) {
             session.close();

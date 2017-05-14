@@ -73,70 +73,77 @@ Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
 Codec.mxgraph_to_object = function(filename, callback) {
     fs.readFile(__dirname + '/' + filename, function(err, data) {
         if (!err) {
-            Codec.parser.parseString(data, function (err, result) {
-                if (err) {
-                    callback(err);
-                } else {
-                    var root = result.mxGraphModel.root[0];
+            try {
+                Codec.parser.parseString(data, function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        if (result === undefined) {
+                            return callback('ParseString was not able to parse the xml');
+                        }
+                        var root = result.mxGraphModel.root[0];
 
-                    // unwrap the <object>s
-                    // The objects under root (<object>)
-                    if (root.object) {
-                        for (var j = 0; j<root.object.length; j++) {
-                            var node2 = root.object[j].mxCell[0];
-                            if (node2.$.parent) {
-                                // merge the object and the node into a new one
-                                var merged = {};
-                                Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
-                                Object.assign(merged.$, root.object[j].mxCell[0].$);
-                                delete merged.mxCell;
-                                if (!root.mxCell) {
-                                    root.mxCell = [];
+                        // unwrap the <object>s
+                        // The objects under root (<object>)
+                        if (root.object) {
+                            for (var j = 0; j < root.object.length; j++) {
+                                var node2 = root.object[j].mxCell[0];
+                                if (node2.$.parent) {
+                                    // merge the object and the node into a new one
+                                    var merged = {};
+                                    Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
+                                    Object.assign(merged.$, root.object[j].mxCell[0].$);
+                                    delete merged.mxCell;
+                                    if (!root.mxCell) {
+                                        root.mxCell = [];
+                                    }
+                                    root.mxCell.push(merged);
                                 }
-                                root.mxCell.push(merged);
+                            }
+
+                            delete root.object;
+                        }
+
+                        // remove groups
+                        // rewire the children to the parent of the group
+                        for (var i = 0; i < root.mxCell.length; i++) {
+                            var node = root.mxCell[i];
+                            if (node.$.style && node.$.style === "group") {
+                                var parent = Codec.get_node_by_id(root, node.$.parent);
+                                var children = Codec.get_nodes_by_parent_id(root, node.$.id);
+                                for (var j = 0; j < children.length; j++) {
+                                    children[j].$.parent = parent.$.id;
+                                }
+                                root.mxCell[i] = 'x';
                             }
                         }
 
-                        delete root.object;
-                    }
+                        // remove all TO DELETE entries
+                        root.mxCell = root.mxCell.filter(function (cell) {
+                            return (cell !== 'x')
+                        });
 
-                    // remove groups
-                    // rewire the children to the parent of the group
-                    for (var i=0; i<root.mxCell.length; i++) {
-                        var node = root.mxCell[i];
-                        if (node.$.style && node.$.style === "group") {
-                            var parent = Codec.get_node_by_id(root, node.$.parent);
-                            var children = Codec.get_nodes_by_parent_id(root, node.$.id);
-                            for (var j=0; j<children.length; j++) {
-                                children[j].$.parent = parent.$.id;
+                        // The cells in the root (<mxCell>)
+                        for (var i = 0; i < root.mxCell.length; i++) {
+                            var node = root.mxCell[i];
+                            if (node.$.parent) {
+                                var parent = Codec.get_node_by_id(root, node.$.parent);
+                                if (!parent.children) {
+                                    parent.children = []
+                                }
+                                parent.children.push(node);
                             }
-                            root.mxCell[i] = 'x';
                         }
+
+                        callback(err, result);
                     }
 
-                    // remove all TO DELETE entries
-                    root.mxCell = root.mxCell.filter(function(cell) {
-                        return (cell !== 'x')
-                    });
-
-                    // The cells in the root (<mxCell>)
-                    for (var i = 0; i<root.mxCell.length; i++) {
-                        var node = root.mxCell[i];
-                        if (node.$.parent) {
-                            var parent = Codec.get_node_by_id(root, node.$.parent);
-                            if (! parent.children) {
-                                parent.children = []
-                            }
-                            parent.children.push(node);
-                        }
-                    }
-
-                    callback(err, result);
-                }
-
-            });
+                });
+            } catch (e) {
+                return callback(err);
+            }
         } else {
-            callback(err);
+            return callback(err);
         }
     });
 };
@@ -161,15 +168,11 @@ Codec.get_nodes_by_parent_id = function(root, parent_id) {
     return nodes;
 };
 
-function clean_restructured_graph(g) {
-    //console.log(g);
-
-}
 
 Codec.mxgraph_to_layered_object = function(filename, callback) {
     Codec.mxgraph_to_object(filename, function(err, result) {
         if (err) {
-            callback(err);
+            return callback(err);
         } else {
             var temp;
             for (var l = 0; l < result.mxGraphModel.root[0].mxCell.length; l++) {
@@ -188,7 +191,7 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
 Codec.mxgraph_to_flattened_object = function(filename, callback) {
     Codec.mxgraph_to_layered_object(filename, function (err, graph) {
         if (err) {
-            callback(err)
+            return callback(err);
         } else {
             graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
 
@@ -220,7 +223,7 @@ Codec.mxgraph_to_flattened_object = function(filename, callback) {
 Codec.mxgraph_to_graphml = function(filename, callback) {
     Codec.mxgraph_to_flattened_object(filename, function (err, graph) {
         if (err) {
-            callback(err)
+            return callback(err);
         } else {
 
             var graphml = JSON.parse(JSON.stringify(graph));
@@ -361,10 +364,18 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
     })
 };
 
-Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback) {
-    Codec.mxgraph_to_flattened_object('../media/uploaded_xmls/' + fragment_id + '.xml', function (err, graph) {
+Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml_path) {
+    if (overwrite_xml_path === undefined) {overwrite_xml_path = false;}
+    var xml_path;
+    if (!overwrite_xml_path) {
+        xml_path = '../media/uploaded_xmls/' + fragment_id + '.xml';
+    } else {
+        xml_path = overwrite_xml_path;
+    }
+
+    Codec.mxgraph_to_flattened_object(xml_path, function (err, graph) {
         if (err) {
-            callback(err)
+            return callback(err);
         } else {
             var nodes = [];
             var edges = [];
@@ -385,8 +396,6 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback) {
                     });
                     delete cell.$.style;
                 }
-
-                console.dir(cell);
 
                 var for_ = "node";
                 if (cell.$.edge) {
@@ -412,13 +421,13 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback) {
                             database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
                         );
                         Promise.all(all_edge_promises).then(function(values){
-                            callback(null, values);
+                            return callback(null, values);
                         }, function(err){
-                            callback(err, null);
+                            return callback(err, null);
                         });
                     });
                 } else {
-                    callback(null, values);
+                    return callback(null, values);
                 }
                 },
             function(err){
@@ -431,13 +440,6 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback) {
     });
 
 };
-
-function classify_node(node) {
-    // a node without a geometry is either an object, a group or a layer
-    return null;
-}
-
-//perform_checks("../media/uploaded_xmls/1.xml");
 
 module.exports = Codec;
 

@@ -4,6 +4,7 @@ var chai = require('chai');
 
 // To be tested
 var database = require('../src/database');
+var Codec = require('../src/codec');
 
 // Activate should-syntax (http://chaijs.com/guide/styles/#should)
 chai.should();
@@ -20,6 +21,7 @@ chai.should();
 describe('database', function() {
     var file_path = 'example_filepath.jpeg';
     var fragment_name = 'something stupid';
+
     describe("#Database", function () {
         it('Setup the constraints', function (done) {
             database.init().then(function(){done();}, function(err){done(err);});
@@ -94,9 +96,39 @@ describe('database', function() {
                 done(err);
             });
         });
+
+        it('Test the mxgraph_to_neo4j on 9.xml from the codec', function(done) {
+            var frag_name_2 = '123456789';
+            database.get_image(file_path).then(function(record){
+                database.add_fragment(record.get('ident'), frag_name_2).then(function(){
+                        database.get_fragment(file_path, frag_name_2).then(function(record){
+                            var image_id = record.get('image_id');
+                            var fragment_id = record.get('ident');
+                            var called = false;
+                            Codec.mxgraph_to_neo4j(image_id, fragment_id, function(err, graphml) {
+                                if (!called) {
+                                    called = true;
+                                    if (err) {
+                                        return done(err)
+                                    } else {
+                                        return done();
+                                    }
+                                }
+                            }, "../test/xml/9.xml");
+                        }, function(err){
+                            return done(err);
+                        });
+                    }, function(err){
+                        return done(err);
+                    });
+            }, function(err){
+                return done(err);
+            })
+        });
+
         it("now remove the fragment", function(done){
             database.get_image(file_path).then(function(record){
-                database.remove_fragment(record.get('ident'), fragment_name).then(function(record){
+                database.remove_fragment(record.get('ident'), fragment_name, false).then(function(record){
                     done();
                 }, function(err){
                     done(err);
@@ -115,5 +147,158 @@ describe('database', function() {
         });
 
     });
+
+    describe('#Constraints', function(){
+        it('double init', function(done){
+            database.init().then(function(){
+                database.init().then(function(){done();}, done);
+            }, done);
+        });
+
+        it('double remove', function(done){
+            database._remove_constraints().then(function(){
+                database._remove_constraints().then(function(){
+                    done('There should have been an error');
+                }, function(err) {
+                    database.init().then(function(){done();}, done);
+                });
+            }, function() {
+                database._remove_constraints().then(function(){
+                    done('There should have been an error');
+                }, function(err) {
+                    database.init().then(function(){done();}, done);
+                });
+            });
+        });
+
+        it("don't delete fragment", function(done){
+            database.add_image(file_path).then(
+                function(result) {
+                    var image_id = Number(result.get('ident'));
+                    var fn3 = 'fragment3';
+                    database.add_fragment(image_id, fn3).then(
+                        function(record){
+                            var fragment_id = Number(record.get('ident'));
+                            database.remove_fragment(image_id, fragment_id).then(function() {
+                                database.get_fragment_by_id(image_id, fragment_id).then(function(record) {
+                                    var new_id = Number(record.get('ident'));
+                                    if (new_id === fragment_id) {
+                                        database.remove_image_by_id(image_id).then(function(data){
+                                            done();
+                                        }, done);
+                                    } else {
+                                        done('fragment id mismatch');
+                                    }
+                                }, done);
+                            }, done);
+                        },
+                        done
+                    );
+
+                },
+                function(err) {
+                    done(err);
+            });
+        });
+
+        it("#get_fragments_by_image_id", function(done){
+            database.add_image('snd image').then(
+                function(result) {
+                    var image_id = result.get('ident');
+                    var fn3 = 'fragment3';
+                    database.add_fragment(image_id, fn3).then(
+                        function(record){
+                            database.get_fragments_by_image_id(image_id).then(function(rows){
+                                if (rows.length === 1) {
+                                    done();
+                                    database.remove_image_by_id(image_id);
+                                } else {
+                                    done('rows.length mismatch');
+                                }
+                            }, done);
+                        },
+                        done
+                    );
+
+                },
+                function(err) {
+                    done(err);
+            });
+        });
+
+
+    });
+
+    describe('#Autocomplete', function(){
+        it("get_all_property_values_for_token", function(done){
+            database.add_image('image_321').then(
+                function(result) {
+                    var image_id = Number(result.get('ident'));
+                    var fn3 = 'fragment4';
+                    database.add_fragment(image_id, fn3).then(
+                        function(record){
+                            var fragment_id = Number(record.get('ident'));
+                            Codec.mxgraph_to_neo4j(image_id, fragment_id, function(err, data) {
+                                database.get_all_property_values_for_token('color', '').then(function(ary) {
+                                    if (ary.includes('nero') && ary.includes('rosso')) {
+                                        database.get_all_property_values_for_token('them_mak', '').then(function(ary) {
+                                            if (ary.includes('ultra')) {
+                                                database.remove_image_by_id(image_id).then(function(){done()}, done);
+                                            } else {
+                                                done('missing attribute values');
+                                            }
+                                        }, done);
+                                    } else {
+                                        done('missing attribute values');
+                                    }
+                                }, done);
+                            }, '../test/xml/10.xml');
+                        },
+                        done
+                    );
+
+                },
+                function(err) {
+                    done(err);
+            });
+        });
+
+        it("get_all_property_keys_for_token", function(done){
+            database.add_image('image_x').then(
+                function(result) {
+                    var image_id = Number(result.get('ident'));
+                    var fn3 = 'fragment4';
+                    database.add_fragment(image_id, fn3).then(
+                        function(record){
+                            var fragment_id = Number(record.get('ident'));
+                            Codec.mxgraph_to_neo4j(image_id, fragment_id, function(err, data) {
+                                database.get_all_property_keys_for_token('').then(function(ary) {
+                                    if (ary.includes('color') && ary.includes('them_mak')) {
+                                        database.get_all_property_keys_for_token('t').then(function(ary) {
+                                            if (ary.includes('tool')) {
+                                                database.remove_image_by_id(image_id).then(function(){done()}, done);
+                                            } else {
+                                                done('missing attribute values');
+                                            }
+                                        }, done);
+                                    } else {
+                                        done('missing attribute values');
+                                    }
+                                }, done);
+                            }, '../test/xml/10.xml');
+                        },
+                        done
+                    );
+
+                },
+                function(err) {
+                    done(err);
+            });
+        });
+
+
+    })
+
+
 });
 
