@@ -60,16 +60,55 @@ MAKE SOME TDD Test Driven Development here.
 
  */
 
+/**
+* XML Handling
+*
+* mxGraph xml
+*
+* @module Codec
+* @requires xml2js
+*/
+
 var fs = require('fs');
 var xml2js = require('xml2js');
 var database = require('./database');
 
+/**
+ *
+ * Codec
+ * --------
+ * Contains all the methods to convert a mxGraph into a GraphML or to neo4j
+ * <br>
+*
+ * @class Codec
+*/
 var Codec = Codec || {};
 
+/**
+ * The xml2js parser
+ *
+ * @property parser
+ * @type {Object}
+ */
 Codec.parser = new xml2js.Parser();
 
+/**
+ * The xml2js builder
+ *
+ * This object can create xml files
+ *
+ * @property builder
+ * @type {Object}
+ */
 Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
 
+/**
+* Get the database driver
+ *
+ * @method mxgraph_to_object
+ * @param filename the resource to load
+ * @param callback function(err, data) {...}
+*/
 Codec.mxgraph_to_object = function(filename, callback) {
     fs.readFile(__dirname + '/' + filename, function(err, data) {
         if (!err) {
@@ -148,6 +187,15 @@ Codec.mxgraph_to_object = function(filename, callback) {
     });
 };
 
+/**
+ * Works on a mxGraph xml2js-object
+ * Finds a node given an id
+ *
+ * @method get_node_by_id
+ * @param root mxGraph tree
+ * @param id
+ * @returns {node}
+ */
 Codec.get_node_by_id = function(root, id) {
     for (var i = 0; i<root.mxCell.length; i++) {
         var node = root.mxCell[i];
@@ -157,6 +205,15 @@ Codec.get_node_by_id = function(root, id) {
     }
 };
 
+/**
+ * Works on a mxGraph xml2js-object
+ * Gets all nodes with a given parent
+ *
+ * @method get_nodes_by_parent_id
+ * @param root
+ * @param parent_id
+ * @returns {Array}
+ */
 Codec.get_nodes_by_parent_id = function(root, parent_id) {
     var nodes = [];
     for (var i = 0; i<root.mxCell.length; i++) {
@@ -169,6 +226,17 @@ Codec.get_nodes_by_parent_id = function(root, parent_id) {
 };
 
 
+/**
+ * Converts the mxGraph to an object structured ad follows
+ *
+ * obj.mxGraphModel.layer1.node1
+ *
+ * It removes groups
+ *
+ * @method mxgraph_to_layered_object
+ * @param filename
+ * @param callback function(err, result) {...}
+ */
 Codec.mxgraph_to_layered_object = function(filename, callback) {
     Codec.mxgraph_to_object(filename, function(err, result) {
         if (err) {
@@ -188,6 +256,17 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
     });
 };
 
+/**
+ * Converts an mxGraph to a flot object structured as follows
+ *
+ * graph.mxGraphModel.data.token1
+ * graph.mxGraphModel.data.token2
+ * graph.mxGraphModel.data.edge1
+ *
+ * @method mxgraph_to_flattened_object
+ * @param filename
+ * @param callback
+ */
 Codec.mxgraph_to_flattened_object = function(filename, callback) {
     Codec.mxgraph_to_layered_object(filename, function (err, graph) {
         if (err) {
@@ -220,6 +299,16 @@ Codec.mxgraph_to_flattened_object = function(filename, callback) {
     })
 };
 
+/**
+ * Converts a mxGraph into the GraphML format
+ *
+ * It removes groups and is not necessary for the code
+ * Only nice to have
+ *
+ * @method mxgraph_to_graphml
+ * @param filename
+ * @param callback
+ */
 Codec.mxgraph_to_graphml = function(filename, callback) {
     Codec.mxgraph_to_flattened_object(filename, function (err, graph) {
         if (err) {
@@ -364,6 +453,15 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
     })
 };
 
+/**
+ * Loads an mxGraph over the flat xml2js-object into the neo4j database
+ *
+ * @method mxgraph_to_neo4j
+ * @param image_id
+ * @param fragment_id
+ * @param callback function(err, data) {...}
+ * @param overwrite_xml_path if you don't want to load the standard xml file_path for the fragment use this
+ */
 Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml_path) {
     if (overwrite_xml_path === undefined) {overwrite_xml_path = false;}
     var xml_path;

@@ -1,0 +1,48 @@
+{
+  "tokens": {
+    "symbol": {
+      "color": "orange",
+      "properties": {
+
+      }
+    },
+    "token": {
+      "color": "grey",
+      "properties": {
+        "pos": "NOCAT",
+        "them_mak": "",
+        "tool": "",
+        "calligraphy": "",
+        "lang": "",
+        "dialect": "",
+        "color": ""
+      }
+    },
+    "erasure": {
+      "color": "red",
+      "properties": {
+
+      }
+    }
+  },
+  "relations": {
+    "follow": {
+      "color": "blue"
+    },
+    "strike": {
+      "color": "black"
+    },
+    "erase": {
+      "color": "black"
+    },
+    "block": {
+      "color": "black"
+    },
+    "add+": {
+      "color": "green"
+    },
+    "add-": {
+      "color": "red"
+    }
+  }
+}

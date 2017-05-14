@@ -8,3 +8,5 @@ The xml files in this folder have the following purpose:
 - 6.xml -> 1 layer, 2 nodes, 1 edge
 - 7.xml -> 1 layer, 1 outer group containing 1 node connected to a node in the inner group which contains two connected nodes
 - 8.xml -> 3 layers, with a some elements (see the test for numbers)
+- 9.xml -> 
+- 10.xml -> test the autocomplete

@@ -6,6 +6,17 @@
         "url": ""
     },
     "files": {
+        "src/codec.js": {
+            "name": "src/codec.js",
+            "modules": {
+                "Codec": 1
+            },
+            "classes": {
+                "Codec": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/database.js": {
             "name": "src/database.js",
             "modules": {
@@ -19,6 +30,23 @@
         }
     },
     "modules": {
+        "Codec": {
+            "name": "Codec",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Codec": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/codec.js",
+            "line": 76,
+            "description": "XML Handling\n\nmxGraph xml",
+            "requires": [
+                "xml2js"
+            ]
+        },
         "Database": {
             "name": "Database",
             "submodules": {},
@@ -38,6 +66,20 @@
         }
     },
     "classes": {
+        "Codec": {
+            "name": "Codec",
+            "shortname": "Codec",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Codec",
+            "namespace": "",
+            "file": "src/codec.js",
+            "line": 76,
+            "description": "Codec\n --------\n Contains all the methods to convert a mxGraph into a GraphML or to neo4j\n <br>"
+        },
         "Database": {
             "name": "Database",
             "shortname": "Database",
@@ -55,6 +97,178 @@
     },
     "elements": {},
     "classitems": [
+        {
+            "file": "src/codec.js",
+            "line": 87,
+            "description": "The xml2js parser",
+            "itemtype": "property",
+            "name": "parser",
+            "type": "{Object}",
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 95,
+            "description": "The xml2js builder\n\nThis object can create xml files",
+            "itemtype": "property",
+            "name": "builder",
+            "type": "{Object}",
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 105,
+            "description": "Get the database driver",
+            "itemtype": "method",
+            "name": "mxgraph_to_object",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": "the resource to load"
+                },
+                {
+                    "name": "callback",
+                    "description": "function(err, data)",
+                    "type": "..."
+                }
+            ],
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 190,
+            "description": "Works on a mxGraph xml2js-object\nFinds a node given an id",
+            "itemtype": "method",
+            "name": "get_node_by_id",
+            "params": [
+                {
+                    "name": "root",
+                    "description": "mxGraph tree"
+                },
+                {
+                    "name": "id",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Node"
+            },
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 208,
+            "description": "Works on a mxGraph xml2js-object\nGets all nodes with a given parent",
+            "itemtype": "method",
+            "name": "get_nodes_by_parent_id",
+            "params": [
+                {
+                    "name": "root",
+                    "description": ""
+                },
+                {
+                    "name": "parent_id",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 229,
+            "description": "Converts the mxGraph to an object structured ad follows\n\nobj.mxGraphModel.layer1.node1\n\nIt removes groups",
+            "itemtype": "method",
+            "name": "mxgraph_to_layered_object",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": "function(err, result)",
+                    "type": "..."
+                }
+            ],
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 259,
+            "description": "Converts an mxGraph to a flot object structured as follows\n\ngraph.mxGraphModel.data.token1\ngraph.mxGraphModel.data.token2\ngraph.mxGraphModel.data.edge1",
+            "itemtype": "method",
+            "name": "mxgraph_to_flattened_object",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": ""
+                }
+            ],
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 302,
+            "description": "Converts a mxGraph into the GraphML format\n\nIt removes groups and is not necessary for the code\nOnly nice to have",
+            "itemtype": "method",
+            "name": "mxgraph_to_graphml",
+            "params": [
+                {
+                    "name": "filename",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": ""
+                }
+            ],
+            "class": "Codec",
+            "module": "Codec"
+        },
+        {
+            "file": "src/codec.js",
+            "line": 456,
+            "description": "Loads an mxGraph over the flat xml2js-object into the neo4j database",
+            "itemtype": "method",
+            "name": "mxgraph_to_neo4j",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": "function(err, data)",
+                    "type": "..."
+                },
+                {
+                    "name": "overwrite_xml_path",
+                    "description": "if you don't want to load the standard xml file_path for the fragment use this"
+                }
+            ],
+            "class": "Codec",
+            "module": "Codec"
+        },
         {
             "file": "src/database.js",
             "line": 24,
@@ -96,7 +310,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 62,
+            "line": 59,
             "description": "Get a session to execute Neo4J Cypher code on",
             "itemtype": "method",
             "name": "_get_session",
@@ -111,7 +325,48 @@
         },
         {
             "file": "src/database.js",
-            "line": 73,
+            "line": 70,
+            "description": "Add the necessary constraints to create something like a schema\nTODO: describe them",
+            "itemtype": "method",
+            "name": "add_constraints",
+            "return": {
+                "description": "",
+                "type": "Session"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 82,
+            "description": "Remove the constraints",
+            "itemtype": "method",
+            "name": "_remove_constraints",
+            "access": "private",
+            "tagname": "",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 94,
+            "description": "Do the initialization on start\n1) drop and then create constraint",
+            "itemtype": "method",
+            "name": "init",
+            "return": {
+                "description": "",
+                "type": "Session"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 113,
             "description": "Adds an image to the database\nSets the upload_date to now in seconds (Math.round(d.getTime() / 1000))\nSets completed to false",
             "itemtype": "method",
             "name": "add_image",
@@ -131,10 +386,10 @@
         },
         {
             "file": "src/database.js",
-            "line": 92,
-            "description": "Remove image from database\n\nPromise: success: Contains number_of_deleted_nodes as param",
+            "line": 140,
+            "description": "Get image from database by file_path\n\nPromise: success: Contains record for the image",
             "itemtype": "method",
-            "name": "remove_image",
+            "name": "get_image",
             "params": [
                 {
                     "name": "file_path",
@@ -151,7 +406,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 114,
+            "line": 165,
             "description": "Removes an image by ID",
             "itemtype": "method",
             "name": "remove_image_by_id",
@@ -171,7 +426,166 @@
         },
         {
             "file": "src/database.js",
-            "line": 133,
+            "line": 206,
+            "description": "Adds a fragment to an image\nEvery image can have multiple fragments\nthe name of the fragment is unique",
+            "itemtype": "method",
+            "name": "add_fragment",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_name",
+                    "description": "The identifier for the fragment"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 236,
+            "description": "Removes all fragments of an image with a given name",
+            "itemtype": "method",
+            "name": "remove_fragment",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                },
+                {
+                    "name": "dont_delete_fragment",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 277,
+            "description": "Get the fragment of an image by name",
+            "itemtype": "method",
+            "name": "get_fragment",
+            "params": [
+                {
+                    "name": "image_file_path",
+                    "description": "The unique id for the image",
+                    "type": "String"
+                },
+                {
+                    "name": "fragment_name",
+                    "description": "The identifier for the fragments"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 302,
+            "description": "Get the fragment of an image by name",
+            "itemtype": "method",
+            "name": "get_fragment_by_id",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 330,
+            "description": "Adds a node to a fragment of an image\n\nPromise:success  number_of_created_nodes",
+            "itemtype": "method",
+            "name": "add_node",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                },
+                {
+                    "name": "node_attributes",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 365,
+            "description": "Adds an edge between two nodes\nin a fragment of an image\n\nPromise:success  number_of_created_edges",
+            "itemtype": "method",
+            "name": "add_edge",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                },
+                {
+                    "name": "source_enum",
+                    "description": ""
+                },
+                {
+                    "name": "target_enum",
+                    "description": ""
+                },
+                {
+                    "name": "edge_attributes",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 402,
             "description": "Returns a promise with an array of records of images\nordered by last_edit_date, upload_date",
             "example": [
                 "\n      database.get_all_images().then(function (results) {\n           var row_data = [];\n           results.forEach(function (r) {\n               row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date'), r.get('completed')]);\n           });\n           res.render('table',\n               {\n                   title: 'Hey',\n                   message: 'Hello there!',\n                   rows: row_data\n               });\n           }\n       );"
@@ -187,7 +601,26 @@
         },
         {
             "file": "src/database.js",
-            "line": 178,
+            "line": 446,
+            "description": "Get all fragments of one image",
+            "itemtype": "method",
+            "name": "get_fragments_by_image_id",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*|Promise"
+            },
+            "class": "Database",
+            "module": "Database"
+        },
+        {
+            "file": "src/database.js",
+            "line": 480,
             "description": "Returns all possible property keys for tokens filtered by search_string\nIs used for the autocomplete function of the add-property-input\n\nPromise:success: Array of strings",
             "itemtype": "method",
             "name": "get_all_property_keys_for_token",
@@ -207,7 +640,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 206,
+            "line": 508,
             "description": "Returns all distinct values for the given property in a string list in a promise\nIs used for the autocomplete function of the property values\n\nPromise:success: Array of strings *",
             "itemtype": "method",
             "name": "get_all_property_values_for_token",
@@ -231,5 +664,18 @@
             "module": "Database"
         }
     ],
-    "warnings": []
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/codec.js:190"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/codec.js:208"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/database.js:446"
+        }
+    ]
 }

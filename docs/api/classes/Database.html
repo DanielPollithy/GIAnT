@@ -38,11 +38,13 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Codec.html">Codec</a></li>
                                 <li><a href="../classes/Database.html">Database</a></li>
                             </ul>
                 
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Codec.html">Codec</a></li>
                                 <li><a href="../modules/Database.html">Database</a></li>
                             </ul>
                         </div>
@@ -123,8 +125,28 @@
                                 <a href="#method__get_session">_get_session</a>
 
                             </li>
+                            <li class="index-item method private">
+                                <a href="#method__remove_constraints">_remove_constraints</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_add_constraints">add_constraints</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_add_edge">add_edge</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_add_fragment">add_fragment</a>
+
+                            </li>
                             <li class="index-item method">
                                 <a href="#method_add_image">add_image</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_add_node">add_node</a>
 
                             </li>
                             <li class="index-item method">
@@ -140,7 +162,27 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_remove_image">remove_image</a>
+                                <a href="#method_get_fragment">get_fragment</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_fragment_by_id">get_fragment_by_id</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_fragments_by_image_id">get_fragments_by_image_id</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_image">get_image</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_init">init</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_remove_fragment">remove_fragment</a>
 
                             </li>
                             <li class="index-item method">
@@ -236,7 +278,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l62"><code>src&#x2F;database.js:62</code></a>
+        <a href="../files/src_database.js.html#l59"><code>src&#x2F;database.js:59</code></a>
         </p>
 
 
@@ -254,6 +296,286 @@ makes use of the development flag in order to use or not use basic auth</p>
 
             <div class="returns-description">
                         <span class="type">Session</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__remove_constraints" class="method item private">
+    <h3 class="name"><code>_remove_constraints</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l82"><code>src&#x2F;database.js:82</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Remove the constraints</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_add_constraints" class="method item">
+    <h3 class="name"><code>add_constraints</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Session</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l70"><code>src&#x2F;database.js:70</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add the necessary constraints to create something like a schema
+TODO: describe them</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Session</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_add_edge" class="method item">
+    <h3 class="name"><code>add_edge</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>source_enum</code>
+                </li>
+                <li class="arg">
+                        <code>target_enum</code>
+                </li>
+                <li class="arg">
+                        <code>edge_attributes</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l365"><code>src&#x2F;database.js:365</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds an edge between two nodes
+in a fragment of an image</p>
+<p>Promise:success  number_of_created_edges</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">source_enum</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_enum</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">edge_attributes</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_add_fragment" class="method item">
+    <h3 class="name"><code>add_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l206"><code>src&#x2F;database.js:206</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds a fragment to an image
+Every image can have multiple fragments
+the name of the fragment is unique</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_name</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>The identifier for the fragment</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
             </div>
         </div>
 
@@ -283,7 +605,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l73"><code>src&#x2F;database.js:73</code></a>
+        <a href="../files/src_database.js.html#l113"><code>src&#x2F;database.js:113</code></a>
         </p>
 
 
@@ -325,6 +647,96 @@ Sets completed to false</p>
 
 
 </div>
+<div id="method_add_node" class="method item">
+    <h3 class="name"><code>add_node</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>node_attributes</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l330"><code>src&#x2F;database.js:330</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds a node to a fragment of an image</p>
+<p>Promise:success  number_of_created_nodes</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">node_attributes</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
 <div id="method_get_all_images" class="method item">
     <h3 class="name"><code>get_all_images</code></h3>
 
@@ -343,7 +755,7 @@ Sets completed to false</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l133"><code>src&#x2F;database.js:133</code></a>
+        <a href="../files/src_database.js.html#l402"><code>src&#x2F;database.js:402</code></a>
         </p>
 
 
@@ -411,7 +823,7 @@ ordered by last_edit_date, upload_date</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l178"><code>src&#x2F;database.js:178</code></a>
+        <a href="../files/src_database.js.html#l480"><code>src&#x2F;database.js:480</code></a>
         </p>
 
 
@@ -480,7 +892,7 @@ Is used for the autocomplete function of the add-property-input</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l206"><code>src&#x2F;database.js:206</code></a>
+        <a href="../files/src_database.js.html#l508"><code>src&#x2F;database.js:508</code></a>
         </p>
 
 
@@ -533,8 +945,225 @@ Is used for the autocomplete function of the property values</p>
 
 
 </div>
-<div id="method_remove_image" class="method item">
-    <h3 class="name"><code>remove_image</code></h3>
+<div id="method_get_fragment" class="method item">
+    <h3 class="name"><code>get_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_file_path</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l277"><code>src&#x2F;database.js:277</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the fragment of an image by name</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_file_path</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>The unique id for the image</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_name</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>The identifier for the fragments</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_fragment_by_id" class="method item">
+    <h3 class="name"><code>get_fragment_by_id</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l302"><code>src&#x2F;database.js:302</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the fragment of an image by name</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_fragments_by_image_id" class="method item">
+    <h3 class="name"><code>get_fragments_by_image_id</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"> | Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l446"><code>src&#x2F;database.js:446</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get all fragments of one image</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"> | Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_image" class="method item">
+    <h3 class="name"><code>get_image</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
@@ -557,7 +1186,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l92"><code>src&#x2F;database.js:92</code></a>
+        <a href="../files/src_database.js.html#l140"><code>src&#x2F;database.js:140</code></a>
         </p>
 
 
@@ -565,8 +1194,8 @@ Is used for the autocomplete function of the property values</p>
     </div>
 
     <div class="description">
-        <p>Remove image from database</p>
-<p>Promise: success: Contains number_of_deleted_nodes as param</p>
+        <p>Get image from database by file_path</p>
+<p>Promise: success: Contains record for the image</p>
 
     </div>
 
@@ -582,6 +1211,139 @@ Is used for the autocomplete function of the property values</p>
                     <div class="param-description">
                         <p>The unique identifier for an image</p>
 
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_init" class="method item">
+    <h3 class="name"><code>init</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Session</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l94"><code>src&#x2F;database.js:94</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Do the initialization on start</p>
+<ol>
+<li>drop and then create constraint</li>
+</ol>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Session</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_remove_fragment" class="method item">
+    <h3 class="name"><code>remove_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>dont_delete_fragment</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l236"><code>src&#x2F;database.js:236</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes all fragments of an image with a given name</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">dont_delete_fragment</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
                     </div>
 
                 </li>
@@ -622,7 +1384,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l114"><code>src&#x2F;database.js:114</code></a>
+        <a href="../files/src_database.js.html#l165"><code>src&#x2F;database.js:165</code></a>
         </p>
 
 

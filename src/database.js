@@ -302,7 +302,7 @@ Database.get_fragment = function(image_file_path, fragment_name) {
 /**
  * Get the fragment of an image by name
  *
- * @method get_fragment
+ * @method get_fragment_by_id
  * @param image_id
  * @param fragment_id
  * @return {Promise}
@@ -443,6 +443,13 @@ Database.get_all_images = function() {
     return prom;
 };
 
+/**
+ * Get all fragments of one image
+ *
+ * @method get_fragments_by_image_id
+ * @param image_id
+ * @returns {*|Promise}
+ */
 Database.get_fragments_by_image_id = function(image_id) {
     var session = this._get_session();
     var prom = session
