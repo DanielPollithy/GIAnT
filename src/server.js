@@ -59,7 +59,7 @@ app.post('/', function (req, res) {
 
     // Use the mv() method to place the file somewhere on your server
     // TODO: close exploit
-    var new_file_name = 'media/uploaded_images/' + sampleFile.name;
+    var new_file_name = path.join('media', 'uploaded_images', sampleFile.name);
     sampleFile.mv(new_file_name, function (err) {
         if (err) {
             return res.status(500).send(err);
