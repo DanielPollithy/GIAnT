@@ -17,7 +17,7 @@ app.use(bodyParser());
 app.use(fileUpload());
 
 
-app.set('views', 'src/views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.post('/save_xml', function (req, res) {
@@ -74,10 +74,6 @@ app.post('/', function (req, res) {
                 return res.status(500).send(err);
             });
         });
-
-
-
-
     });
 });
 
@@ -202,4 +198,5 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
 if (!module.parent) {
     app.listen(4000);
     console.log('TransliterationApplication Server started an express server on port 4000');
+    console.log('READY');
 }

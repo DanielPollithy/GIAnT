@@ -1,10 +1,17 @@
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
+const spawn = require('child_process').spawn;
+
+function main() {
+
+}
+const {app, BrowserWindow} = require('electron');
+const path = require('path');
+const url = require('url');
+
+// var server = require(app.getAppPath() + '/src/server');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+let win;
 
 function createWindow () {
   // Create the browser window.
@@ -15,10 +22,10 @@ function createWindow () {
     pathname: path.join('localhost:4000'),
     protocol: 'http:',
     slashes: true
-  }))
+  }));
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -39,7 +46,8 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.exit()
+    app.exit();
+    server.kill('SIGINT');
   }
 })
 
@@ -54,3 +62,30 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+console.log(app.getAppPath())
+const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
+
+server.stdout.on('data', (data) => {
+  var data = data.toString();
+  console.log('jup')
+  if (data.includes('READY')) {
+      console.log('reload window');
+      win.loadURL(url.format({
+        pathname: path.join('localhost:4000'),
+        protocol: 'http:',
+        slashes: true
+      }));
+  }
+  console.log(data.toString());
+})
+
+server.stderr.on('data', (data) => {
+  console.log(data.toString());
+})
+
+server.on('close', (code) => {
+  if (code) {
+    code = code.toString();
+  }
+  console.log('child process exited with code ' + code);
+})
