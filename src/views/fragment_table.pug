@@ -23,7 +23,7 @@ html
           td
             - image_path = row[1]
             - fragment_id = row[2]
-            a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id)= 'Editor'
+            a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id + '')= 'Editor'
           td
             a(href='/image/' + image_id +'/fragment/' + fragment_id + '/to-db')= 'Übertragen'
           td

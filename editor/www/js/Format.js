@@ -334,7 +334,7 @@ Format.prototype.refresh = function()
 	
 	if (graph.isSelectionEmpty())
 	{
-		mxUtils.write(label, mxResources.get('diagram'));
+		mxUtils.write(label, mxResources.get('layers'));
 		
 		// Adds button to hide the format panel since
 		// people don't seem to find the toolbar button
@@ -5205,15 +5205,16 @@ DiagramFormatPanel.prototype.addLayerOps = function(div)
 					var new_node = graph.model.add(graph.model.root, new mxCell());
 					graph.setDefaultParent(null);
 					graph.setCellStyles('locked', '1', [new_node]);
+				} else if (index > 0 && index == graph.model.getChildCount(graph.model.root)) {
+					graph.setDefaultParent(graph.model.getChildAt(graph.model.root, index - 1));
 				}
 				else if (index > 0 && index <= graph.model.getChildCount(graph.model.root))
 				{
-				    //editor.highest_hand_number--;
-					graph.setDefaultParent(graph.model.getChildAt(graph.model.root, index - 1));
+					// DANIEL (index-1 replaced by index)
+					graph.setDefaultParent(graph.model.getChildAt(graph.model.root, index));
 				}
 				else
 				{
-				    //editor.highest_hand_number--;
 					graph.setDefaultParent(null);
 				}
 			}
@@ -5252,6 +5253,7 @@ DiagramFormatPanel.prototype.addLayerOps = function(div)
 
 	function renameLayer(layer)
 	{
+		return; // DANIEL
 		if (graph.isEnabled() && layer != null)
 		{
 			var dlg = new FilenameDialog(editorUi, layer.value || mxResources.get('background'), mxResources.get('rename'), mxUtils.bind(this, function(newValue)
@@ -5331,10 +5333,9 @@ DiagramFormatPanel.prototype.addLayerOps = function(div)
 
 			try
 			{
-			    editor.highest_hand_number++;
 				var cell = graph.addCell(
 					new mxCell(
-                        (mxResources.get('hand') || 'Hand') + ' ' + editor.highest_hand_number
+                        graph.model.getChildCount(graph.model.root) + ''
                     ), graph.model.root);
 				graph.setDefaultParent(cell);
 			}
@@ -5492,6 +5493,11 @@ DiagramFormatPanel.prototype.addLayerOps = function(div)
 			{
 				if (graph.isEnabled())
 				{
+					// the background layer was clicked DANIEL
+					if (child.value === undefined) {
+						// make the background image visible/invisible  DANIEL
+						editor_ui.triggerBackgroundImage();
+					}
 					graph.model.setVisible(child, !graph.model.isVisible(child));
 					mxEvent.consume(evt);
 				}
@@ -5600,6 +5606,9 @@ DiagramFormatPanel.prototype.addLayerOps = function(div)
 			{
 				mxEvent.addListener(ldiv, 'click', function(evt)
 				{
+					if (label === 'Background') {
+						return; // DANIEL
+					}
 					if (graph.isEnabled())
 					{
 						graph.setDefaultParent(defaultParent);

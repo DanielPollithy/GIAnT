@@ -2,7 +2,7 @@
   "name": "transliteration_application",
   "version": "0.0.1",
   "description": "A graphical transliteration tool based on mxgraph and Neo4J",
-  "main": "main.js",
+  "main": "src/atom.js",
   "directories": {
     "test": "test"
   },
@@ -38,11 +38,14 @@
   },
   "dependencies": {
     "body-parser": "^1.17.1",
+    "electron": "^1.6.7",
+    "exif": "^0.6.0",
     "express": "^4.15.2",
     "express-fileupload": "^0.1.2",
     "mxgraph": "^3.7.2-2",
     "neo4j-driver": "^1.1.1",
     "pug": "^2.0.0-beta11",
-    "xml2js": "^0.4.17"
+    "xml2js": "^0.4.17",
+    "xmlhttprequest": "^1.8.0"
   }
 }

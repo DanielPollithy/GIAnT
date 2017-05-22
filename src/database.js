@@ -119,12 +119,30 @@ Database.init = function(callback) {
  * @param file_path {string} The unique identifier for an image
  * @return {Promise}
  */
-Database.add_image = function(file_path) {
+Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime() / 1000);
-    return session.run("CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;",
-        {file_path: file_path, upload_date: upload_date})
+    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
+    var meta_data = null;
+    if (exif_data) {
+        cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) " +
+            "SET a += {meta_data} " +
+            "RETURN ID(a) as ident;";
+        meta_data =  exif_data['gps'];
+        if (exif_data.hasOwnProperty('exif') && exif_data['exif'].hasOwnProperty('ExifImageWidth')
+            && exif_data['exif'].hasOwnProperty('ExifImageHeight')) {
+            Object.assign(meta_data, {
+                width:  exif_data.exif.ExifImageWidth,
+                height: exif_data.exif.ExifImageHeight
+            });
+        }
+        console.log(meta_data)
+
+    }
+    console.log(cql)
+    return session.run(cql,
+        {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {
             session.close();
             var records = [];

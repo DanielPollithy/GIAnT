@@ -995,7 +995,7 @@ EditorUi.prototype.init = function()
 	// Updates action states
 	this.addUndoListener();
 	this.addBeforeUnloadListener();
-	
+
 	graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
 	{
 		this.updateActionStates();
@@ -1978,13 +1978,28 @@ EditorUi.prototype.addBeforeUnloadListener = function()
 {
 	// Installs dialog if browser window is closed without saving
 	// This must be disabled during save and image export
-	window.onbeforeunload = mxUtils.bind(this, function()
-	{
-		if (!this.editor.chromeless)
-		{
-			return this.onBeforeUnload();
-		}
-	});
+
+	if (!require_exists) {
+        window.onbeforeunload = mxUtils.bind(this, function () {
+            if (!this.editor.chromeless) {
+                return this.onBeforeUnload();
+            }
+        });
+    } else {
+		window.onbeforeunload = function(e) {
+			var remote = require('remote');
+			var dialog = remote.require('dialog');
+			var choice = dialog.showMessageBox(
+					remote.getCurrentWindow(),
+					{
+						type: 'question',
+						buttons: [mxResources.get('ok'), mxResources.get('back')],
+						title: mxResources.get('Confirm'),
+						message: mxResources.get('allChangesLost')
+					});
+			return choice === 0;
+		};
+	}
 };
 
 /**

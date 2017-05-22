@@ -73,6 +73,9 @@ Actions.prototype.init = function()
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = function(){return true;};
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = function(){return true;};
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 230, true, true); }).isEnabled = function(){return true;};
+	this.addAction('exit', function() {
+		window.location.href = "../../";
+	}).isEnabled = function(){return true;};
 	this.addAction('editDiagram...', function()
 	{
 		var dlg = new EditDiagramDialog(ui);

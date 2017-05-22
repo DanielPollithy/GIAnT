@@ -2,14 +2,38 @@
  * Created by daniel on 19.04.17.
  */
 
+
+
 function set_background_image_on_init(editor_ui) {
-    //var newValue = 'http://2.bp.blogspot.com/-KOpMIOrd4j8/UWwbINOqQwI/AAAAAAAABrg/BFQePWCrSPc/s1600/scritte+murali+ok.jpg';
-    var newValue = urlParams['image']
+    var newValue = urlParams['image'];
+    editor_ui.backgroundImage = {src: newValue, width:0, height:0, visible:false};
+    editor_ui.hideBackgroundImage = function() {
+        editor_ui.setBackgroundImage(new mxImage('', editor_ui.backgroundImage.width,
+            editor_ui.backgroundImage.height)
+        );
+        editor_ui.backgroundImage.visible = false;
+    };
+    editor_ui.showBackgroundImage = function() {
+        editor_ui.setBackgroundImage(new mxImage(editor_ui.backgroundImage.src, editor_ui.backgroundImage.width,
+            editor_ui.backgroundImage.height)
+        );
+        editor_ui.backgroundImage.visible = true;
+    };
+    editor_ui.triggerBackgroundImage = function() {
+        if (editor_ui.backgroundImage.visible) {
+            editor_ui.hideBackgroundImage();
+        } else {
+            editor_ui.showBackgroundImage();
+        }
+    };
     if (newValue != null && newValue.length > 0) {
         var img = new Image();
 
         img.onload = function () {
             var image = new mxImage(newValue, img.width, img.height);
+            editor_ui.backgroundImage.width = img.width;
+            editor_ui.backgroundImage.height = img.height;
+            editor_ui.backgroundImage.visible = true;
             editor_ui.setBackgroundImage(image);
             var object = Object();
             object.width = image.width;
@@ -18,6 +42,7 @@ function set_background_image_on_init(editor_ui) {
             editor_ui.actions.get("fitPageWidth").funct();
         };
         img.onerror = function () {
+            // TODO: remove this -> electron render thread will fail
             mxUtils.alert(mxResources.get('fileNotFound'));
         };
 
@@ -31,6 +56,7 @@ function open_xml_on_init(editorUi) {
         var splitted = xml_file_path.split('/');
         var only_name = splitted[splitted.length - 1];
         editorUi.editor.filename = only_name;
+        console.log(require_exists)
         var req = mxUtils.get(xml_file_path, mxUtils.bind(this, function (req) {
             if (req.request.status >= 200 && req.request.status <= 299) {
                 if (req.request.response.length > 0) {
@@ -54,11 +80,43 @@ function open_xml_on_init(editorUi) {
     }
 }
 
+function open_xml_on_init_electron(editorUi) {
+    var xml_file_path = res_path + urlParams['xml_file'];
+    console.log(xml_file_path)
+    if (xml_file_path != null && xml_file_path.length > 0) {
+        var splitted = xml_file_path.split('/');
+        var only_name = splitted[splitted.length - 1];
+        editorUi.editor.filename = only_name;
+        console.log(fs)
+        fs.readFile(xml_file_path, function(err, data) {
+            console.log(data)
+                if (!err) {
+                    editorUi.editor.graph.model.beginUpdate();
+                    try {
+                        var xmlElem = mxUtils.parseXml(data.toString()).documentElement;
+                        editorUi.editor.setGraphXml(xmlElem);
+
+                    }
+                    catch (e) {
+                        error = e;
+                        console.log(e);
+                    }
+                    finally {
+                        editorUi.editor.graph.model.endUpdate();
+                        set_background_image_on_init(editorUi);
+                    }
+                }
+            }
+        );
+    }
+}
+
 function add_autocomplete_to_input(input, url, field) {
     var url = "http://localhost:4000" + url;
-    $(input).autocomplete({
+    console.log($(input))
+    window.$(input).autocomplete({
         source: function (request, response) {
-            $.ajax({
+            window.$.ajax({
                 url: url,
                 dataType: "jsonp",
                 data: {
@@ -136,5 +194,7 @@ function add_edge_between_cells(graph, parent, origin_cell, target_cell, relatio
     }
     graph.getModel().setValue(cell, value);
 }
+
+
 
 

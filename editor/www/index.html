@@ -5,13 +5,39 @@
     <title>Grapheditor</title>
 	<script type="text/javascript">
       mxBasePath = '../../node_modules/mxgraph/javascript/src';
+      res_path = '/home/daniel/Desktop/Bachelorarbeit/TransliterationApplication';
+      var require_exists;
+			try {
+			    var r = require;
+			    require_exists = true;
+			} catch (err) {
+			    require_exists = false;
+			}
+	  if (require_exists) {
+		   var url = require('url');
+		  var fs = require('fs');
+		  var querystring = require('querystring');
+		  var process = require('process');
+		  var path = require('path');
+		  const remote = require('electron').remote;
+
+		module.paths.push(path.resolve('node_modules'));
+		module.paths.push(path.resolve('../node_modules'));
+		// var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+		//var xhr = new XMLHttpRequest();
+	  }
+
    </script>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="extern/jquery-ui.min.css">
   	<!--<link rel="stylesheet" href="/resources/demos/style.css">-->
-  	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript">if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+	<script type="text/javascript" src="extern/jquery.min.js"></script>
+	<script type="text/javascript" src="extern/jquery_ui.min.js"></script>
+
+
+  	<!--<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
     <link rel="stylesheet" type="text/css" href="styles/grapheditor.css">
 
 	<script type="text/javascript">
@@ -50,7 +76,7 @@
 	<script type="text/javascript" src="js/Init.js"></script>
 	<script type="text/javascript" src="jscolor/jscolor.js"></script>
 	<script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
-	<script type="text/javascript" src="../../node_modules/mxgraph/javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript" src="mxClient-debug.js"></script>
 	<script type="text/javascript" src="js/EditorUi.js"></script>
 	<script type="text/javascript" src="js/Editor.js"></script>
 	<script type="text/javascript" src="js/Sidebar.js"></script>
@@ -61,12 +87,14 @@
 	<script type="text/javascript" src="js/Format.js"></script>
 	<script type="text/javascript" src="js/Toolbar.js"></script>
 	<script type="text/javascript" src="js/Dialogs.js"></script>
-	<script type="text/javascript" src="js/Custom.js"></script>
+	<script type="text/javascript" src="js/Custom.js" defer='defer'></script>
+
+	<script type="text/javascript">if (window.module) {module = window.module; }</script>
 </head>
 <body class="geEditor">
 	<script type="text/javascript">
 		// Extends EditorUi to update I/O action states based on availability of backend
-		(function()
+		$(document).ready(function()
 		{
 			var editorUiInit = EditorUi.prototype.init;
 			
@@ -97,26 +125,52 @@
 				mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
 
 			// Fixes possible asynchronous requests
-			mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
-			{
-				// Adds bundle text to resources
-				mxResources.parse(xhr[0].getText());
-				
-				// Configures the default graph theme
-				var themes = new Object();
-				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement(); 
-				
-				// Main
-				editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-				set_background_image_on_init(editor_ui);
-				open_xml_on_init(editor_ui);
-				editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
-				editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
-			}, function()
-			{
-				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
-			});
-		})();
+
+
+			if (require_exists) {
+
+			    console.log();
+			    var translation_file = res_path + '/editor/www/resources/grapheditor.txt';
+			    var default_style_file = res_path + '/editor/www/styles/default.xml';
+				fs.readFile(translation_file, function(err, data) {
+				    console.log(data.toString())
+				    mxResources.parse(data.toString());
+				    fs.readFile(default_style_file, function(err, data2) {
+						// Configures the default graph theme
+						var doc = mxUtils.parseXml(data2);
+						console.dir(doc);
+						var themes = new Object();
+						themes[Graph.prototype.defaultThemeName] = doc;
+						// Main
+						editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+						set_background_image_on_init(editor_ui);
+						open_xml_on_init_electron(editor_ui);
+						editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
+						editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
+					});
+				});
+			} else {
+			    mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
+				{
+					// Adds bundle text to resources
+					mxResources.parse(xhr[0].getText());
+
+					// Configures the default graph theme
+					var themes = new Object();
+					themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
+
+					// Main
+					editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+					set_background_image_on_init(editor_ui);
+					open_xml_on_init(editor_ui);
+					editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
+					editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
+				}, function()
+				{
+					document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
+				});
+			}
+		});
 	</script>
 </body>
 </html>

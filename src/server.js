@@ -5,6 +5,7 @@ var fs = require('fs');
 var database = require('./database');
 var path = require('path');
 var codec = require('./codec');
+var utils = require('./utils');
 
 
 
@@ -60,14 +61,23 @@ app.post('/', function (req, res) {
     // TODO: close exploit
     var new_file_name = 'media/uploaded_images/' + sampleFile.name;
     sampleFile.mv(new_file_name, function (err) {
-        if (err)
+        if (err) {
             return res.status(500).send(err);
-
-        database.add_image(sampleFile.name).then(function () {
-            res.redirect('/');
-        }, function(err){
-            return res.status(500).send(err);
+        }
+        utils.get_exif_from_image(new_file_name, function(exif_err, exif_data) {
+            if (exif_err) {
+                exif_data = null;
+            }
+            database.add_image(sampleFile.name, exif_data).then(function () {
+                res.status(200).redirect('/');
+            }, function(err){
+                return res.status(500).send(err);
+            });
         });
+
+
+
+
     });
 });
 
@@ -111,7 +121,7 @@ app.get('/image/:id(\\d+)/delete', function (req, res) {
         var id_ = req.params.id;
         database.remove_image_by_id(id_).then(function (result) {
             res.redirect('/');
-        }, res.send);
+        }, res.status(400).send);
     } else {
         res.send("Missing parameter");
     }
@@ -122,8 +132,7 @@ app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete', function (r
         database.remove_fragment(req.params.image_id, req.params.fragment_id, false)
             .then(function (result) {
                 res.redirect('/image/'+ req.params.image_id +'/fragments');
-            }, res.status(400).send
-            );
+            }, res.status(400).send);
     } else {
         res.send("Missing parameter");
     }

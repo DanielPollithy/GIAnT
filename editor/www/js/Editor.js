@@ -13,7 +13,7 @@ Editor = function(chromeless, themes, model, graph)
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 	// DANIEL
-	this.highest_hand_number = 0;
+	// this.highest_hand_number = this.graph.model.getChildCount(this.graph.model.root);
 
 	this.getOrCreateFilename = function()
 	{
