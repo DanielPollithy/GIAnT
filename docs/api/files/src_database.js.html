@@ -222,10 +222,7 @@ Database.add_image = function(file_path, exif_data) {
                 height: exif_data.exif.ExifImageHeight
             });
         }
-        console.log(meta_data)
-
     }
-    console.log(cql)
     return session.run(cql,
         {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {

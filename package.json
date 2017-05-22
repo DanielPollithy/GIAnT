@@ -9,7 +9,8 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000",
-    "docs": "yuidoc -c ./yuidoc.json src/.",
+    "docs": "yuidoc -c ./yuidoc.json src/. ",
+    "postdocs": "sed -i 's|http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js|../yui-min.js|g'  ./docs/api/index.html && sed -i 's|http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css|../cssgrids-min.css|g'  ./docs/api/index.html",
     "server": "node src/server.js"
   },
   "repository": {
@@ -18,12 +19,12 @@
   },
   "keywords": [
     "node",
-    "yuidocs",
-    "travis-ci",
     "electron",
     "mxgraph",
+    "neo4j",
     "transliteration",
-    "neo4j"
+    "travis-ci",
+    "yuidocs"
   ],
   "author": "Daniel Pollithy",
   "license": "GPL-3.0",
