@@ -27,6 +27,13 @@
             },
             "fors": {},
             "namespaces": {}
+        },
+        "src/utils.js": {
+            "name": "src/utils.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
         }
     },
     "modules": {
@@ -386,7 +393,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 140,
+            "line": 158,
             "description": "Get image from database by file_path\n\nPromise: success: Contains record for the image",
             "itemtype": "method",
             "name": "get_image",
@@ -406,7 +413,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 165,
+            "line": 183,
             "description": "Removes an image by ID",
             "itemtype": "method",
             "name": "remove_image_by_id",
@@ -426,7 +433,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 206,
+            "line": 224,
             "description": "Adds a fragment to an image\nEvery image can have multiple fragments\nthe name of the fragment is unique",
             "itemtype": "method",
             "name": "add_fragment",
@@ -449,7 +456,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 236,
+            "line": 254,
             "description": "Removes all fragments of an image with a given name",
             "itemtype": "method",
             "name": "remove_fragment",
@@ -476,7 +483,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 277,
+            "line": 295,
             "description": "Get the fragment of an image by name",
             "itemtype": "method",
             "name": "get_fragment",
@@ -500,7 +507,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 302,
+            "line": 320,
             "description": "Get the fragment of an image by name",
             "itemtype": "method",
             "name": "get_fragment_by_id",
@@ -523,7 +530,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 330,
+            "line": 348,
             "description": "Adds a node to a fragment of an image\n\nPromise:success  number_of_created_nodes",
             "itemtype": "method",
             "name": "add_node",
@@ -550,7 +557,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 365,
+            "line": 383,
             "description": "Adds an edge between two nodes\nin a fragment of an image\n\nPromise:success  number_of_created_edges",
             "itemtype": "method",
             "name": "add_edge",
@@ -585,7 +592,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 402,
+            "line": 420,
             "description": "Returns a promise with an array of records of images\nordered by last_edit_date, upload_date",
             "example": [
                 "\n      database.get_all_images().then(function (results) {\n           var row_data = [];\n           results.forEach(function (r) {\n               row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date'), r.get('completed')]);\n           });\n           res.render('table',\n               {\n                   title: 'Hey',\n                   message: 'Hello there!',\n                   rows: row_data\n               });\n           }\n       );"
@@ -601,7 +608,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 446,
+            "line": 464,
             "description": "Get all fragments of one image",
             "itemtype": "method",
             "name": "get_fragments_by_image_id",
@@ -620,7 +627,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 480,
+            "line": 498,
             "description": "Returns all possible property keys for tokens filtered by search_string\nIs used for the autocomplete function of the add-property-input\n\nPromise:success: Array of strings",
             "itemtype": "method",
             "name": "get_all_property_keys_for_token",
@@ -640,7 +647,7 @@
         },
         {
             "file": "src/database.js",
-            "line": 508,
+            "line": 526,
             "description": "Returns all distinct values for the given property in a string list in a promise\nIs used for the autocomplete function of the property values\n\nPromise:success: Array of strings *",
             "itemtype": "method",
             "name": "get_all_property_values_for_token",
@@ -662,6 +669,13 @@
             },
             "class": "Database",
             "module": "Database"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 1,
+            "description": "Created by daniel on 19.05.17.",
+            "class": "",
+            "module": "Database"
         }
     ],
     "warnings": [
@@ -675,7 +689,11 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " src/database.js:446"
+            "line": " src/database.js:464"
+        },
+        {
+            "message": "Missing item type\nCreated by daniel on 19.05.17.",
+            "line": " src/utils.js:1"
         }
     ]
 }

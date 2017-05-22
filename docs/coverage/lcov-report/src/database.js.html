@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.26% </span>
+        <span class="strong">84.94% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>137/157</span>
+        <span class='fraction'>141/166</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">68.42% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>12/12</span>
+        <span class='fraction'>13/19</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">76.6% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>36/47</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.18% </span>
+        <span class="strong">84.85% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>136/156</span>
+        <span class='fraction'>140/165</span>
       </div>
     </div>
   </div>
@@ -586,7 +586,25 @@
 541
 542
 543
-544</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -712,6 +730,24 @@
 <span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5×</span>
@@ -1024,7 +1060,7 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1250,12 +1286,30 @@ Database.init = function(callback) {
  * @param file_path {string} The unique identifier for an image
  * @return {Promise}
  */
-Database.add_image = function(file_path) {
+Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime() / 1000);
-    return session.run("CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;",
-        {file_path: file_path, upload_date: upload_date})
+    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
+    var meta_data = null;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (exif_data) {
+<span class="cstat-no" title="statement not covered" >        cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) " +</span>
+            "SET a += {meta_data} " +
+            "RETURN ID(a) as ident;";
+<span class="cstat-no" title="statement not covered" >        meta_data =  exif_data['gps'];</span>
+<span class="cstat-no" title="statement not covered" >        if (exif_data.hasOwnProperty('exif') &amp;&amp; exif_data['exif'].hasOwnProperty('ExifImageWidth')</span>
+            &amp;&amp; exif_data['exif'].hasOwnProperty('ExifImageHeight')) {
+<span class="cstat-no" title="statement not covered" >            Object.assign(meta_data, {</span>
+                width:  exif_data.exif.ExifImageWidth,
+                height: exif_data.exif.ExifImageHeight
+            });
+        }
+<span class="cstat-no" title="statement not covered" >        console.log(meta_data)</span>
+&nbsp;
+    }
+    console.log(cql)
+    return session.run(cql,
+        {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {
             session.close();
             var records = [];
@@ -1678,7 +1732,7 @@ module.exports = Database;</pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun May 14 2017 14:44:33 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon May 22 2017 15:03:39 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../prettify.js"></script>
