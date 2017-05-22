@@ -4349,6 +4349,14 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		obj.setAttribute('label', value || '');
 		value = obj;
 	}
+
+	// DANIEL
+	// if more than one element in the selection -> don't display the attributes
+	if (ss.vertices.length + ss.edges.length > 1) {
+
+		return div;
+	}
+
     var generateEdgesBtn = mxUtils.button(mxResources.get('generateEdges'), function() {
         generate_edges_between_overlapping_tokens(cell, graph);
     });
