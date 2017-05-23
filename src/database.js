@@ -41,6 +41,48 @@ Database.development = false;
 Database._driver = null;
 
 /**
+ * Stores whether a successful login took place
+ *
+ * @property _logged_in
+ * @type {boolean}
+ * @private
+ * @default false
+ */
+Database.logged_in = false;
+
+/**
+* Try to fetch a neo4j driver with the given credentials
+ *
+* @method login
+* @return {boolean}
+*/
+Database.login = function (url, user, password){
+    if (this._driver !== null) {
+        Database.logged_in = true;
+        return true;
+    }
+    try {
+        this._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
+        Database.logged_in = true;
+        return true;
+    } catch (e) {
+        Database.logged_in = false;
+        return e;
+    }
+};
+
+/**
+* Delete the saved neo4j session
+ *
+* @method logout
+* @return {boolean}
+*/
+Database.logout = function (){
+    Database._driver = null;
+    Database.logged_in = false;
+};
+
+/**
 * Get the database driver
  * stores the instance in _driver
  * makes use of the development flag in order to use or not use basic auth
@@ -53,7 +95,7 @@ Database._get_driver = function (){
     if (this._driver !== null) {
         return this._driver;
     }
-    return this._driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "1234"));
+    return this._driver = neo4j.driver("bolt://87.118.94.85:7687", neo4j.auth.basic("neo4j", "neo4j"));
 };
 
 /**

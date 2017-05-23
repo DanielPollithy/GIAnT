@@ -7,8 +7,6 @@ var path = require('path');
 var codec = require('./codec');
 var utils = require('./utils');
 
-
-
 var app = module.exports = express();
 
 app.use(express.static(path.join(__dirname, '..')));
@@ -16,9 +14,45 @@ app.use(express.static(path.join(__dirname, '..')));
 app.use(bodyParser());
 app.use(fileUpload());
 
+// database logged in middleware
+app.use(function (req, res, next) {
+    if (!database.logged_in) {
+        req.url = '/db';
+    }
+    next();
+});
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.get('/db', function (req, res) {
+    if (database.logged_in) {
+        res.render('db_logout', { message: '' });
+    } else {
+        res.render('db_settings', { message: '' });
+    }
+
+});
+
+app.post('/db-drop', function (req, res) {
+    database.logout();
+    res.redirect('/db');
+});
+
+app.post('/db', function (req, res) {
+    if (req.body.url && req.body.user && req.body.password) {
+        var url = req.body.url;
+        var user = req.body.user;
+        var password = req.body.password;
+        if (!database.login(url, user, password)) {
+            return res.render('db_settings', { message: 'Login failed' });
+        }
+        res.redirect('/')
+    } else {
+        return res.render('db_settings', { message: 'Missing data' });
+    }
+});
 
 app.post('/save_xml', function (req, res) {
     if (req.body.filename && req.body.xml) {
@@ -192,6 +226,8 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
         }
     );
 });
+
+
 
 
 

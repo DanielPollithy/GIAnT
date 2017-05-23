@@ -1,0 +1,9 @@
+html
+  head
+    title= 'Database settings'
+  body
+    h1= 'Database settings (Drop connection)'
+    p= 'You are connected. Do you want to drop the connection?'
+    b= '' + message
+    form(method='post', action='/db-drop')
+      input(type='submit', value='drop connection')

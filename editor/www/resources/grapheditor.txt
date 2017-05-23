@@ -102,6 +102,7 @@ enterValue=Enter Value
 enterName=Enter Name
 enterPropertyName=Enter Property Name
 entityRelation=Entity Relation
+exit=Exit
 exitGroup=Exit Group
 expand=Expand
 export=Export
