@@ -1,7 +1,7 @@
 {
   "name": "transliteration_application",
   "productName": "Transliteration Application",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A graphical transliteration tool based on mxgraph and Neo4J",
   "main": "src/atom.js",
   "directories": {
