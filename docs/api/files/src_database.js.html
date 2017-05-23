@@ -126,6 +126,51 @@ Database.development = false;
 Database._driver = null;
 
 /**
+ * Stores whether a successful login took place
+ *
+ * @property _logged_in
+ * @type {boolean}
+ * @default false
+ */
+Database.logged_in = false;
+
+/**
+* Try to fetch a neo4j driver with the given credentials
+ * if that works, the Database._driver is not null anymore.
+ * It also set the Database.logged_in to true
+ *
+* @method login
+* @return {boolean|error}
+*/
+Database.login = function (url, user, password){
+    // the _driver is the actual flag for the state
+    if (Database._driver !== null) {
+        Database.logged_in = true;
+        return true;
+    }
+    try {
+        Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
+        Database.logged_in = true;
+        return true;
+    } catch (e) {
+        Database.logged_in = false;
+        return e;
+    }
+};
+
+/**
+ * Logout from the current database neo4j session.
+ * Delete the saved neo4j session and set the Database.logged_in flag to false.
+ *
+* @method logout
+* @return {boolean}
+*/
+Database.logout = function (){
+    Database._driver = null;
+    Database.logged_in = false;
+};
+
+/**
 * Get the database driver
  * stores the instance in _driver
  * makes use of the development flag in order to use or not use basic auth
@@ -138,7 +183,7 @@ Database._get_driver = function (){
     if (this._driver !== null) {
         return this._driver;
     }
-    return this._driver = neo4j.driver(&quot;bolt://localhost:7687&quot;, neo4j.auth.basic(&quot;neo4j&quot;, &quot;1234&quot;));
+    return false;
 };
 
 /**
@@ -154,7 +199,7 @@ Database._get_session = function () {
 
 /**
  * Add the necessary constraints to create something like a schema
- * TODO: describe them
+ * 1) The file_path of an image is unique
  *
  * @method add_constraints
  * @return {session}
@@ -258,6 +303,9 @@ Database.get_image = function(file_path){
                 records.push(result.records[i]);
             }
             return records[0];
+        }, function(err) {
+            session.close();
+            return err;
         });
     return prom;
 };
