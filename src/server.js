@@ -7,6 +7,8 @@ var path = require('path');
 var codec = require('./codec');
 var utils = require('./utils');
 
+var log = require('electron-log');
+
 var app = module.exports = express();
 
 console.log('dirname', __dirname);
@@ -46,63 +48,91 @@ app.post('/db', function (req, res) {
         var url = req.body.url;
         var user = req.body.user;
         var password = req.body.password;
+        log.info('connecting to '+url+' as '+user);
         if (!database.login(url, user, password)) {
+            log.warn('connection failed ' + url + ' as '+ user);
             return res.render('db_settings', { message: 'Login failed' });
         }
         res.redirect('/')
     } else {
+        log.info('missing params for POST to /db');
         return res.render('db_settings', { message: 'Missing data' });
     }
 });
 
 app.post('/save_xml', function (req, res) {
     if (req.body.filename && req.body.xml) {
+        log.info('/save_xml ' + filename);
         var filename = req.body.filename;
         var xml = req.body.xml;
 
         if (filename.length === 0) {
+            log.warn('Filename in /save_xml is empty -> fallback: draft.xml');
             filename = 'draft.xml';
         }
 
         xml = decodeURIComponent(xml);
         filename = decodeURIComponent(filename);
 
-        // TODO: check for .. and such stuff
+        // check for path escapes (http://localhost/../../../../../etc/passwd)
+        // -> only save to files in the uploaded_xmls folder
 		var target_file = path.join(__dirname, '../media/uploaded_xmls/', filename);
-		console.log(target_file);
+		if (filename.indexOf(path.join(__dirname, '../media/uploaded_xmls/')) == 0 ) {
+		    log.info('XML has valid path: ' + target_file);
+        } else {
+		    log.error('XML path tried to escape: ' + target_file);
+		    return res.status(400).send('Error');
+        }
+        // write file to uploaded_xmls
         fs.writeFile(target_file, xml, function(err){
             if (err) {
+                log.error('There was an error saving the xml: ' + target_file);
                 return res.status(500).send("Error saving the file");
             }
+            log.info('XML saved: ' + target_file);
             return res.status(200).send("File saved");
         });
     } else {
-		console.log('missing param');
-        res.send("Missing parameter");
+		log.info('missing param');
+        return res.status(400).send("Missing parameter");
     }
 });
 
 app.post('/', function (req, res) {
-    if (!req.files)
+    if (!req.files) {
+        log.warn('Image upload without image');
         return res.status(400).send('No files were uploaded.');
+    }
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    var sampleFile = req.files.image;
+    var image_file = req.files.image;
 
     // Use the mv() method to place the file somewhere on your server
-    // TODO: close exploit
-    var new_file_name = path.join('media', 'uploaded_images', sampleFile.name);
-    sampleFile.mv(new_file_name, function (err) {
+    var new_file_name = path.join(__dirname, '..', 'media', 'uploaded_images', image_file.name);
+
+    if (new_file_name.indexOf(path.join(__dirname, '..', 'media', 'uploaded_images')) == 0 ) {
+        log.info('Image has valid path: ' + new_file_name);
+    } else {
+        log.error('Image path tried to escape: ' + new_file_name);
+        return res.status(400).send('Error');
+    }
+
+    // write file to uploaded_images
+    image_file.mv(new_file_name, function (err) {
         if (err) {
+            log.error('There was an error saving the image: ' + new_file_name);
             return res.status(500).send(err);
         }
         utils.get_exif_from_image(new_file_name, function(exif_err, exif_data) {
             if (exif_err) {
+                log.warn('There was an error reading exif from image: ' + new_file_name);
                 exif_data = null;
             }
-            database.add_image(sampleFile.name, exif_data).then(function () {
+            database.add_image(image_file.name, exif_data).then(function () {
+                log.info('Added image: ' + new_file_name);
                 res.status(200).redirect('/');
             }, function(err){
+                log.error('Error on adding an image to the database: ' + new_file_name);
                 return res.status(500).send(err);
             });
         });
@@ -193,7 +223,8 @@ app.post('/image/:id(\\d+)/create-fragment', function (req, res) {
                 res.send(err);
             });
     } else {
-        res.status(400).send("Missing POST parameter name or image_id");
+        log.warn('Missing params for /create-fragment');
+        return res.status(400).send("Missing POST parameter name or image_id");
     }
 });
 
@@ -227,10 +258,9 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
 
 
 
-
-
 if (!module.parent) {
     app.listen(4000);
+    log.info('TransliterationApplication Server started on port 4000');
     console.log('TransliterationApplication Server started an express server on port 4000');
     console.log('READY');
 }
