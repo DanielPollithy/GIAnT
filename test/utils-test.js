@@ -68,28 +68,32 @@ describe('utils', function() {
                 if (err) {
                     done(err);
                 }
-                database.add_image("test9999.jpg", data).then(function (record) {
-                    var image_id = record['ident'];
+                database.add_image("test9999.jpg", data).then(function () {
                     database.get_image("test9999.jpg").then(function(record){
+                        var image_id = record.get('ident');
                         record = record.get('a').properties;
-                        console.dir(record);
                         var lat = record['GPSLatitude'];
                         var long = record['GPSLongitude'];
                         var latRef = record['GPSLatitudeRef'];
                         var longRef = record['GPSLongitudeRef'];
                         var coords = [lat, long, latRef, longRef];
+                        var missing = false;
                         coords.forEach(function(coord){
                             if (coord === undefined) {
-                                database.remove_image_by_id(image_id).then(function(){
-                                    done('Missing gps data in the database');
-                                }, done);
-
+                                missing = true;
                             }
                         });
-                        database.remove_image_by_id(image_id).then(function(){
-                            done();
-                        }, done);
-
+                        if (missing) {
+                            database.remove_image_by_id(image_id).then(function(){
+                                done('Missing gps data in the database');
+                            }, done);
+                        } else {
+                            database.remove_image_by_id(image_id).then(function(){
+                                // DON'T REMOVE THIS LOG
+                                console.log(image_id);
+                                done();
+                            }, done);
+                        }
                     }, done);
                 }, function(err){
                     done(err);
