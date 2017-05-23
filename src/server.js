@@ -62,8 +62,8 @@ app.post('/db', function (req, res) {
 
 app.post('/save_xml', function (req, res) {
     if (req.body.filename && req.body.xml) {
-        log.info('/save_xml ' + filename);
         var filename = req.body.filename;
+        log.info('/save_xml ' + filename);
         var xml = req.body.xml;
 
         if (filename.length === 0) {
@@ -76,8 +76,8 @@ app.post('/save_xml', function (req, res) {
 
         // check for path escapes (http://localhost/../../../../../etc/passwd)
         // -> only save to files in the uploaded_xmls folder
-		var target_file = path.join(__dirname, '../media/uploaded_xmls/', filename);
-		if (filename.indexOf(path.join(__dirname, '../media/uploaded_xmls/')) == 0 ) {
+		var target_file = path.join(__dirname, '..', 'media', 'uploaded_xmls', filename);
+		if (target_file.indexOf(path.join(__dirname, '..', 'media', 'uploaded_xmls')) == 0 ) {
 		    log.info('XML has valid path: ' + target_file);
         } else {
 		    log.error('XML path tried to escape: ' + target_file);
