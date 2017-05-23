@@ -45,24 +45,26 @@ Database._driver = null;
  *
  * @property _logged_in
  * @type {boolean}
- * @private
  * @default false
  */
 Database.logged_in = false;
 
 /**
 * Try to fetch a neo4j driver with the given credentials
+ * if that works, the Database._driver is not null anymore.
+ * It also set the Database.logged_in to true
  *
 * @method login
-* @return {boolean}
+* @return {boolean|error}
 */
 Database.login = function (url, user, password){
-    if (this._driver !== null) {
+    // the _driver is the actual flag for the state
+    if (Database._driver !== null) {
         Database.logged_in = true;
         return true;
     }
     try {
-        this._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
+        Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
         Database.logged_in = true;
         return true;
     } catch (e) {
@@ -72,7 +74,8 @@ Database.login = function (url, user, password){
 };
 
 /**
-* Delete the saved neo4j session
+ * Logout from the current database neo4j session.
+ * Delete the saved neo4j session and set the Database.logged_in flag to false.
  *
 * @method logout
 * @return {boolean}
@@ -95,7 +98,7 @@ Database._get_driver = function (){
     if (this._driver !== null) {
         return this._driver;
     }
-    return this._driver = neo4j.driver("bolt://87.118.94.85:7687", neo4j.auth.basic("neo4j", "neo4j"));
+    return false;
 };
 
 /**
@@ -111,7 +114,7 @@ Database._get_session = function () {
 
 /**
  * Add the necessary constraints to create something like a schema
- * TODO: describe them
+ * 1) The file_path of an image is unique
  *
  * @method add_constraints
  * @return {session}
@@ -215,6 +218,9 @@ Database.get_image = function(file_path){
                 records.push(result.records[i]);
             }
             return records[0];
+        }, function(err) {
+            session.close();
+            return err;
         });
     return prom;
 };

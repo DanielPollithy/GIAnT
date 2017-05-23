@@ -22,6 +22,6 @@ function get_exif_from_image(path, cb) {
 
 var all = {
     'get_exif_from_image': get_exif_from_image
-}
+};
 
 module.exports = all;
