@@ -9,6 +9,7 @@ var utils = require('./utils');
 
 var app = module.exports = express();
 
+console.log('dirname', __dirname);
 app.use(express.static(path.join(__dirname, '..')));
 
 app.use(bodyParser());
@@ -65,21 +66,18 @@ app.post('/save_xml', function (req, res) {
 
         xml = decodeURIComponent(xml);
         filename = decodeURIComponent(filename);
-        console.log(filename);
 
-        /*res.contentType('text/plain');
-        res.header('Content-Disposition',
-            "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + filename);
-        res.status(200);
-        res.send(xml);*/
         // TODO: check for .. and such stuff
-        fs.writeFile('media/uploaded_xmls/'+filename, xml, function(err){
+		var target_file = path.join(__dirname, '../media/uploaded_xmls/', filename);
+		console.log(target_file);
+        fs.writeFile(target_file, xml, function(err){
             if (err) {
                 return res.status(500).send("Error saving the file");
             }
             return res.status(200).send("File saved");
         });
     } else {
+		console.log('missing param');
         res.send("Missing parameter");
     }
 });

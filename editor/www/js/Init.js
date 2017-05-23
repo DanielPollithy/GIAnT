@@ -9,7 +9,7 @@ window.MAX_AREA = window.MAX_AREA || 15000 * 15000;
 window.EXPORT_URL = window.EXPORT_URL || '/export';
 // DANIEL
 // window.SAVE_URL = window.SAVE_URL || '/save';
-window.SAVE_URL = 'http://0.0.0.0:4000/save_xml';
+window.SAVE_URL = '/save_xml';
 window.OPEN_URL = window.OPEN_URL || '/open';
 window.RESOURCES_PATH = window.RESOURCES_PATH || 'resources';
 window.RESOURCE_BASE = window.RESOURCE_BASE || window.RESOURCES_PATH + '/grapheditor';

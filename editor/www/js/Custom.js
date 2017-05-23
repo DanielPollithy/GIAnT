@@ -8,7 +8,7 @@ function set_background_image_on_init(editor_ui) {
     var newValue = urlParams['image'];
     editor_ui.backgroundImage = {src: newValue, width:0, height:0, visible:false};
     editor_ui.hideBackgroundImage = function() {
-        editor_ui.setBackgroundImage(new mxImage('', editor_ui.backgroundImage.width,
+        editor_ui.setBackgroundImage(new mxImage(null, editor_ui.backgroundImage.width,
             editor_ui.backgroundImage.height)
         );
         editor_ui.backgroundImage.visible = false;
@@ -81,15 +81,16 @@ function open_xml_on_init(editorUi) {
 }
 
 function open_xml_on_init_electron(editorUi) {
-    var xml_file_path = res_path + urlParams['xml_file'];
+	const {BrowserWindow, app} = require('electron').remote
+    var xml_file_path = path.join(app.getAppPath(), urlParams['xml_file']);
     console.log(xml_file_path)
     if (xml_file_path != null && xml_file_path.length > 0) {
-        var splitted = xml_file_path.split('/');
+        var splitted = urlParams['xml_file'].split('/');
         var only_name = splitted[splitted.length - 1];
         editorUi.editor.filename = only_name;
         console.log(fs)
         fs.readFile(xml_file_path, function(err, data) {
-            console.log(data)
+            console.log(err)
                 if (!err) {
                     editorUi.editor.graph.model.beginUpdate();
                     try {
