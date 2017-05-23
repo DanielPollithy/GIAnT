@@ -4,6 +4,8 @@ var chai = require('chai');
 
 // To be tested
 var database = require('../src/database');
+database.login('bolt://localhost:7687', 'neo4j', '1234');
+
 var Codec = require('../src/codec');
 
 // Activate should-syntax (http://chaijs.com/guide/styles/#should)
