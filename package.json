@@ -12,7 +12,7 @@
     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000",
     "docs": "yuidoc -c ./yuidoc.json src/. ",
     "server": "node src/server.js",
-    "release": "electron-packager ."
+    "release": "node_modules/.bin/electron-packager ."
   },
   "repository": {
     "type": "git",
@@ -35,9 +35,10 @@
   "homepage": "https://github.com/DanielPollithy/TransliterationApplication#readme",
   "devDependencies": {
     "chai": "^3.5.0",
+    "electron": "^1.6.7",
+    "electron-packager": "^8.7.0",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "electron": "^1.6.7"
+    "mocha": "^3.2.0"
   },
   "dependencies": {
     "body-parser": "^1.17.1",
