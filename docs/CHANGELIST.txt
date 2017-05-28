@@ -1,0 +1,7 @@
+CHANGELIST for TransliterationApplication
+=========================================
+
+v0.0.2
+------
+
+ - initial release
