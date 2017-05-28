@@ -25,7 +25,8 @@
     "neo4j",
     "transliteration",
     "travis-ci",
-    "yuidocs"
+    "yuidocs",
+    "appveyor"
   ],
   "author": "Daniel Pollithy",
   "license": "GPL-3.0",
