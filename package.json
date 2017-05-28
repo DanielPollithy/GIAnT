@@ -11,7 +11,8 @@
     "test": "./node_modules/mocha/bin/mocha",
     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000",
     "docs": "yuidoc -c ./yuidoc.json src/. ",
-    "server": "node src/server.js"
+    "server": "node src/server.js",
+    "release": "electron-packager ."
   },
   "repository": {
     "type": "git",
