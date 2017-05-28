@@ -33,7 +33,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: $GH_TOKEN # your encrypted token from GitHub
-  artifact: *.zip          # upload all NuGet packages to release assets
+  artifact: /.*.zip/            # upload all NuGet packages to release assets
   draft: true
   prerelease: true
   on:
