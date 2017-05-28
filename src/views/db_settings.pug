@@ -5,7 +5,7 @@ html
     a(href='/')= 'back'
     h1= 'Database settings'
     p= 'The application works only with a connection to a Neo4j-database. It can be local or remote.'
-    b= '' + message
+    p= message
     form(method='post', action='.')
       input(type='text', name='url', value='bolt://localhost:7687')
       input(type='text', name='user', value='neo4j')
