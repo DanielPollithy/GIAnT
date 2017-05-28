@@ -7,6 +7,37 @@
 
 The first part of the README is dedicated to users who want to work with the application.
 
+## TransliterationApplication - Primary use case
+
+You want to analyze text on pictures, how authors interact (overwrite, annotate, comment) with each others, 
+the positional distributions of selected words.
+
+This application enables you to build a graph database for your corpus. With the advantage of a graph database query your
+analyzations could become easier (see [Comparison of relationals v.s. graph database in corpus analytics]).
+
+The outline of the project for that I built this application looked like this:
+1. Pictures with GPS originated in the metropol region of Rome
+2. Install TransliterationApplication on Windows
+3. Connect the TransliterationApplication to a Neo4J-Node in the Digital Humanities cloud 
+(http://dhvlab.gwi.uni-muenchen.de/index.php/Main_Page)
+4. REPEAT 3000 times: 
+ 4.1 Insert picture
+ 4.2 Create region (called fragment) on picture (as many as you want)
+ 4.3 Open the TransliterationEditor for the fragment
+ 4.4 Add a layer for every author that 'collaborated'
+ 4.5 Drag rectangles onto the layer, annotate the transliteration, the political opinion, the color, the language...
+ The user can add an endless amount of not predefined properties to the rectangles
+ 4.6 Connect the rectangles according to their interactions (e.g. rectangle R1 overwrites rectangle R2, R3 follows R4, 
+ R5 is a positive comment to R3... (endless possibilites)
+ 4.7 Call the save-button in the TransliterationEditor to store the current state
+ 4.8 Transmit the fragment with all its layers, nodes and edges into the graph database (-> enables autocomplete functions)
+5. Transport the locally stored images into the Digital Humanities Cloud in order to build an online map web app for the corpus
+6. Analyze the corpus
+ 6.1 Commentary relation between text blocks can be realized far easier than with SQL
+ 6.2 Heatmap analysis costs the same effort as with SQL
+ 6.3 Quantitative analysis for selected words (how often comes word A after word B)
+7. Export the graph data for relational database system (MySQL)
+
 ## Example workflow
 
 <img src="https://danielpollithy.github.io/TransliterationApplication/images/sota-opt.gif">
