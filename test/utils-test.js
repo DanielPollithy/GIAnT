@@ -111,6 +111,7 @@ describe('utils', function() {
                         var image_id = record.get('ident');
                         record = record.get('a').properties;
                         var creation_date = record['upload_date'];
+                        console.log(creation_date)
                         var wrong = true;
                         if (Number(creation_date) === 1483244880000) {
                             wrong = false;
