@@ -21,8 +21,8 @@ chai.should();
  });*/
 
 describe("#Database massive test (this may take up to a minute)", function () {
-    it('Add 3000 images to the db', function (done) {
-        var num = 3000;
+    it('Add 300 images to the db', function (done) {
+        var num = 300;
         this.timeout(100000);
         var proms = [];
         for (var i = 0; i < num; i++) {
