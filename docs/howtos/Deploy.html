@@ -1,0 +1,24 @@
+<html>
+<head>Howto: Deploy</head>
+<body>
+<h1>Howto: Deploy</h1>
+
+<p>If you made a change to the code and want to ship this change in an electron app
+follow this procedure</p>
+
+<ol>
+    <li>Tag the commit in Git by ```git tag -a v0.0.0 -m "Release 0.0.0"```</li>
+    <li>Push the tag ```git push origin v0.0.0```</li>
+    <li>Package the electron app for your platform with ```electron-packager```</li>
+    <li>If you haven't done so, install ```electron-packager``` globally:  ```npm install -g electron-packager```</li>
+    <li>If you are on the OS that you want to target with the build execute ```electron-packager . ```
+    (Else consulate the documentation of electron-packager)</li>
+    <li>Compress the created folder. Example for linux: ```zip -r [archive-name].zip [name of the folder]```</li>
+    <li>Navigate to the releases tab of the github repository</li>
+    <li>Edit your release: Add the compressed archive.</li>
+    <li>Add the release to the download section in docs/index.html</li>
+    <li>Describe the changes made in docs/CHANGELIST.txt</li>
+</ol>
+
+</body>
+</html>
