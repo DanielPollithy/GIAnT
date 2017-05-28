@@ -49,9 +49,11 @@ app.post('/db', function (req, res) {
         var user = req.body.user;
         var password = req.body.password;
         log.info('connecting to '+url+' as '+user);
-        if (!database.login(url, user, password)) {
+        var error = database.login(url, user, password);
+        if (error) {
             log.warn('connection failed ' + url + ' as '+ user);
-            return res.render('db_settings', { message: 'Login failed' });
+            log.warn(error);
+            return res.render('db_settings', { message: 'Login failed with ' + error });
         }
         res.redirect('/')
     } else {
