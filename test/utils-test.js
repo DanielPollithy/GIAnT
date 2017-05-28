@@ -100,5 +100,37 @@ describe('utils', function() {
                 });
             });
         });
+
+        it("extract creation date from exif", function (done) {
+            utils.get_exif_from_image(path.join(__dirname, "exif/date.jpg"), function(err, data) {
+                if (err) {
+                    done(err);
+                }
+                database.add_image("test9999.jpg", data).then(function () {
+                    database.get_image("test9999.jpg").then(function(record){
+                        var image_id = record.get('ident');
+                        record = record.get('a').properties;
+                        var creation_date = record['upload_date'];
+                        var wrong = true;
+                        if (Number(creation_date) === 1483244880000) {
+                            wrong = false;
+                        }
+                        if (wrong) {
+                            database.remove_image_by_id(image_id).then(function(){
+                                done('Created image with exif date tag has the wrong milliseconds since 1970');
+                            }, done);
+                        } else {
+                            database.remove_image_by_id(image_id).then(function(){
+                                // DON'T REMOVE THIS LOG
+                                console.log(image_id);
+                                done();
+                            }, done);
+                        }
+                    }, done);
+                }, function(err){
+                    done(err);
+                });
+            });
+        });
     });
 });

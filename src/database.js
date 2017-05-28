@@ -167,7 +167,7 @@ Database.init = function(callback) {
 Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
-    var upload_date = Math.round(d.getTime() / 1000);
+    var upload_date = Math.round(d.getTime());
     var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
     var meta_data = null;
     if (exif_data) {
@@ -181,6 +181,18 @@ Database.add_image = function(file_path, exif_data) {
                 width:  exif_data.exif.ExifImageWidth,
                 height: exif_data.exif.ExifImageHeight
             });
+        }
+        // Get the upload_date from the creation date exif tag
+        if (exif_data && exif_data.hasOwnProperty('exif') && exif_data['exif'].hasOwnProperty('CreateDate')) {
+            // might look like this 2017:05:28 19:46:49
+            var raw_format = exif_data['exif']['CreateDate'];
+            if (raw_format.indexOf(" ") >= 0) {
+                var splits = raw_format.split(" ");
+                var parsed_date = Date.parse(splits[0], 'yyyy:MM:dd');
+                if (parsed_date) {
+                    upload_date = parsed_date;
+                }
+            }
         }
     }
     return session.run(cql,
