@@ -61,12 +61,12 @@ Database.login = function (url, user, password){
     // the _driver is the actual flag for the state
     if (Database._driver !== null) {
         Database.logged_in = true;
-        return true;
+        return false;
     }
     try {
         Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
         Database.logged_in = true;
-        return true;
+        return false;
     } catch (e) {
         Database.logged_in = false;
         return e;
@@ -193,6 +193,7 @@ Database.add_image = function(file_path, exif_data) {
             }
             return records[0];
         }, function(err) {
+            session.close();
             return err;
         });
 };
@@ -207,7 +208,7 @@ Database.add_image = function(file_path, exif_data) {
  * @return {Promise}
  */
 Database.get_image = function(file_path){
-    // Todo: What happens in case of duplications
+    // Duplications are silent for some reason
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image {file_path: {file_path}}) return ID(a) as ident, a;", {file_path: file_path})
@@ -239,14 +240,14 @@ Database.remove_image_by_id = function(id_) {
             "WHERE ID(n) = {ident} " +
             "DETACH DELETE t;", {ident: Number(id_)})
         .then(function (result) {
-            session.run(
+            return session.run(
                 "MATCH (n:Image)-[:image]-(f:Fragment) " +
-                "WHERE ID(n) = {ident} " +
+                "WHERE ID(n) = toInteger({ident}) " +
                 "DETACH DELETE n,f", {ident: Number(id_)})
                 .then(function(result){
-                    session.run(
+                    return session.run(
                     "MATCH (n:Image) " +
-                    "WHERE ID(n) = {ident} " +
+                    "WHERE ID(n) = toInteger({ident}) " +
                     "DETACH DELETE n;", {ident: Number(id_)})
                         .then(function(result){
                             session.close();
@@ -313,7 +314,7 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
         "DETACH DELETE t;", {image_id: Number(image_id), fragment_id:Number(fragment_id)})
         .then(function(success) {
                 if (!dont_delete_fragment) {
-                    session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
+                    return session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
                         "WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} " +
                         "DETACH DELETE f;", {image_id: Number(image_id), fragment_id: Number(fragment_id)})
                         .then(
@@ -485,7 +486,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
  * @return {Promise}
  */
 Database.get_all_images = function() {
-    // TODO: add pagination
+    // pagination is not necessary so far (the page behaved well with 300 images in a test)
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image) " +
