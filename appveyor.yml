@@ -26,3 +26,16 @@ build_script:
   - npm run release
 
 test: off
+
+deploy:
+  release: TransliterationApplication-v$(appveyor_build_version)
+  description: 'TransliterationApplication'
+  provider: GitHub
+  auth_token:
+    secure: $GH_TOKEN # your encrypted token from GitHub
+  artifact: *.zip          # upload all NuGet packages to release assets
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
