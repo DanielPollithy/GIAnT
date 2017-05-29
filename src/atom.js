@@ -1,4 +1,8 @@
-const spawn = require('child_process').spawn;
+//const spawn = require('child_process').spawn;
+
+
+//const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
+var server = require('./server');
 
 function main() {
 
@@ -6,6 +10,10 @@ function main() {
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+console.log(app.getAppPath())
 
 // var server = require(app.getAppPath() + '/src/server');
 
@@ -25,7 +33,7 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -59,12 +67,9 @@ app.on('activate', () => {
   }
 })
 
+server.run();
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-console.log(app.getAppPath())
-const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
-
+/*
 server.stdout.on('data', (data) => {
   var data = data.toString();
   console.log('jup')
@@ -88,4 +93,4 @@ server.on('close', (code) => {
     code = code.toString();
   }
   console.log('child process exited with code ' + code);
-})
+})*/

@@ -61,16 +61,22 @@ Database.login = function (url, user, password){
     // the _driver is the actual flag for the state
     if (Database._driver !== null) {
         Database.logged_in = true;
-        return true;
-    }
-    try {
-        Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
-        Database.logged_in = true;
-        return true;
-    } catch (e) {
-        Database.logged_in = false;
-        return e;
-    }
+    } else {
+		try {
+			Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
+			Database.logged_in = true;
+		} catch (err) {
+			Database.logged_in = false;
+			return err;
+		}
+	}
+	try {
+		var s = Database._get_session();
+		return null;
+	} catch (err) {
+		return err;
+	}
+    
 };
 
 /**
