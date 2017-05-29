@@ -1,12 +1,13 @@
 //const spawn = require('child_process').spawn;
-
-
 //const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
+
 var server = require('./server');
+var log = require('electron-log');
 
 function main() {
 
 }
+
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
@@ -23,7 +24,8 @@ let win;
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({width: 800, height: 600});
+  log.info('Electron window opened');
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -53,6 +55,7 @@ app.on('ready', createWindow)
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
+    log.info('Electron windows closed');
   if (process.platform !== 'darwin') {
     app.exit();
     server.kill('SIGINT');
@@ -72,9 +75,8 @@ server.run();
 /*
 server.stdout.on('data', (data) => {
   var data = data.toString();
-  console.log('jup')
   if (data.includes('READY')) {
-      console.log('reload window');
+      log.info('reload window');
       win.loadURL(url.format({
         pathname: path.join('localhost:4000'),
         protocol: 'http:',
@@ -92,5 +94,5 @@ server.on('close', (code) => {
   if (code) {
     code = code.toString();
   }
-  console.log('child process exited with code ' + code);
-})*/
+  log.info('child process exited with code ' + code);
+}) */

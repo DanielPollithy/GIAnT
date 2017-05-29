@@ -76,7 +76,6 @@ Database.login = function (url, user, password){
 	} catch (err) {
 		return err;
 	}
-    
 };
 
 /**
@@ -173,7 +172,7 @@ Database.init = function(callback) {
 Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
-    var upload_date = Math.round(d.getTime() / 1000);
+    var upload_date = Math.round(d.getTime());
     var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
     var meta_data = null;
     if (exif_data) {
@@ -188,6 +187,18 @@ Database.add_image = function(file_path, exif_data) {
                 height: exif_data.exif.ExifImageHeight
             });
         }
+        // Get the upload_date from the creation date exif tag
+        if (exif_data && exif_data.hasOwnProperty('exif') && exif_data['exif'].hasOwnProperty('CreateDate')) {
+            // might look like this 2017:05:28 19:46:49
+            var raw_format = exif_data['exif']['CreateDate'];
+            if (raw_format.indexOf(" ") >= 0) {
+                var splits = raw_format.split(" ");
+                var parsed_date = Date.parse(splits[0], 'yyyy:MM:dd');
+                if (parsed_date) {
+                    upload_date = parsed_date;
+                }
+            }
+        }
     }
     return session.run(cql,
         {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
@@ -199,6 +210,7 @@ Database.add_image = function(file_path, exif_data) {
             }
             return records[0];
         }, function(err) {
+            session.close();
             return err;
         });
 };
@@ -213,7 +225,7 @@ Database.add_image = function(file_path, exif_data) {
  * @return {Promise}
  */
 Database.get_image = function(file_path){
-    // Todo: What happens in case of duplications
+    // Duplications are silent for some reason
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image {file_path: {file_path}}) return ID(a) as ident, a;", {file_path: file_path})
@@ -245,14 +257,14 @@ Database.remove_image_by_id = function(id_) {
             "WHERE ID(n) = {ident} " +
             "DETACH DELETE t;", {ident: Number(id_)})
         .then(function (result) {
-            session.run(
+            return session.run(
                 "MATCH (n:Image)-[:image]-(f:Fragment) " +
-                "WHERE ID(n) = {ident} " +
+                "WHERE ID(n) = toInteger({ident}) " +
                 "DETACH DELETE n,f", {ident: Number(id_)})
                 .then(function(result){
-                    session.run(
+                    return session.run(
                     "MATCH (n:Image) " +
-                    "WHERE ID(n) = {ident} " +
+                    "WHERE ID(n) = toInteger({ident}) " +
                     "DETACH DELETE n;", {ident: Number(id_)})
                         .then(function(result){
                             session.close();
@@ -319,7 +331,7 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
         "DETACH DELETE t;", {image_id: Number(image_id), fragment_id:Number(fragment_id)})
         .then(function(success) {
                 if (!dont_delete_fragment) {
-                    session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
+                    return session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
                         "WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} " +
                         "DETACH DELETE f;", {image_id: Number(image_id), fragment_id: Number(fragment_id)})
                         .then(
@@ -491,7 +503,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
  * @return {Promise}
  */
 Database.get_all_images = function() {
-    // TODO: add pagination
+    // pagination is not necessary so far (the page behaved well with 300 images in a test)
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image) " +

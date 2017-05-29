@@ -1,8 +1,8 @@
 {
   "name": "transliteration_application",
   "productName": "Transliteration Application",
-  "version": "0.0.2",
-  "description": "A graphical transliteration tool based on mxgraph and Neo4J",
+  "version": "0.0.3",
+  "description": "A graphical transliteration tool based on mxgraph, Neo4J and electron",
   "main": "src/atom.js",
   "directories": {
     "test": "test"
@@ -11,7 +11,8 @@
     "test": "./node_modules/mocha/bin/mocha",
     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec -t 5000",
     "docs": "yuidoc -c ./yuidoc.json src/. ",
-    "server": "node src/server.js"
+    "server": "node src/server.js",
+    "release": "node_modules/.bin/electron-zip-packager . "
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
     "neo4j",
     "transliteration",
     "travis-ci",
-    "yuidocs"
+    "yuidocs",
+    "appveyor"
   ],
   "author": "Daniel Pollithy",
   "license": "GPL-3.0",
@@ -34,9 +36,11 @@
   "homepage": "https://github.com/DanielPollithy/TransliterationApplication#readme",
   "devDependencies": {
     "chai": "^3.5.0",
+    "electron": "^1.6.7",
+    "electron-packager": "^8.7.0",
+    "electron-zip-packager": "^4.0.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "electron": "^1.6.7"
+    "mocha": "^3.2.0"
   },
   "dependencies": {
     "body-parser": "^1.17.1",

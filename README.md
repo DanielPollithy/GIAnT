@@ -1,6 +1,9 @@
 # TransliterationApplication
 [![Build Status](https://travis-ci.org/DanielPollithy/TransliterationApplication.svg?branch=master)](https://travis-ci.org/DanielPollithy/TransliterationApplication)
 [![Build Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](https://danielpollithy.github.io/TransliterationApplication/api/)
+[![Build status](https://ci.appveyor.com/api/projects/status/ry2i05ev77omps3h?svg=true)](https://ci.appveyor.com/project/DanielPollithy/transliterationapplication)
+
+
 <a href="https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html">Code Coverage</a>
 
 # Interesting for users
