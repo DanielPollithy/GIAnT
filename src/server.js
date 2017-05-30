@@ -55,7 +55,7 @@ app.post('/db', function (req, res) {
             log.warn(error);
             return res.render('db_settings', { message: 'Login failed with ' + error });
         }
-        res.redirect('/')
+        return res.redirect('/')
     } else {
         log.info('missing params for POST to /db');
         return res.render('db_settings', { message: 'Missing data' });
@@ -101,9 +101,9 @@ app.post('/save_xml', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-    if (!req.files) {
+    if (!req.files || !req.files.image) {
         log.warn('Image upload without image');
-        return res.status(400).send('No files were uploaded.');
+        return res.redirect('/?e=' + encodeURIComponent('Missing file'))
     }
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
@@ -116,14 +116,14 @@ app.post('/', function (req, res) {
         log.info('Image has valid path: ' + new_file_name);
     } else {
         log.error('Image path tried to escape: ' + new_file_name);
-        return res.status(400).send('Error');
+        return res.redirect('/?e=' + encodeURIComponent('Image path error'))
     }
 
     // write file to uploaded_images
     image_file.mv(new_file_name, function (err) {
         if (err) {
             log.error('There was an error saving the image: ' + new_file_name);
-            return res.status(500).send(err);
+            return res.redirect('/?e=' + encodeURIComponent('Missing image error saving the image'))
         }
         utils.get_exif_from_image(new_file_name, function(exif_err, exif_data) {
             if (exif_err) {
@@ -135,7 +135,7 @@ app.post('/', function (req, res) {
                 res.status(200).redirect('/');
             }, function(err){
                 log.error('Error on adding an image to the database: ' + new_file_name);
-                return res.status(500).send(err);
+				return res.redirect('/?e=' + encodeURIComponent(err))
             });
         });
     });
@@ -162,16 +162,21 @@ app.get('/autocomplete/token/keys', function(req, res){
 
 
 app.get('/', function (req, res) {
+	var msg = req.query.e || '';
+	msg = decodeURIComponent(msg)
+	if (msg.length > 0) {
+		msg = 'Error: ' + msg;
+	}
     database.get_all_images().then(function (results) {
             var row_data = [];
             results.forEach(function (r) {
                 row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date')]);
             });
             res.render('image_table',
-                {
-                    message: '',
-                    rows: row_data
-                });
+			{
+				message: msg,
+				rows: row_data
+			});
         }
     );
 });
@@ -181,9 +186,12 @@ app.get('/image/:id(\\d+)/delete', function (req, res) {
         var id_ = req.params.id;
         database.remove_image_by_id(id_).then(function (result) {
             res.redirect('/');
-        }, res.status(400).send);
+        }, function(err) {
+			log.error(err);
+			return res.redirect('/?e=' + encodeURIComponent(err))
+		});
     } else {
-        res.send("Missing parameter");
+        return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
     }
 });
 
@@ -192,9 +200,12 @@ app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete', function (r
         database.remove_fragment(req.params.image_id, req.params.fragment_id, false)
             .then(function (result) {
                 res.redirect('/image/'+ req.params.image_id +'/fragments');
-            }, res.status(400).send);
+            }, function(err) {
+				log.error(err);
+				return res.redirect('/?e=' + encodeURIComponent(err))
+		});
     } else {
-        res.send("Missing parameter");
+		return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
     }
 });
 
@@ -203,15 +214,17 @@ app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/to-db', function (re
         database.remove_fragment(req.params.image_id, req.params.fragment_id, true).then(function(success){
             codec.mxgraph_to_neo4j(req.params.image_id, req.params.fragment_id, function(err, data){
                 if (err) {
-                    return res.status(400).send(err);
+					log.error(err);
+                    return res.redirect('/?e=' + encodeURIComponent(err));
                 }
                 res.redirect('/image/'+ req.params.image_id +'/fragments');
             });
         }, function(err){
-            res.status(500).send(err);
+			log.error(err);
+            return res.redirect('/?e=' + encodeURIComponent(err));
         });
     } else {
-        res.send("Missing parameter");
+        return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
     }
 });
 
@@ -222,17 +235,18 @@ app.post('/image/:id(\\d+)/create-fragment', function (req, res) {
             function(result){
                 res.redirect('/image/'+ req.params.id +'/fragments');
             }, function(err){
-                res.send(err);
+				log.error(err);
+                return res.redirect('/?e=' + encodeURIComponent(err));
             });
     } else {
         log.warn('Missing params for /create-fragment');
-        return res.status(400).send("Missing POST parameter name or image_id");
+		return res.redirect('/?e=' + encodeURIComponent('Missing POST parameter name or image_id'));
     }
 });
 
 app.get('/image/:id(\\d+)/fragments', function (req, res) {
     if (!req.params.id) {
-        return res.send("Missing parameter");
+        return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
     }
     database.get_fragments_by_image_id(req.params.id).then(function (results) {
             var row_data = [];
@@ -258,11 +272,15 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
     );
 });
 
-
-
-if (!module.parent) {
-    app.listen(4000);
+function run() {
+	app.listen(4000);
     log.info('TransliterationApplication Server started on port 4000');
     console.log('TransliterationApplication Server started an express server on port 4000');
     console.log('READY');
 }
+
+if (!module.parent) {
+    run()
+}
+
+module.exports = {'run': run};

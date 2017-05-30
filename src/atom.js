@@ -1,12 +1,20 @@
-const spawn = require('child_process').spawn;
+//const spawn = require('child_process').spawn;
+//const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
+
+var server = require('./server');
 var log = require('electron-log');
 
 function main() {
 
 }
+
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+console.log(app.getAppPath())
 
 // var server = require(app.getAppPath() + '/src/server');
 
@@ -62,12 +70,9 @@ app.on('activate', () => {
   }
 })
 
+server.run();
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-console.log(app.getAppPath())
-const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
-
+/*
 server.stdout.on('data', (data) => {
   var data = data.toString();
   if (data.includes('READY')) {
@@ -90,4 +95,4 @@ server.on('close', (code) => {
     code = code.toString();
   }
   log.info('child process exited with code ' + code);
-})
+}) */

@@ -242,6 +242,7 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
         if (err) {
             return callback(err);
         } else {
+			if (!result) {return callback('empty result');}
             var temp;
             for (var l = 0; l < result.mxGraphModel.root[0].mxCell.length; l++) {
                 var node = result.mxGraphModel.root[0].mxCell[l];

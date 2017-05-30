@@ -3,6 +3,10 @@ html
     title= 'Hauptübersicht'
   body
     a(href='/db')= 'Datenbankeinstellungen'
+    if message.length > 0
+        p= ''
+        p(style={background:'darkred', color:'white', padding:'10px'})= message
+        p= ''
     h1= 'Hauptübersicht'
     p= 'Hier sind alle Bilder aufgelistet'
     table
