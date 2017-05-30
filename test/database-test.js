@@ -4,7 +4,6 @@ var chai = require('chai');
 
 // To be tested
 var database = require('../src/database');
-database.login('bolt://localhost:7687', 'neo4j', '1234');
 
 var Codec = require('../src/codec');
 
@@ -20,47 +19,15 @@ chai.should();
  });
  });*/
 
-describe("#Database massive test (this may take up to a minute)", function () {
-    it('Add 300 images to the db', function (done) {
-        var num = 300;
-        this.timeout(100000);
-        var proms = [];
-        for (var i = 0; i < num; i++) {
-            proms.push(database.add_image('x' + i));
-        }
-        Promise.all(proms).then(function (rows) {
-            var deletes = [];
-            var outer = [];
-            var errors = 0;
-            for (i = 0; i < num; i++) {
-                outer.push(database.get_image('x' + i).then(function(row){
-                    var id = row.get('ident');
-                    deletes.push(database.remove_image_by_id(id));
-                    return row;
-                }, function(err){
-                    errors++;
-                    return err;
-                }));
-            }
 
-            Promise.all(outer).then(function(outers){
-                Promise.all(deletes).then(function(dels){
-                    done();
-                }, function(err){
-                    done(err);
-                });
-            }, function(err){
-                done(err);
-            });
-        }, function (err) {
-            done(err);
-        });
-    })
-});
 
 describe('database', function () {
     var file_path = 'example_filepath.jpeg';
     var fragment_name = 'something stupid';
+
+    before(function(done) {
+        database.login('bolt://localhost:7687', 'neo4j', '1234').then(function(){done();}, done);
+    });
 
     describe("#Database", function () {
         it('Setup the constraints', function (done) {
@@ -71,6 +38,85 @@ describe('database', function () {
             });
         })
     });
+
+    describe("#Database massive test (this may take up to a minute)", function () {
+
+        it('Add 300 images to the db', function (done) {
+            var num = 300;
+            this.timeout(100000);
+            var proms = [];
+            for (var i = 0; i < num; i++) {
+                proms.push(database.add_image('x' + i));
+            }
+            Promise.all(proms).then(function (rows) {
+                var deletes = [];
+                var outer = [];
+                var errors = 0;
+                for (i = 0; i < num; i++) {
+                    outer.push(database.get_image('x' + i).then(function(row){
+                        var id = row.get('ident');
+                        deletes.push(database.remove_image_by_id(id));
+                        return row;
+                    }, function(err){
+                        errors++;
+                        return err;
+                    }));
+                }
+
+                Promise.all(outer).then(function(outers){
+                    Promise.all(deletes).then(function(dels){
+                        done();
+                    }, function(err){
+                        done(err);
+                    });
+                }, function(err){
+                    done(err);
+                });
+            }, function (err) {
+                done(err);
+            });
+        })
+    });
+
+    describe("#Database wrong port", function(){
+        it('Logout and login with wrong creds and then with correct ones', function(done) {
+            database.logout();
+            database.login('bolt://localhost:7681', 'neo4', '1234').then(
+                function() {
+                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
+                        function() {done('there should have been an error');},
+                        function() {done('there should have been an error');}
+                    );
+                }, function() {
+                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
+                        function() {done();},
+                        function() {done();}
+                    );
+                }
+            );
+        });
+    });
+
+    describe("#Database wrong protocol", function(){
+        it('Logout and login with wrong creds and then with correct ones', function(done) {
+            database.logout();
+            database._get_driver().should.equal(false);
+            database.login('lt://localhost:7681', 'neo4j', '1234').then(
+                function() {
+                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
+                        function() {done('there should have been an error');},
+                        function() {done('there should have been an error');}
+                    );
+                }, function() {
+                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
+                        function() {done();},
+                        function() {done();}
+                    );
+                }
+            );
+        });
+    });
+
     describe("#Image", function () {
         it("save one", function (done) {
             database.add_image(file_path).then(
@@ -81,6 +127,20 @@ describe('database', function () {
                     done(err);
                 })
         });
+        /*it("try to save the same again, but should fail because of filepath constraint", function (done) {
+            database.add_image(file_path).then(
+                function (result) {
+                    console.log(result.Error)
+                    if (!result.hasOwnProperty('Error')) {
+                        done('There should have been an error');
+                    } else {
+                        done();
+                    }
+                },
+                function (err) {
+                    done();
+                })
+        });*/
         it("get all images and look for ours", function (done) {
             database.get_all_images().then(
                 function (records) {
@@ -110,7 +170,6 @@ describe('database', function () {
             }, function (err) {
                 done(err);
             })
-
         });
 
 
@@ -364,7 +423,6 @@ describe('database', function () {
 
 
     })
-
 
 });
 
