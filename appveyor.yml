@@ -1,6 +1,7 @@
 version: 0.1.{build}
 
 platform:
+  - x86
   - x64
 
 cache:
@@ -38,4 +39,4 @@ deploy:
   prerelease: true
   on:
     branch: master                 # release from master branch only
-    appveyor_repo_tag: false        # deploy on tag push only
+    appveyor_repo_tag: true        # deploy on tag push only
