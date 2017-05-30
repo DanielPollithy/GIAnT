@@ -3,6 +3,8 @@ html
     title= 'Hauptübersicht'
   body
     a(href='/db')= 'Datenbankeinstellungen'
+    br
+    a(href='/heatmap')= 'Heatmap Tool'
     if message.length > 0
         p= ''
         p(style={background:'darkred', color:'white', padding:'10px'})= message
