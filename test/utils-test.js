@@ -4,6 +4,7 @@ var chai = require('chai');
 
 // To be tested
 var utils = require('../src/utils');
+var database = require('../src/database');
 var path = require('path');
 
 var database = require('../src/database');
@@ -101,7 +102,7 @@ describe('utils', function() {
             });
         });
 
-        /*
+
         it("extract creation date from exif", function (done) {
             utils.get_exif_from_image(path.join(__dirname, "exif/date.jpg"), function(err, data) {
                 if (err) {
@@ -133,6 +134,50 @@ describe('utils', function() {
                     done(err);
                 });
             });
-        });*/
+        });
+    });
+    describe('#parse the heatmap result', function () {
+        it("check number of records in heatmap", function (done) {
+            database.add_image('xyz').then(
+                function(result){
+                    var image_id = Number(result.get('ident'));
+                    var session = database._get_session();
+                    session.run('MATCH (i:Image) RETURN i;').then(
+                        function(data) {
+                            var records = [];
+                            for (var i = 0; i < data.records.length; i++) {
+                                records.push(data.records[i]);
+                            }
+                            var n = utils.count_images_in_result(records);
+                            database.remove_image_by_id(image_id).then(
+                                function() {
+                                    if (n !== 1) {
+                                        done('n should be 1');
+                                    } else {
+                                        done();
+                                    }
+                                },
+                                function(err){
+                                    done(err);
+                                }
+                            )
+                        },
+                        function(err) {
+                            database.remove_image_by_id(image_id).then(
+                                function() {
+                                    done(err);
+                                },
+                                function(err2){
+                                    done(err);
+                                }
+                            )
+                        }
+                    );
+                },
+                function(err){
+                    done(err);
+                }
+            );
+        });
     });
 });
