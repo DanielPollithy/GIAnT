@@ -58,7 +58,7 @@ app.on('window-all-closed', () => {
     log.info('Electron windows closed');
   if (process.platform !== 'darwin') {
     app.exit();
-    server.kill('SIGINT');
+    //server.kill('SIGINT');
   }
 })
 
