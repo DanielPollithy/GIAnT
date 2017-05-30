@@ -1,0 +1,21 @@
+a(href='/')= '< Back'
+form(method='post', action='/heatmap-generate')
+    p= message
+    label(for='query') Query (Only do READS here!):
+    textarea#query(name='query', rows="3")= 'MATCH (s:Token) RETURN s;'
+    br
+    label(for='normalization') Normalization:
+    select#normalization(name='normalization')
+        option(value='1', selected= true) Type 1
+        option(value='2', selected= false) Type 2
+        option(value='3', selected= false) Type 3
+    br
+    label(for='width') Width (1-300):
+    input#width(type='number', name='width', value='160')
+    label(for='height') Height (1-300):
+    input#height(type='number', name='height', value='100')
+    br
+    label(for='pixel_size') Pixel size (1-5):
+    input#pixel_size(type='number', name='pixel_size', value='1')
+    br
+    input(type='submit', value='generate')

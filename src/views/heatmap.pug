@@ -1,0 +1,64 @@
+html
+  head
+    title= 'Heatmap'
+    script(type='text/javascript', src='/editor/www/extern/d3.v4.min.js')
+    script(type="text/javascript").
+      function run() {
+          var data = !{json};
+
+          //height of each row in the heatmap
+          //width of each column in the heatmap
+          var gridSize = !{pixel_size},
+              h = gridSize,
+              w = gridSize;
+
+          var colorLow = 'green', colorMed = 'yellow', colorHigh = 'red';
+
+          var margin = {top: 0, right: 0, bottom: 0, left: 0},
+              width = !{width}*gridSize - margin.left - margin.right,
+              height = !{height}*gridSize - margin.top - margin.bottom;
+
+          var colorScale = d3.scaleLinear()
+              .domain([-1, 0, 1])
+              .range([colorLow, colorMed, colorHigh]);
+
+          var svg = d3.select("#heatmap").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var heatMap = svg.selectAll(".heatmap")
+              .data(data, function (d) {
+                  return d.col + ':' + d.row;
+              })
+              .enter().append("svg:rect")
+              .attr("x", function (d) {
+                  return d.row * w;
+              })
+              .attr("width", function (d) {
+                  return w;
+              })
+              .attr("y", function (d) {
+                  return d.col * h;
+              })
+              .attr("height", function (d) {
+                  return h;
+              })
+              .style("fill", function (d) {
+                  return colorScale(d.score);
+              });
+      }
+
+  body(onload='run();')
+    a(href='/heatmap')= '< Back'
+    h1= 'Heat map'
+    input(type='button', onclick='window.print()', value='Print this page')
+    p= 'Query: ' + query
+    p= 'Number of tokens: ' + num_tokens
+    p= 'Normalization: ' + normalization
+    p= 'Width: ' + width
+    p= 'Height: ' + height
+    b= '' + message
+    hr
+    div#heatmap
