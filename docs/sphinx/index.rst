@@ -9,7 +9,9 @@ Welcome to TransliterationApplication's documentation!
 This is a **technical documentation** of the components and how to use them.
 It powers ~well written "articles" on general questions. See Articles_ section.
 
-There is also an **API description** here: `<https://danielpollithy.github.io/TransliterationApplication/api/>`_
+There is also an **API description** here:
+
+`<https://danielpollithy.github.io/TransliterationApplication/api/>`_
 
 Contents
 --------
@@ -17,7 +19,8 @@ Contents
 .. toctree::
    :maxdepth: 2
    
-   sources/Deployment/Deployment
+   sources/Deployment
+   sources/Configuration
 
 
 Articles
@@ -42,6 +45,12 @@ It is going to cover
  - "Extending the mxGraph Editor"
  - "What is not implemented"
  - "Next steps"
+
+Maybe
+ - "App performance struggle: Million of nodes, thousands of images and a lot of properties"
+ - "Codec.js - What is the biggest XML-Graph it can convert to Neo4J?"
+ - "A question of complexity: Cypher vs SQL for transliteration analyzes"
+ - "The use case of this application"
 
 Indices and tables
 ==================
