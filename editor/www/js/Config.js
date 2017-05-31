@@ -1,4 +1,8 @@
 
+EDITOR_CONFIG = {
+    "default_font_size": "40pt"
+
+};
 
 TOKEN_CONFIG = {
   "tokens": {
@@ -12,7 +16,6 @@ TOKEN_CONFIG = {
       "color": "grey",
       "properties": [
         "pos",
-        "them_mak",
         "tool",
         "lang",
         "dialect",
