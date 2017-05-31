@@ -42,6 +42,8 @@ It is going to cover
  - "Why Electron"
  - "Could the server be used as a standalone?",
  - "How does the autocomplete function work",
+ - "Asynchronous tests with mocha.js and chai.js"
+ - "About the code coverage"
  - "Extending the mxGraph Editor"
  - "What is not implemented"
  - "Next steps"

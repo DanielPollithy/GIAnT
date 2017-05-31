@@ -2,8 +2,8 @@
 [![Build Status](https://travis-ci.org/DanielPollithy/TransliterationApplication.svg?branch=master)](https://travis-ci.org/DanielPollithy/TransliterationApplication)
 [![Build status](https://ci.appveyor.com/api/projects/status/ry2i05ev77omps3h?svg=true)](https://ci.appveyor.com/project/DanielPollithy/transliterationapplication)
 [![Documentation Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](http://transliterationapplication.readthedocs.io/en/latest/?badge=latest)
-| <a href="https://danielpollithy.github.io/TransliterationApplication/api/">API Description</a>
-| <a href="https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html">Code Coverage</a>
+[![API Status](https://img.shields.io/badge/API-0.1-brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/api/)
+[![API Status](https://img.shields.io/badge/Test_Coverage--brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html)
 
 # Interesting for users
 
