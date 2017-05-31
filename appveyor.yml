@@ -28,13 +28,17 @@ build_script:
 
 test: off
 
+artifacts:
+  - path: '**\*.zip'
+    name: win_release
+
 deploy:
-  release: TransliterationApplication-v$(appveyor_build_version)
+  release: $(appveyor_repo_tag_name)
   description: 'TransliterationApplication'
   provider: GitHub
   auth_token:
     secure: QBn6bw8znM2WsrG32eTzA55Iu0iE6oymujVBos6XFUldN/biNahd6Csr6d9Y4u+E
-  artifact: '**\*.zip'            # upload all NuGet packages to release assets
+  artifact: win_release
   draft: true
   prerelease: true
   on:
