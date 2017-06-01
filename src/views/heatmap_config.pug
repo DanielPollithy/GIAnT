@@ -6,16 +6,15 @@ form(method='post', action='/heatmap-generate')
     br
     label(for='normalization') Normalization:
     select#normalization(name='normalization')
-        option(value='1', selected= true) Type 1
-        option(value='2', selected= false) Type 2
-        option(value='3', selected= false) Type 3
+        option(value='1', selected= true) Full Image Normalization
+        option(value='2', selected= false) Fragment Bounding Box Normalization
     br
     label(for='width') Width (1-300):
     input#width(type='number', name='width', value='160')
     label(for='height') Height (1-300):
     input#height(type='number', name='height', value='100')
     br
-    label(for='pixel_size') Pixel size (1-5):
-    input#pixel_size(type='number', name='pixel_size', value='1')
+    label(for='pixel_size') Pixel size (1-10):
+    input#pixel_size(type='number', name='pixel_size', value='5')
     br
     input(type='submit', value='generate')

@@ -288,6 +288,39 @@ Database.get_image_of_token = function(token_id){
 };
 
 /**
+ *
+ * @param token_id
+ * @returns {*|Promise}
+ */
+Database.get_fragment_bounding_box = function(token_id){
+    var session = this._get_session();
+    var prom = session
+        .run("MATCH (t:Token)-[]-(f:Fragment) WHERE ID(t) = toInteger({token_id}) "+
+            "WITH f " +
+            "MATCH (x:Token)-[]-(f) " +
+            "WITH x "+
+            "WHERE EXISTS(x.x) AND EXISTS(x.y) AND EXISTS(x.width) AND EXISTS(x.height) "+
+            "RETURN MIN(toInteger(x.x)) as x, MIN(toInteger(x.y)) as y, " +
+            "MAX(toInteger(x.x)+toInteger(x.width)) as width, MAX(toInteger(x.y)+toInteger(x.height)) as height;",
+            {token_id: Number(token_id)})
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            if (records.length === 0) {
+                return null;
+            }
+            return records[0];
+        }, function(err) {
+            session.close();
+            return err;
+        });
+    return prom;
+};
+
+/**
  * Removes an image by ID
  *
  * @method remove_image_by_id

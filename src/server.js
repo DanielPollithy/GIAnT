@@ -320,6 +320,7 @@ app.post('/heatmap-generate', function (req, res) {
                             message: '',
                             query: query,
                             num_tokens: data.num_tokens,
+                            num_errors: data.num_errors,
                             normalization: normalization,
                             width: width,
                             height: height,

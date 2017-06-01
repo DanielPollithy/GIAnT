@@ -79,19 +79,22 @@ function check_all_images_have_dimension(records) {
     return true;
 }
 
-// TODO: implement different normalization techniques
-function normalize_token_spatials(token, normalization, target_width, target_height) {
+function normalization_on_whole_image(token, normalization, target_width, target_height) {
     var token_id = Number(token._fields[0].identity);
     return database.get_image_of_token(token_id).then(function(img){
         // TODO: Check if image has width and height
         var image_width = img._fields[0].properties.width;
         var image_height = img._fields[0].properties.height;
+        if (!image_height || !image_width) {
+            return null;
+        }
         var width_ratio = image_width / target_width;
         var height_ratio = image_height / target_height;
         var x = Number(token._fields[0].properties.x);
         var y = Number(token._fields[0].properties.y);
         var width = Number(token._fields[0].properties.width);
         var height = Number(token._fields[0].properties.height);
+        console.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
         var normalized = {
             'x': Math.round(x / width_ratio),
             'y': Math.round(y / height_ratio),
@@ -102,7 +105,81 @@ function normalize_token_spatials(token, normalization, target_width, target_hei
     }, function(err){
         return 'No image found for the given token';
     });
+}
 
+function get_bounding_box_of_fragment(token) {
+    // TODO: implement a cache for image
+    var token_id = Number(token._fields[0].identity);
+    var prom = database.get_fragment_bounding_box(token_id).then(
+        function(bb){
+            return bb;
+        },
+        function(err){
+            return err;
+        }
+    );
+    return prom;
+}
+
+function normalization_on_bounding_box(token, normalization, target_width, target_height) {
+    return get_bounding_box_of_fragment(token).then(function(bb){
+        if (!bb){
+            return null;
+        }
+        var bounding_box = {
+            'x': Number(bb.get('x')),
+            'y': Number(bb.get('y')),
+            'x2': Number(bb.get('width')),
+            'y2': Number(bb.get('height'))
+        };
+
+        // this happens if the bounding box could not be calculated
+        if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
+            return null;
+        }
+
+        var normalized_bb = {
+            'x': 0,
+            'y': 0,
+            'width': bounding_box.x2 - bounding_box.x,
+            'height': bounding_box.y2 - bounding_box.y,
+        };
+
+        console.log('bb', bounding_box)
+        console.log('n_bb', normalized_bb)
+
+        var width_ratio = normalized_bb.width / target_width;
+        var height_ratio = normalized_bb.height / target_height;
+        var x = Number(token._fields[0].properties.x) - bounding_box.x;
+        var y = Number(token._fields[0].properties.y) - bounding_box.y;
+        var width = Number(token._fields[0].properties.width);
+        var height = Number(token._fields[0].properties.height);
+
+        console.log('token', x,y,width, height)
+        console.log(width_ratio)
+        console.log(height_ratio)
+
+        // TODO: throw error if any value is smaller or equal to zero!
+        var normalized = {
+            'x': Math.round(x / width_ratio),
+            'y': Math.round(y / height_ratio),
+            'width': Math.round(width / width_ratio),
+            'height': Math.round(height / height_ratio)
+        };
+        console.log(normalized)
+        return normalized;
+    }, function(err){
+        return 'No bounding box found for the given token';
+    });
+}
+
+// TODO: implement different normalization techniques
+function normalize_token_spatials(token, normalization, target_width, target_height) {
+    if (normalization === 1) {
+        return normalization_on_whole_image(token, normalization, target_width, target_height);
+    } else if (normalization === 2) {
+        return normalization_on_bounding_box(token, normalization, target_width, target_height);
+    }
 }
 
 function normalize_heatmap_nodes(records, normalization, width, height) {
@@ -121,27 +198,43 @@ function normalize_heatmap_nodes(records, normalization, width, height) {
 
         Promise.all(all_promises).then(
             function(all_results){
-                var count = 0;
-                var max = 0;
+
+                var num_errors = 0;
                 all_results.forEach(function(normalized){
-                    count++;
-                    // calcalute all point spanned by the rects x,y,width,height
-                    for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
-                        for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
-                            heat_map[x_][y_]++;
-                            // calculate the maximum entry in the matrix on the last iteration
-                            if (count === all_results.length && heat_map[x_][y_] > max) {
-                                max = heat_map[x_][y_];
+                    if (!normalized){
+                        // normalization failed
+                        num_errors++;
+                    } else {
+                        // calcalute all point spanned by the rects x,y,width,height
+                        for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
+                            for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
+                                heat_map[x_][y_]++;
                             }
                         }
                     }
                 });
+
+                // calculate the maximum entry of the matrix
+                var max = 0;
+                for (var x = 0; x < heat_map.length; x++) {
+                    for (var y = 0; y < heat_map[0].length; y++) {
+                        if (heat_map[x][y] > max) {
+                            max = heat_map[x][y];
+                        }
+                    }
+                }
+
+                // transform the values of the matrix into the interval [0;1]
+                // by dividing every entry by max
                 for (var x = 0; x < heat_map.length; x++) {
                     for (var y = 0; y < heat_map[0].length; y++) {
                         heat_map[x][y] = heat_map[x][y] / max;
                     }
                 }
-                resolve(heat_map);
+                resolve({
+                    'heat_map': heat_map,
+                    'num_errors': num_errors
+                });
             },
             function(err){
                 reject(err);
@@ -174,16 +267,15 @@ function format_heat_map_to_d3js(heat_map) {
 }
 
 // shall return number of nodes, fragments, images and the normalized data array
-// TODO: set maximum size of heatmap
-// TODO: define normalization types
 MAX_SIZE_HEATMAP = 300;
-MAX_PIXEL_SIZE = 5;
+MAX_PIXEL_SIZE = 10;
+SUPPORTED_NORMALIZATIONS = 2;
 function process_heatmap_query(query, normalization, width, height, pixel_size) {
     var p = new Promise(function(resolve, reject) {
         if (width < 1 || width > MAX_SIZE_HEATMAP || height < 1 || height > MAX_SIZE_HEATMAP) {
             return reject('Dimension of heat map are not in between 1 and ' + MAX_SIZE_HEATMAP);
         }
-        if (normalization !== 1) {
+        if (normalization > SUPPORTED_NORMALIZATIONS || normalization < 1) {
             return reject('Unsupported normalization');
         }
         if (pixel_size < 1 || pixel_size > 5) {
@@ -221,12 +313,15 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                     return reject('not all images have dimensions (have width and height property)');
                 }
 
-                normalize_heatmap_nodes(records, normalization, width, height).then(function(heat_map) {
+                normalize_heatmap_nodes(records, normalization, width, height).then(function(data) {
+                    var heat_map = data.heat_map;
+                    var num_errors = data.num_errors;
                     var d3js_heat_map = format_heat_map_to_d3js(heat_map);
                     return resolve({
                         'num_images': num_images,
                         'num_fragments': num_fragments,
                         'num_tokens': num_tokens,
+                        'num_errors': num_errors,
                         'heat_map': d3js_heat_map
                     });
                 }, function(err){
