@@ -493,6 +493,12 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
                             cell.$[key] = value;
                         }
                     });
+                    // some times the text is in the property label and other times in value
+                    // => we want it everytime in value
+                    if (cell.$.hasOwnProperty('label')) {
+                        cell.$['value'] = cell.$['label'];
+                        delete cell.$['label'];
+                    }
                     delete cell.$.style;
                 }
 
