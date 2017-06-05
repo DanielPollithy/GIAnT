@@ -52,7 +52,6 @@
     "mxgraph": "^3.7.2-2",
     "neo4j-driver": "^1.1.1",
     "pug": "^2.0.0-beta11",
-    "xml2js": "^0.4.17",
-    "xmlhttprequest": "^1.8.0"
+    "xml2js": "^0.4.17"
   }
 }

@@ -1,0 +1,58 @@
+Licenses for incorporated software
+==================================
+
+This is a summary of software that I used for this project.
+With the usage and their license.
+
+Documentation
+-------------
+yuidocs - docstring extraction with frontend - https://github.com/yui/yuidoc/blob/master/LICENSE
+istanbul - test coverage for documentation purpose - https://github.com/gotwarlost/istanbul/blob/master/LICENSE
+sphinx - docs creation - https://github.com/sphinx-doc/sphinx/blob/master/LICENSE
+
+Testing
+-------
+mocha - test framework js - https://github.com/mochajs/mocha/blob/master/LICENSE
+chai - BDD/TDD assertion framework - MIT - https://github.com/chaijs/chai/blob/master/LICENSE
+
+Frontend
+------
+mxGraph - graphing tool - Apache2 - https://github.com/jgraph/mxgraph/blob/master/LICENSE
+bootstrap - web framework - MIT - https://github.com/twbs/bootstrap/blob/master/LICENSE
+bootswatch - theme for bootstrap - MIT - http://bootswatch.com - https://github.com/thomaspark/bootswatch/blob/gh-pages/LICENSE
+d3.JS - visualization in browser for heatmap - BSD-3 - https://github.com/d3/d3/blob/master/LICENSE
+jquery - necessary javascript framework for bootstrap - MIT - http://jquery.org/license
+
+Application
+-----------
+electron - cross platform nodejs webapp wrapper - MIT - https://github.com/electron/electron/blob/master/LICENSE
+electron-packager - packager for electron - BSD-2 - https://github.com/electron-userland/electron-packager/blob/master/LICENSE
+electron-zip-packager - zips the electron-packager result - MIT - https://github.com/azu/electron-zip-packager/blob/master/LICENSE
+electron-log - os independent logging - MIT - https://github.com/megahertz/electron-log/blob/master/LICENSE
+
+server
+-------
+nodejs - javascript with os libraries - MIT - https://github.com/nodejs/node/blob/master/LICENSE
+pug - former jade templating engine for nodejs - MIT - https://github.com/pugjs/pug/blob/master/package.json
+expressjs - simple server and file serving for nodejs - MIT - https://github.com/expressjs/express/blob/master/LICENSE
+body-parser - access the POST params in expressjs - MIT - https://github.com/expressjs/body-parser/blob/master/LICENSE
+express-fileupload - helper for fileupload with expressjs - MIT - https://github.com/richardgirges/express-fileupload/blob/master/LICENSE
+
+
+Logic
+-----
+neo4j community edition - Graph database - GPLv3 - https://neo4j.com/licensing/
+neo4j-driver - api for javascript to interact with neo4j - Apache2 - https://github.com/neo4j/neo4j-javascript-driver/blob/1.4/LICENSE
+xml2js - xml file to javascript object - MIT - https://github.com/Leonidas-from-XIV/node-xml2js/blob/master/LICENSE
+exifImage - read exif image information - MIT - https://github.com/gomfunkel/node-exif/blob/master/LICENSE.md
+image-size - access the image width and height stored in the header - MIT - https://github.com/image-size/image-size/blob/master/LICENSE
+
+Build automation: Not part of this project (included as an external service)
+----------------
+travis - automation for unix
+appveyor - automation for windows
+
+
+
+
+
