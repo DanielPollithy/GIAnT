@@ -143,19 +143,44 @@ Database.logged_in = false;
 * @return {boolean|error}
 */
 Database.login = function (url, user, password){
-    // the _driver is the actual flag for the state
-    if (Database._driver !== null) {
-        Database.logged_in = true;
-        return true;
-    }
-    try {
-        Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
-        Database.logged_in = true;
-        return true;
-    } catch (e) {
-        Database.logged_in = false;
-        return e;
-    }
+    var p = new Promise(function(resolve, reject) {
+        // the _driver is the actual flag for the state
+        if (Database._driver !== null) {
+            Database.logged_in = true;
+            resolve();
+        } else {
+            try {
+                Database._driver = neo4j.driver(url, neo4j.auth.basic(user, password));
+                /*Database._driver.onCompleted = function () {
+                    console.log(&quot;ON COMP&quot;);
+                };*/
+
+                Database._driver.onError = function (error) {
+                    Database._driver = null;
+                        Database.logged_in = false;
+                        reject(error);
+                };
+
+                var session = Database._get_session();
+                return session.run(&#x27;return 1&#x27;).then(
+                    function() {
+                        Database.logged_in = true;
+                        resolve();
+                    },
+                    function(err) {
+                        Database._driver = null;
+                        Database.logged_in = false;
+                        reject(err);
+                    }
+                );
+            } catch (err) {
+                Database._driver = null;
+                Database.logged_in = false;
+                return reject(err);
+            }
+        }
+    });
+    return p;
 };
 
 /**
@@ -247,19 +272,20 @@ Database.init = function(callback) {
  *
  * @method add_image
  * @param file_path {string} The unique identifier for an image
+ * @param exif_data
  * @return {Promise}
  */
 Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
-    var upload_date = Math.round(d.getTime() / 1000);
+    var upload_date = Math.round(d.getTime());
     var cql = &quot;CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;&quot;;
     var meta_data = null;
     if (exif_data) {
         cql = &quot;CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) &quot; +
             &quot;SET a += {meta_data} &quot; +
             &quot;RETURN ID(a) as ident;&quot;;
-        meta_data =  exif_data[&#x27;gps&#x27;];
+        meta_data =  exif_data[&#x27;gps&#x27;] || {};
         if (exif_data.hasOwnProperty(&#x27;exif&#x27;) &amp;&amp; exif_data[&#x27;exif&#x27;].hasOwnProperty(&#x27;ExifImageWidth&#x27;)
             &amp;&amp; exif_data[&#x27;exif&#x27;].hasOwnProperty(&#x27;ExifImageHeight&#x27;)) {
             Object.assign(meta_data, {
@@ -267,8 +293,20 @@ Database.add_image = function(file_path, exif_data) {
                 height: exif_data.exif.ExifImageHeight
             });
         }
+        // Get the upload_date from the creation date exif tag
+        if (exif_data &amp;&amp; exif_data.hasOwnProperty(&#x27;exif&#x27;) &amp;&amp; exif_data[&#x27;exif&#x27;].hasOwnProperty(&#x27;CreateDate&#x27;)) {
+            // might look like this 2017:05:28 19:46:49
+            var raw_format = exif_data[&#x27;exif&#x27;][&#x27;CreateDate&#x27;];
+            if (raw_format.indexOf(&quot; &quot;) &gt;= 0) {
+                var splits = raw_format.split(&quot; &quot;);
+                var parsed_date = Date.parse(splits[0], &#x27;yyyy:MM:dd&#x27;);
+                if (parsed_date) {
+                    upload_date = parsed_date;
+                }
+            }
+        }
     }
-    return session.run(cql,
+    var p = session.run(cql,
         {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {
             session.close();
@@ -276,10 +314,15 @@ Database.add_image = function(file_path, exif_data) {
             for (var i = 0; i &lt; result.records.length; i++) {
                 records.push(result.records[i]);
             }
+            if (records.length === 0) {
+                throw Error(&#x27;Zero elements created&#x27;);
+            }
             return records[0];
         }, function(err) {
+            session.close();
             return err;
         });
+    return p;
 };
 
 /**
@@ -292,7 +335,7 @@ Database.add_image = function(file_path, exif_data) {
  * @return {Promise}
  */
 Database.get_image = function(file_path){
-    // Todo: What happens in case of duplications
+    // Duplications are silent for some reason
     var session = this._get_session();
     var prom = session
         .run(&quot;MATCH (a:Image {file_path: {file_path}}) return ID(a) as ident, a;&quot;, {file_path: file_path})
@@ -301,6 +344,58 @@ Database.get_image = function(file_path){
             var records = [];
             for (var i = 0; i &lt; result.records.length; i++) {
                 records.push(result.records[i]);
+            }
+            return records[0];
+        }, function(err) {
+            session.close();
+            return err;
+        });
+    return prom;
+};
+
+Database.get_image_of_token = function(token_id){
+    var session = this._get_session();
+    var prom = session
+        .run(&quot;MATCH (t:Token)-[]-(:Fragment)-[]-(i:Image) WHERE ID(t) = toInteger({token_id}) RETURN i;&quot;,
+            {token_id: Number(token_id)})
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i &lt; result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            return records[0];
+        }, function(err) {
+            session.close();
+            return err;
+        });
+    return prom;
+};
+
+/**
+ *
+ * @param token_id
+ * @returns {*|Promise}
+ */
+Database.get_fragment_bounding_box = function(token_id){
+    var session = this._get_session();
+    var prom = session
+        .run(&quot;MATCH (t:Token)-[]-(f:Fragment) WHERE ID(t) = toInteger({token_id}) &quot;+
+            &quot;WITH f &quot; +
+            &quot;MATCH (x:Token)-[]-(f) &quot; +
+            &quot;WITH x &quot;+
+            &quot;WHERE EXISTS(x.x) AND EXISTS(x.y) AND EXISTS(x.width) AND EXISTS(x.height) &quot;+
+            &quot;RETURN MIN(toInteger(x.x)) as x, MIN(toInteger(x.y)) as y, &quot; +
+            &quot;MAX(toInteger(x.x)+toInteger(x.width)) as width, MAX(toInteger(x.y)+toInteger(x.height)) as height;&quot;,
+            {token_id: Number(token_id)})
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i &lt; result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            if (records.length === 0) {
+                return null;
             }
             return records[0];
         }, function(err) {
@@ -321,17 +416,17 @@ Database.remove_image_by_id = function(id_) {
     var session = this._get_session();
     return session
         .run(&quot;MATCH (n:Image)&lt;-[:image]-(f:Fragment)&lt;-[:fragment]-(t:Token) &quot; +
-            &quot;WHERE ID(n) = {ident} &quot; +
+            &quot;WHERE ID(n) = toInteger({ident}) &quot; +
             &quot;DETACH DELETE t;&quot;, {ident: Number(id_)})
         .then(function (result) {
-            session.run(
+            return session.run(
                 &quot;MATCH (n:Image)-[:image]-(f:Fragment) &quot; +
-                &quot;WHERE ID(n) = {ident} &quot; +
+                &quot;WHERE ID(n) = toInteger({ident}) &quot; +
                 &quot;DETACH DELETE n,f&quot;, {ident: Number(id_)})
                 .then(function(result){
-                    session.run(
+                    return session.run(
                     &quot;MATCH (n:Image) &quot; +
-                    &quot;WHERE ID(n) = {ident} &quot; +
+                    &quot;WHERE ID(n) = toInteger({ident}) &quot; +
                     &quot;DETACH DELETE n;&quot;, {ident: Number(id_)})
                         .then(function(result){
                             session.close();
@@ -364,13 +459,13 @@ Database.remove_image_by_id = function(id_) {
 Database.add_fragment = function(image_id, fragment_name) {
     var session = this._get_session();
     var d = new Date();
-    var upload_date = Math.round(d.getTime() / 1000);
+    var upload_date = Math.round(d.getTime());
     return session.run(&quot;MATCH (i:Image) &quot; +
-        &quot;WHERE ID(i) = {image_id} &quot; +
+        &quot;WHERE ID(i) = toInteger({image_id}) &quot; +
         &quot;WITH i &quot; +
-        &quot;CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false})-[:image]-&gt;(i)&quot; +
+        &quot;CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]-&gt;(i)&quot; +
         &quot;RETURN ID(f) as ident;&quot;,
-        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id)})
+        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: &#x27;&#x27;})
         .then(function(result){
             session.close();
             var records = [];
@@ -379,6 +474,31 @@ Database.add_fragment = function(image_id, fragment_name) {
             }
             return records[0];
         }, function(err){return err;})
+};
+
+Database.add_comment_to_fragment = function(fragment_id, comment) {
+    var session = this._get_session();
+    return session.run(
+        &quot;MATCH (f:Fragment) &quot; +
+        &quot;WHERE ID(f) = toInteger({fragment_id}) &quot; +
+        &quot;SET f += {comment: {comment}} &quot; +
+        &quot;RETURN ID(f) as ident;&quot;,
+        {
+            fragment_id: fragment_id,
+            comment: comment
+        }
+    ).then(function(result){
+        session.close();
+        var records = [];
+        for (var i = 0; i &lt; result.records.length; i++) {
+            records.push(result.records[i]);
+        }
+        return records[0];
+    }, function(err){
+        session.close();
+        return err;
+    });
+
 };
 
 /**
@@ -394,12 +514,12 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
     if (dont_delete_fragment === undefined) {dont_delete_fragment=true;}
     var session = this._get_session();
     return session.run(&quot;MATCH (i:Image)&lt;-[:image]-(f:Fragment)-[:fragment]-(t:Token) &quot; +
-        &quot;WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} &quot; +
+        &quot;WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) &quot; +
         &quot;DETACH DELETE t;&quot;, {image_id: Number(image_id), fragment_id:Number(fragment_id)})
         .then(function(success) {
                 if (!dont_delete_fragment) {
-                    session.run(&quot;MATCH (i:Image)&lt;-[:image]-(f:Fragment) &quot; +
-                        &quot;WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} &quot; +
+                    return session.run(&quot;MATCH (i:Image)&lt;-[:image]-(f:Fragment) &quot; +
+                        &quot;WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) &quot; +
                         &quot;DETACH DELETE f;&quot;, {image_id: Number(image_id), fragment_id: Number(fragment_id)})
                         .then(
                             function (result) {
@@ -433,7 +553,7 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
 Database.get_fragment = function(image_file_path, fragment_name) {
     var session = this._get_session();
     var prom = session.run(&quot;MATCH (a:Fragment {fragment_name: {fragment_name}})-[r:image]-&gt;(i:Image {file_path:{file_path}}) &quot; +
-        &quot;RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed;&quot;,
+        &quot;RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed, a.comment as comment;&quot;,
         {fragment_name: fragment_name, file_path: image_file_path})
         .then(function (result) {
             session.close();
@@ -458,8 +578,8 @@ Database.get_fragment = function(image_file_path, fragment_name) {
 Database.get_fragment_by_id = function(image_id, fragment_id) {
     var session = this._get_session();
     var prom = session.run(&quot;MATCH (a:Fragment)-[r:image]-&gt;(i:Image) &quot; +
-        &quot;WHERE ID(a) = {fragment_id} AND ID(i) = {image_id} &quot; +
-        &quot;RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed;&quot;,
+        &quot;WHERE ID(a) = toInteger({fragment_id}) AND ID(i) = toInteger({image_id}) &quot; +
+        &quot;RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed, a.comment AS comment;&quot;,
         {image_id: Number(image_id), fragment_id: Number(fragment_id)})
         .then(function (result) {
             session.close();
@@ -492,7 +612,7 @@ Database.add_node = function(image_id, fragment_id, node_attributes) {
     var enumerator = node_attributes.id;
     var session = this._get_session();
     var prom = session.run(&quot;MATCH (i:Image)&lt;-[:image]-(f:Fragment) &quot; +
-        &quot;WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} &quot; +
+        &quot;WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) &quot; +
         &quot;WITH f &quot; +
         &quot;CREATE (n:Token {enumerator:{enumerator}})-[:fragment]-&gt;(f) &quot; +
         &quot;SET n += {props};&quot;,
@@ -528,7 +648,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
     var enumerator = edge_attributes.id;
     var session = this._get_session();
     var prom = session.run(&quot;MATCH (i:Image)&lt;-[:image]-(f:Fragment) &quot; +
-        &quot;WHERE ID(i) = {image_id} AND ID(f) = {fragment_id} &quot; +
+        &quot;WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) &quot; +
         &quot;WITH f &quot; +
         &quot;MATCH (f)&lt;-[:fragment]-(a:Token {enumerator: {source_enum} }), (f)&lt;-[:fragment]-(b:Token {enumerator: {target_enum} }) &quot; +
         &quot;CREATE (a)-[n:edge]-&gt;(b) &quot; +
@@ -570,7 +690,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
  * @return {Promise}
  */
 Database.get_all_images = function() {
-    // TODO: add pagination
+    // pagination is not necessary so far (the page behaved well with 300 images in a test)
     var session = this._get_session();
     var prom = session
         .run(&quot;MATCH (a:Image) &quot; +
@@ -602,7 +722,7 @@ Database.get_fragments_by_image_id = function(image_id) {
     var session = this._get_session();
     var prom = session
         .run(&quot;MATCH (a:Image)-[r]-(f:Fragment) &quot; +
-            &quot;WHERE ID(a) = {image_id}&quot; +
+            &quot;WHERE ID(a) = toInteger({image_id})&quot; +
             &quot;WITH a,f &quot; +
             &quot;ORDER BY f.upload_date &quot; +
             &quot;RETURN &quot; +
@@ -610,8 +730,9 @@ Database.get_fragments_by_image_id = function(image_id) {
             &quot;a.file_path as file_path, &quot; +
             &quot;ID(f) as fragment_id, &quot; +
             &quot;f.fragment_name as fragment_name, &quot; +
-            &quot;f.upload_date as upload_date,&quot; +
-            &quot;f.completed as completed;&quot;,
+            &quot;f.upload_date as upload_date, &quot; +
+            &quot;f.completed as completed, &quot; +
+            &quot;f.comment as comment;&quot;,
             {image_id: Number(image_id)}
         )
         .then(function (result) {

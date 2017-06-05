@@ -327,6 +327,7 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
         if (err) {
             return callback(err);
         } else {
+			if (!result) {return callback(&#x27;empty result&#x27;);}
             var temp;
             for (var l = 0; l &lt; result.mxGraphModel.root[0].mxCell.length; l++) {
                 var node = result.mxGraphModel.root[0].mxCell[l];
@@ -577,6 +578,12 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
                             cell.$[key] = value;
                         }
                     });
+                    // some times the text is in the property label and other times in value
+                    // =&gt; we want it everytime in value
+                    if (cell.$.hasOwnProperty(&#x27;label&#x27;)) {
+                        cell.$[&#x27;value&#x27;] = cell.$[&#x27;label&#x27;];
+                        delete cell.$[&#x27;label&#x27;];
+                    }
                     delete cell.$.style;
                 }
 
