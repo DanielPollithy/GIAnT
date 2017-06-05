@@ -1,0 +1,13 @@
+extends layout.pug
+
+block title
+  title= 'Comment'
+  - var selected = 'comment'
+
+    block body
+    form(method='post', action='comment')
+        input(type='text', name='fragment_id', readonly='True', value=fragment_name, class="form-control")
+        br
+        textarea(name='comment', class="form-control")= comment
+        br
+        input(type='submit', value='save', class="form-control")

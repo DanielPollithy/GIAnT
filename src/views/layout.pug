@@ -1,0 +1,20 @@
+html
+  head
+    block title
+      title='TransliterationApplication'
+      - var selected = "images"
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    block css
+        link(rel="stylesheet", href="/editor/www/extern/bootstrap.min.css")
+        link(rel="stylesheet", href="/editor/www/styles/gui.css")
+    block script
+        script(type='text/javascript', src='/editor/www/extern/jquery.min.js')
+        script(type='text/javascript', src='/editor/www/extern/bootstrap.min.js')
+  block body
+      body
+        block menu
+            include menu
+        div#main
+            block content
+                p= 'missing content'
