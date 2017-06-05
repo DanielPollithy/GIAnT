@@ -1,17 +1,17 @@
-html
-  head
-    title= 'Hauptübersicht'
-  body
-    a(href='/db')= 'Datenbankeinstellungen'
-    br
-    a(href='/heatmap')= 'Heatmap Tool'
+extends layout.pug
+
+block title
+  title= 'Fragment'
+  - var selected = 'images'
+
+block content
     if message.length > 0
         p= ''
-        p(style={background:'darkred', color:'white', padding:'10px'})= message
+        p(class="alert alert-dismissible alert-danger")= message
         p= ''
     h1= 'Hauptübersicht'
     p= 'Hier sind alle Bilder aufgelistet'
-    table
+    table(class="table")
       tr
         th= 'Id'
         th= 'Pfad'
@@ -20,8 +20,9 @@ html
         th= 'Löschen'
       each row in rows
         tr
-          each cell in row
-            td= cell
+          td= row[0]
+          td= row[1]
+          td= new Date(Number(row[2])).toLocaleString()
           td
             - ident_ = row[0]
             a(href='/image/' + ident_ + '/fragments')= 'Fragmente'

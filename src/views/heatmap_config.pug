@@ -1,20 +1,26 @@
-a(href='/')= '< Back'
-form(method='post', action='/heatmap-generate')
-    p= message
-    label(for='query') Query (Only do READS here!):
-    textarea#query(name='query', rows="3")= 'MATCH (s:Token) RETURN s;'
-    br
-    label(for='normalization') Normalization:
-    select#normalization(name='normalization')
-        option(value='1', selected= true) Full Image Normalization
-        option(value='2', selected= false) Fragment Bounding Box Normalization
-    br
-    label(for='width') Width (1-300):
-    input#width(type='number', name='width', value='160')
-    label(for='height') Height (1-300):
-    input#height(type='number', name='height', value='100')
-    br
-    label(for='pixel_size') Pixel size (1-10):
-    input#pixel_size(type='number', name='pixel_size', value='5')
-    br
-    input(type='submit', value='generate')
+extends layout.pug
+
+block title
+  title= 'Heatmap'
+  - var selected = 'heatmap'
+
+block content
+    form(method='post', action='/heatmap-generate')
+        p= message
+        label(for='query') Query (Only do READS here!):
+        textarea#query(name='query', rows="3", class="form-control")= 'MATCH (s:Token) RETURN s;'
+        br
+        label(for='normalization') Normalization:
+        select#normalization(name='normalization', class="form-control")
+            option(value='1', selected= true) Full Image Normalization
+            option(value='2', selected= false) Fragment Bounding Box Normalization
+        br
+        label(for='width', class="form-control") Width (1-300):
+        input#width(type='number', name='width', value='160')
+        label(for='height', class="form-control") Height (1-300):
+        input#height(type='number', name='height', value='100')
+        br
+        label(for='pixel_size', class="form-control") Pixel size (1-10):
+        input#pixel_size(type='number', name='pixel_size', value='5')
+        br
+        input(type='submit', value='generate', class="form-control")

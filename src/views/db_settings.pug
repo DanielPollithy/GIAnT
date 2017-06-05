@@ -1,8 +1,10 @@
-html
-  head
-    title= 'Database settings'
-  body
-    a(href='/')= 'back'
+extends layout.pug
+
+block title
+  title= 'Database'
+  - var selected = 'database'
+
+block content
     h1= 'Database settings'
     p= 'The application works only with a connection to a Neo4j-database. It can be local or remote.'
     p= message
