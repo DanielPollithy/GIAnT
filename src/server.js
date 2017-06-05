@@ -255,6 +255,63 @@ app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/to-db', function (re
     }
 });
 
+app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/comment', function (req, res) {
+    if (req.params.image_id && req.params.fragment_id) {
+        var image_id = Number(req.params.image_id);
+        var fragment_id = Number(req.params.fragment_id);
+        database.get_fragment_by_id(image_id, fragment_id).then(
+            function(row) {
+                var fragment_name = row.get('fragment_name');
+                var comment = row.get('comment');
+                res.render('comment',
+                {
+                    message: '',
+                    comment: comment,
+                    fragment_name: fragment_name,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            },
+            function(err) {
+                return res.redirect('/?e=' + encodeURIComponent('Error fetching fragment'));
+            }
+        );
+
+    } else {
+        return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
+    }
+});
+
+app.post('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/comment', function (req, res) {
+    if (req.body.comment && req.params.image_id && req.params.fragment_id) {
+        var image_id = Number(req.params.image_id);
+        var fragment_id = Number(req.params.fragment_id);
+        var comment = req.body.comment;
+        database.add_comment_to_fragment(fragment_id, comment).then(
+            function (result) {
+                res.render('comment',
+                {
+                    message: '',
+                    comment: comment,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            }, function (err) {
+                log.error(err);
+                res.render('comment',
+                {
+                    message: err,
+                    comment: comment,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            });
+    } else {
+        log.warn('Missing params for /comment');
+        return res.redirect('/?e=' + encodeURIComponent('Missing POST parameter comment or ids'));
+    }
+});
+
 app.post('/image/:id(\\d+)/create-fragment', function (req, res) {
     if (req.body.name && req.params.id) {
         var name = req.body.name;
@@ -284,6 +341,7 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
                         r.get('file_path'),
                         r.get('fragment_id'),
                         r.get('fragment_name'),
+                        r.get('comment') || '',
                         r.get('upload_date'),
                         r.get('completed')
                     ]

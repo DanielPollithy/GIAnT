@@ -374,13 +374,13 @@ Database.remove_image_by_id = function(id_) {
 Database.add_fragment = function(image_id, fragment_name) {
     var session = this._get_session();
     var d = new Date();
-    var upload_date = Math.round(d.getTime() / 1000);
+    var upload_date = Math.round(d.getTime());
     return session.run("MATCH (i:Image) " +
         "WHERE ID(i) = toInteger({image_id}) " +
         "WITH i " +
-        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false})-[:image]->(i)" +
+        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]->(i)" +
         "RETURN ID(f) as ident;",
-        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id)})
+        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: ''})
         .then(function(result){
             session.close();
             var records = [];
@@ -389,6 +389,31 @@ Database.add_fragment = function(image_id, fragment_name) {
             }
             return records[0];
         }, function(err){return err;})
+};
+
+Database.add_comment_to_fragment = function(fragment_id, comment) {
+    var session = this._get_session();
+    return session.run(
+        "MATCH (f:Fragment) " +
+        "WHERE ID(f) = toInteger({fragment_id}) " +
+        "SET f += {comment: {comment}} " +
+        "RETURN ID(f) as ident;",
+        {
+            fragment_id: fragment_id,
+            comment: comment
+        }
+    ).then(function(result){
+        session.close();
+        var records = [];
+        for (var i = 0; i < result.records.length; i++) {
+            records.push(result.records[i]);
+        }
+        return records[0];
+    }, function(err){
+        session.close();
+        return err;
+    });
+
 };
 
 /**
@@ -443,7 +468,7 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
 Database.get_fragment = function(image_file_path, fragment_name) {
     var session = this._get_session();
     var prom = session.run("MATCH (a:Fragment {fragment_name: {fragment_name}})-[r:image]->(i:Image {file_path:{file_path}}) " +
-        "RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed;",
+        "RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed, a.comment as comment;",
         {fragment_name: fragment_name, file_path: image_file_path})
         .then(function (result) {
             session.close();
@@ -469,7 +494,7 @@ Database.get_fragment_by_id = function(image_id, fragment_id) {
     var session = this._get_session();
     var prom = session.run("MATCH (a:Fragment)-[r:image]->(i:Image) " +
         "WHERE ID(a) = toInteger({fragment_id}) AND ID(i) = toInteger({image_id}) " +
-        "RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed;",
+        "RETURN ID(a) as ident, ID(i) as image_id, a.fragment_name AS fragment_name, a.upload_date AS upload_date, a.completed AS completed, a.comment AS comment;",
         {image_id: Number(image_id), fragment_id: Number(fragment_id)})
         .then(function (result) {
             session.close();
@@ -620,8 +645,9 @@ Database.get_fragments_by_image_id = function(image_id) {
             "a.file_path as file_path, " +
             "ID(f) as fragment_id, " +
             "f.fragment_name as fragment_name, " +
-            "f.upload_date as upload_date," +
-            "f.completed as completed;",
+            "f.upload_date as upload_date, " +
+            "f.completed as completed, " +
+            "f.comment as comment;",
             {image_id: Number(image_id)}
         )
         .then(function (result) {
