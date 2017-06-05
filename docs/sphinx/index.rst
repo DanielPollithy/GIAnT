@@ -21,6 +21,9 @@ Contents
    
    sources/Deployment
    sources/Configuration
+   sources/Heatmap
+   sources/Downloads
+   sources/CHANGELOG
 
 
 Articles
