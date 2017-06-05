@@ -6,7 +6,8 @@ var database = require('./database');
 var path = require('path');
 var codec = require('./codec');
 var utils = require('./utils');
-var sizeOf = require('image-size')
+var Settings = require('./settings');
+var sizeOf = require('image-size');
 
 var log = require('electron-log');
 
@@ -395,6 +396,37 @@ app.post('/heatmap-generate', function (req, res) {
     } else {
         log.warn('Missing params for /heatmap-generate');
         return res.redirect('/?e=' + encodeURIComponent('Missing POST parameter'));
+    }
+});
+
+app.get('/settings', function (req, res) {
+    var sets = Settings.get_settings_for_frontend();
+    console.dir(sets);
+    var settings = {
+        "fontSize": sets.styles.defaultVertex.fontSize,
+        "curved": sets.defaultEdgeStyle.curved
+    };
+    res.render('settings',
+    {
+        settings: settings,
+        message: ''
+    });
+});
+
+app.post('/settings', function (req, res) {
+    if (req.body.fontSize) {
+        var curved = req.body.curved || "0";
+        var fontSize = req.body.fontSize;
+
+        var settings = {
+            'fontSize': fontSize,
+            'curved': curved
+        };
+        Settings.set_settings_from_frontend(settings);
+        return res.redirect('/settings')
+    } else {
+        log.warn('Missing params for /settings');
+        return res.redirect('/?e=' + encodeURIComponent('Missing POST parameter for settings'));
     }
 });
 

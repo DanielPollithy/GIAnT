@@ -1,8 +1,63 @@
-/**
- * Created by daniel on 19.04.17.
- */
+function apply_custom_settings(editor_ui) {
+    get_cross_resource('/media/settings/settings.json').then(
+        function(text) {
+            console.log(editor_ui.editor.graph.stylesheet)
+            var json = JSON.parse(text);
+            var styles = {'styles': json.styles || {}};
+            var defaultEdgeStyle = json.defaultEdgeStyle;
+            console.log(defaultEdgeStyle);
+            editor_ui.editor.graph.stylesheet = realMerge(editor_ui.editor.graph.stylesheet, styles);
+            editor_ui.editor.graph.defaultEdgeStyle = realMerge(editor_ui.editor.graph.defaultEdgeStyle,
+                defaultEdgeStyle);
+            console.log(editor_ui.editor.graph.defaultEdgeStyle)
+        },
+        function(err){
+            console.log(err);
+    });
+    //
+}
 
+function realMerge(to, from) {
 
+    for (n in from) {
+
+        if (typeof to[n] != 'object') {
+            to[n] = from[n];
+        } else if (typeof from[n] == 'object') {
+            to[n] = realMerge(to[n], from[n]);
+        }
+    }
+    return to;
+};
+
+function get_cross_resource(src) {
+    var p = new Promise(function(resolve, reject){
+        if (require_exists) {
+            var {app} = require('electron').remote;
+            var extended_path = path.join(app.getAppPath(), src);
+            fs.readFile(extended_path, function(err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        } else {
+            mxUtils.get(src, function(xhr) {
+                // Adds bundle text to resources
+                try {
+                    var text = xhr.getText();
+                } catch (e) {
+                    reject(e);
+                }
+                resolve(text);
+            }, function(err) {
+                reject(err);
+            });
+        }
+    });
+    return p;
+}
 
 function set_background_image_on_init(editor_ui) {
     var newValue = urlParams['image'];
@@ -40,10 +95,11 @@ function set_background_image_on_init(editor_ui) {
             object.height = image.height;
             editor_ui.setPageFormat(object);
             editor_ui.actions.get("fitPageWidth").funct();
+            apply_custom_settings(editor_ui);
         };
         img.onerror = function () {
-            // TODO: remove this -> electron render thread will fail
-            mxUtils.alert(mxResources.get('fileNotFound'));
+            // removed this -> electron render thread will fail
+            // mxUtils.alert(mxResources.get('fileNotFound'));
         };
 
         img.src = newValue;

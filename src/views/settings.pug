@@ -1,0 +1,21 @@
+extends layout.pug
+
+block title
+  title= 'Settings'
+  - var selected = 'settings'
+
+block content
+    p= message
+    h1= 'Settings'
+    p= 'These are general settings'
+    form(method='post', action='/settings')
+        div(class="form-group")
+            label(for='1')= 'Default font size (pt)'
+            input(id='1', class="form-control", type='number', name='fontSize', value=settings.fontSize)
+        div(class="form-group")
+            label(for='2')= 'Should the edges be curved'
+            if settings.curved === "1"
+                input(id='2', class="form-control", type='checkbox', name='curved', value="1", checked)
+            else
+                input(id='2', class="form-control", type='checkbox', name='curved', value="1")
+        input(type='submit', value='save')
