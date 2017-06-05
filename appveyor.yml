@@ -9,7 +9,7 @@ init:
 install:
   - ps: Install-Product node 6 x64
   - git reset --hard HEAD
-  - nvm install 6
+  - npm install npm -g
   - npm install electron-builder@next # force install next version to test electron-builder
   - npm install
   - npm prune
