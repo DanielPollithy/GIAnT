@@ -82,9 +82,9 @@ function check_all_images_have_dimension(records) {
 function normalization_on_whole_image(token, normalization, target_width, target_height) {
     var token_id = Number(token._fields[0].identity);
     return database.get_image_of_token(token_id).then(function(img){
-        // TODO: Check if image has width and height
         var image_width = img._fields[0].properties.width;
         var image_height = img._fields[0].properties.height;
+        // Check if image has width and height
         if (!image_height || !image_width) {
             return null;
         }
@@ -173,12 +173,102 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
     });
 }
 
+function normalization_on_bounding_box_centered(token, normalization, target_width, target_height) {
+    var token_id = Number(token._fields[0].identity);
+    return database.get_image_of_token(token_id).then(function(img){
+        var image_width = img._fields[0].properties.width;
+        var image_height = img._fields[0].properties.height;
+        // Check if image has width and height
+        if (!image_height || !image_width) {
+            return null;
+        }
+        var width_ratio = image_width / target_width;
+        var height_ratio = image_height / target_height;
+        var x = Number(token._fields[0].properties.x);
+        var y = Number(token._fields[0].properties.y);
+        var width = Number(token._fields[0].properties.width);
+        var height = Number(token._fields[0].properties.height);
+        console.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
+        var normalized = {
+            'x': Math.round(x / width_ratio),
+            'y': Math.round(y / height_ratio),
+            'width': Math.round(width / width_ratio),
+            'height': Math.round(height / height_ratio)
+        };
+
+        return get_bounding_box_of_fragment(token).then(function(bb){
+            if (!bb){
+                return null;
+            }
+            var bounding_box = {
+                'x': Number(bb.get('x')),
+                'y': Number(bb.get('y')),
+                'x2': Number(bb.get('width')),
+                'y2': Number(bb.get('height'))
+            };
+
+            // this happens if the bounding box could not be calculated
+            if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
+                return null;
+            }
+
+            var normalized_bb = {
+                'x': bounding_box.x,
+                'y': bounding_box.y,
+                'width': bounding_box.x2 - bounding_box.x,
+                'height': bounding_box.y2 - bounding_box.y,
+            };
+
+            var bounding_box_center = {
+                'x': normalized_bb.x + normalized_bb.width / 2,
+                'y': normalized_bb.y + normalized_bb.height / 2,
+            };
+
+            var image_center = {
+                'x': image_width/2,
+                'y': image_height/2,
+            };
+
+            var movement_vector = {
+                'x': bounding_box_center.x - image_center.x,
+                'y': bounding_box_center.y - image_center.y
+            };
+
+            var normalized_movement_vector = {
+                'x': Math.round(movement_vector.x / width_ratio),
+                'y': Math.round(movement_vector.y / height_ratio)
+            };
+
+
+            var new_normalized = {
+                'x': normalized.x - normalized_movement_vector.x,
+                'y': normalized.y - normalized_movement_vector.y,
+                'width': normalized.width,
+                'height': normalized.height
+            };
+
+
+            return new_normalized;
+        }, function(err){
+            console.log(err)
+            return 'No bounding box found for the given token';
+        });
+
+        return normalized;
+    }, function(err){
+        console.log(err)
+        return 'No image found for the given token';
+    });
+}
+
 // TODO: implement different normalization techniques
 function normalize_token_spatials(token, normalization, target_width, target_height) {
     if (normalization === 1) {
         return normalization_on_whole_image(token, normalization, target_width, target_height);
     } else if (normalization === 2) {
         return normalization_on_bounding_box(token, normalization, target_width, target_height);
+    } else if (normalization === 3) {
+        return normalization_on_bounding_box_centered(token, normalization, target_width, target_height);
     }
 }
 
@@ -208,6 +298,7 @@ function normalize_heatmap_nodes(records, normalization, width, height) {
                         // calcalute all point spanned by the rects x,y,width,height
                         for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
                             for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
+                                console.log(x_, y_);
                                 heat_map[x_][y_]++;
                             }
                         }
@@ -269,7 +360,7 @@ function format_heat_map_to_d3js(heat_map) {
 // shall return number of nodes, fragments, images and the normalized data array
 MAX_SIZE_HEATMAP = 300;
 MAX_PIXEL_SIZE = 10;
-SUPPORTED_NORMALIZATIONS = 2;
+SUPPORTED_NORMALIZATIONS = 3;
 function process_heatmap_query(query, normalization, width, height, pixel_size) {
     var p = new Promise(function(resolve, reject) {
         if (width < 1 || width > MAX_SIZE_HEATMAP || height < 1 || height > MAX_SIZE_HEATMAP) {

@@ -1,11 +1,11 @@
 {
     "styles": {
         "defaultVertex": {
-            "fontSize": "100"
+            "fontSize": "48"
         }
     },
     "defaultEdgeStyle": {
         "edgeStyle": "orthogonalEdgeStyle",
-        "curved": "0"
+        "curved": "1"
     }
 }

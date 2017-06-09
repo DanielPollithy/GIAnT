@@ -5,13 +5,29 @@
     <title>Grapheditor</title>
 	<script type="text/javascript">
       mxBasePath = '../../node_modules/mxgraph/javascript/src';
+      log = console;
       var require_exists;
+		try {
+			var r = require;
+			require_exists = true;
 			try {
-			    var r = require;
-			    require_exists = true;
-			} catch (err) {
-			    require_exists = false;
+				log = require('electron-log');
+			} catch (e) {
+			    console.log(e)
 			}
+		} catch (err) {
+			require_exists = false;
+		}
+
+
+		// error collection
+		window.onerror = function(message, url, lineNumber) {
+		    log.error(url);
+		    log.error(lineNumber);
+		    log.error(message);
+		  	return true;
+		};
+
 	  if (require_exists) {
 		   var url = require('url');
 		  var fs = require('fs');
@@ -25,6 +41,8 @@
 		// var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 		//var xhr = new XMLHttpRequest();
 	  }
+
+
 
    </script>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -129,7 +147,7 @@
 			if (require_exists) {
 				const {BrowserWindow, app} = require('electron').remote;
 			    var translation_file = path.join(app.getAppPath(), '/editor/www/resources/grapheditor.txt');
-			    var default_style_file = path.join(app.getAppPath(), '/editor/www/styles/default.xml');
+			    var default_style_file = path.join(app.getAppPath(), 'editor', 'www' , 'styles', 'default.xml');
 				fs.readFile(translation_file, function(err, data) {
 					if (err) {
 						console.log(err);
