@@ -10,23 +10,18 @@
 		try {
 			var r = require;
 			require_exists = true;
-			try {
-				log = require('electron-log');
-			} catch (e) {
-			    console.log(e)
-			}
 		} catch (err) {
 			require_exists = false;
 		}
 
 
 		// error collection
-		window.onerror = function(message, url, lineNumber) {
+		/*window.onerror = function(message, url, lineNumber) {
 		    log.error(url);
 		    log.error(lineNumber);
 		    log.error(message);
 		  	return true;
-		};
+		};*/
 
 	  if (require_exists) {
 		   var url = require('url');
@@ -152,7 +147,6 @@
 					if (err) {
 						console.log(err);
 					} else {
-						console.log(data.toString());
 						mxResources.parse(data.toString());
 					}
 				    fs.readFile(default_style_file, function(err, data2) {
@@ -160,9 +154,9 @@
 						if (err) {console.log(err);} 
 						else {
 							// Configures the default graph theme
-							var doc = mxUtils.parseXml(data2);
-							console.dir(doc);							
-							themes[Graph.prototype.defaultThemeName] = doc;
+							var doc = mxUtils.parseXml(data2.toString());
+							console.dir(doc.firstChild);
+							themes[Graph.prototype.defaultThemeName] = doc.firstChild;
 						}
 						// Main
 						editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
