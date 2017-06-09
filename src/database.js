@@ -208,19 +208,31 @@ Database.add_image = function(file_path, exif_data) {
                 height: exif_data.exif.ExifImageHeight
             });
         }
+        console.dir(meta_data);
         // Get the upload_date from the creation date exif tag
         if (exif_data && exif_data.hasOwnProperty('exif') && exif_data['exif'].hasOwnProperty('CreateDate')) {
             // might look like this 2017:05:28 19:46:49
-            var raw_format = exif_data['exif']['CreateDate'];
-            if (raw_format.indexOf(" ") >= 0) {
-                var splits = raw_format.split(" ");
-                var parsed_date = Date.parse(splits[0], 'yyyy:MM:dd');
-                if (parsed_date) {
-                    upload_date = parsed_date;
+            try {
+                var raw_format = exif_data['exif']['CreateDate'];
+                if (raw_format.indexOf(" ") >= 0) {
+                    var splits = raw_format.split(" ");
+                    var parsed_date = Number(Date.parse(splits[0], 'yyyy:MM:dd'));
+                    if (parsed_date) {
+                        upload_date = parsed_date;
+                    }
                 }
+            } catch (e) {
+                console.error(e);
             }
         }
     }
+    Object.keys(meta_data).forEach(function(key) {
+        meta_data[key] = meta_data[key].valueOf();
+        if  (meta_data[key] instanceof Buffer) {
+            meta_data[key] = meta_data[key].toString();
+        }
+    });
+    console.dir(meta_data);
     var p = session.run(cql,
         {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {
@@ -234,6 +246,7 @@ Database.add_image = function(file_path, exif_data) {
             }
             return records[0];
         }, function(err) {
+            console.error(err);
             session.close();
             return err;
         });

@@ -148,6 +148,7 @@ app.post('/', function (req, res) {
                             'ExifImageHeight': dimensions.height
                         }
                     };
+                    console.log(alternative_meta);
                     database.add_image(image_file.name, alternative_meta).then(function () {
                         log.info('Added image: ' + new_file_name);
                         res.status(200).redirect('/');
@@ -157,6 +158,7 @@ app.post('/', function (req, res) {
                     });
                 })
             } else {
+                console.log(exif_data);
                 database.add_image(image_file.name, exif_data).then(function () {
                     log.info('Added image: ' + new_file_name);
                     res.status(200).redirect('/');
