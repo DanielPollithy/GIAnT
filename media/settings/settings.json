@@ -6,6 +6,7 @@
     },
     "defaultEdgeStyle": {
         "edgeStyle": "orthogonalEdgeStyle",
-        "curved": "1"
+        "curved": "1",
+        "strokeWidth": "15"
     }
 }

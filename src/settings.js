@@ -65,6 +65,10 @@ Settings.set_settings_from_frontend = function(new_settings) {
         if (8 < fontSize && fontSize < 200) {
             Settings._store.styles.defaultVertex.fontSize = fontSize;
         }
+        var strokeWidth = new_settings.strokeWidth;
+        if (0 < strokeWidth && strokeWidth < 200) {
+            Settings._store.defaultEdgeStyle.strokeWidth = strokeWidth;
+        }
         var curved = new_settings.curved;
         console.log(curved)
         if (curved === "1") {

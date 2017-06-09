@@ -404,7 +404,8 @@ app.get('/settings', function (req, res) {
     console.dir(sets);
     var settings = {
         "fontSize": sets.styles.defaultVertex.fontSize,
-        "curved": sets.defaultEdgeStyle.curved
+        "curved": sets.defaultEdgeStyle.curved,
+        "strokeWidth": sets.defaultEdgeStyle.strokeWidth
     };
     res.render('settings',
     {
@@ -414,13 +415,15 @@ app.get('/settings', function (req, res) {
 });
 
 app.post('/settings', function (req, res) {
-    if (req.body.fontSize) {
+    if (req.body.fontSize && req.body.curved && req.body.strokeWidth) {
         var curved = req.body.curved || "0";
         var fontSize = req.body.fontSize;
+        var strokeWidth = req.body.strokeWidth;
 
         var settings = {
             'fontSize': fontSize,
-            'curved': curved
+            'curved': curved,
+            'strokeWidth': strokeWidth
         };
         Settings.set_settings_from_frontend(settings);
         return res.redirect('/settings')

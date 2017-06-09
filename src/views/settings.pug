@@ -18,4 +18,7 @@ block content
                 input(id='2', class="form-control", type='checkbox', name='curved', value="1", checked)
             else
                 input(id='2', class="form-control", type='checkbox', name='curved', value="1")
+        div(class="form-group")
+            label(for='3')= 'Default stroke width of relations (1-200)'
+            input(id='3', class="form-control", type='number', name='strokeWidth', value=settings.strokeWidth)
         input(type='submit', value='save')
