@@ -903,7 +903,7 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	var fns = [
 	 	// this.createVertexTemplateEntry('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', null, null, 'rect rectangle box'),
 	 	this.createVertexTemplateEntry('tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;', 120, 60, 'Token', 'Token', null, null, 'token'),
-	 	this.createVertexTemplateEntry('tokenType=erase;rounded=1;whiteSpace=wrap;fillColor=#666666;opacity=50;html=1;', 120, 60, 'Erase', 'Erase', null, null, 'erase'),
+	 	this.createVertexTemplateEntry('tokenType=modification;rounded=1;whiteSpace=wrap;fillColor=#666666;opacity=50;html=1;', 120, 60, 'Modification', 'Modification', null, null, 'modification'),
 	 	this.createVertexTemplateEntry('tokenType=symbol;rounded=1;whiteSpace=wrap;fillColor=#FFD966;opacity=50;html=1;', 120, 60, 'Symbol', 'Symbol', null, null, 'symbol'),
  		/*this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Ellipse', null, null, 'oval ellipse state'),
 	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style

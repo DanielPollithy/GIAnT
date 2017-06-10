@@ -32,7 +32,7 @@
     "strike": {
       "color": "black"
     },
-    "erase": {
+    "modification": {
       "color": "black"
     },
     "block": {
