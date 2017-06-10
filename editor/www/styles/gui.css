@@ -1,3 +1,27 @@
 #main{
     padding: 0 1% 0  1%;
 }
+
+
+#overlay {
+    display: none;
+    background: #ffffff;
+    color: #666666;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+}
+
+.loading-link {
+    background: url('/editor/www/images/loader.gif') no-repeat;
+    background-size: contain;
+    padding-left: 30px;  /* width of the image plus a little extra padding */
+    display: block;  /* may not need this, but I've found I do */
+}

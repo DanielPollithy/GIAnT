@@ -11,8 +11,13 @@ html
     block script
         script(type='text/javascript', src='/editor/www/extern/jquery.min.js')
         script(type='text/javascript', src='/editor/www/extern/bootstrap.min.js')
+        script(type='text/javascript', src='/editor/www/extern/gui.js')
   block body
       body
+        div#overlay
+            img(src='/editor/www/images/loader.gif', alt='Loading')
+            br
+            p= 'Loading...'
         block menu
             include menu
         div#main
