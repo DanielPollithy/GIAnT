@@ -16,8 +16,13 @@ var app = module.exports = express();
 console.log('dirname', __dirname);
 app.use(express.static(path.join(__dirname, '..')));
 
-app.use(bodyParser());
-app.use(fileUpload());
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: '10mb'
+}));
+app.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+}));
 
 // database logged in middleware
 app.use(function (req, res, next) {
