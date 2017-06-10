@@ -1,0 +1,51 @@
+Ctrl+C	Copy
+Ctrl+V	Paste
+Delete	Delete
+Ctrl+Delete	Delete all
+Ctrl+D	Duplicate
+Ctrl+R	Rotate by 90 degrees
+Ctrl+Shift+I	selectVertices
+Ctrl+Shift+E	selectEdges
+Ctrl+A	selectAll
+Ctrl+Shift+A	selectNone
+Ctrl+L	Lock/Unlock
+Ctrl+Shift+F	BringToFront
+Ctrl+Shift+B	BringToBack
+F2	Edit
+Enter	Edit
+Ctrl+Shift+Y	Autosize
+Ctrl+H	Reset View
+Ctrl +	ZoomIn
+Alt+Mousewheel	ZoomIn
+Ctrl -	ZoomOut
+Alt+Mousewheel	ZoomOut
+Ctrl+Shift+H	FitWindow
+Ctrl+J	FitPage
+Ctrl+Shift+G ToggeGrid
+Ctrl+Q	ToggleConnectionArrowsEnabled
+Ctrl+Shift+G	ToggleConnectionPointsEnabled
+F1	About
+
+Ctrl+B	Bold
+Ctrl+I	Italic
+Ctrl+U	Underlined
+Ctrl+,	Subscript
+Ctrl+.	Superscript	
+
+Ctrl+E	EditStyle
+Ctrl+Shift+D	SetAsDefaultStyle
+Ctrl+Shift+R	ClearDefaultStyle	
+
+Alt+Shift+C	ClearWaypoints
+
+Ctrl+Shift+P	ToggleFormatPanel
+Ctrl+Shift+O	ToggleOutlinePanel
+
+
+
+
+
+
+
+
+

@@ -256,7 +256,7 @@ Actions.prototype.init = function()
 			ui.showDialog(dlg.container, 320, 320, true, false);
 			dlg.init();
 		}
-	}, null, null, 'Ctrl+M');
+	}, null, null);
 	this.addAction('editTooltip...', function()
 	{
 		var graph = ui.editor.graph;
@@ -575,7 +575,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = Math.min(pad.y, (graph.container.scrollHeight - graph.container.clientHeight) / 2);
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+Shift+J');
+	}), null, null);
 	this.addAction('fitPageWidth', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -1130,7 +1130,7 @@ Actions.prototype.init = function()
 		}
 		
 		//ui.fireEvent(new mxEventObject('layers'));
-	}), null, null, 'Ctrl+Shift+L');
+	}), null, null);
 	action.setToggleAction(true);
 	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
 	action = this.addAction('formatPanel', mxUtils.bind(this, function()
