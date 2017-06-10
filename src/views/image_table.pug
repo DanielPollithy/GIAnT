@@ -9,6 +9,10 @@ block content
         p= ''
         p(class="alert alert-dismissible alert-danger")= message
         p= ''
+    if info.length > 0
+        p= ''
+        p(class="alert alert-dismissible alert-info")= info
+        p= ''
     h1= 'Hauptübersicht'
     p= 'Hier sind alle Bilder aufgelistet'
     table(class="table")

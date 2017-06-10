@@ -38,7 +38,11 @@ block content
                 - com = row[4].substr(0, 23)
               a(href='/image/' + image_id +'/fragment/' + fragment_id + '/comment', target="_blank")= com
           td= new Date(Number(row[5])).toLocaleString()
-          td= row[6]
+          td
+            if row[6]
+              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'Fertig'
+            else
+              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'In Bearbeitung'
           td
             a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id + '')= 'Editor'
           td

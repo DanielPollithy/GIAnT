@@ -193,7 +193,9 @@ app.get('/autocomplete/token/keys', function (req, res) {
 
 app.get('/', function (req, res) {
     var msg = req.query.e || '';
-    msg = decodeURIComponent(msg)
+    var info = req.query.m || '';
+    msg = decodeURIComponent(msg);
+    info = decodeURIComponent(info);
     if (msg.length > 0) {
         msg = 'Error: ' + msg;
     }
@@ -205,6 +207,7 @@ app.get('/', function (req, res) {
             res.render('image_table',
                 {
                     message: msg,
+                    info: info,
                     rows: row_data
                 });
         }
@@ -228,6 +231,21 @@ app.get('/image/:id(\\d+)/delete', function (req, res) {
 app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete', function (req, res) {
     if (req.params.image_id && req.params.fragment_id) {
         database.remove_fragment(req.params.image_id, req.params.fragment_id, false)
+            .then(function (result) {
+                res.redirect('/image/' + req.params.image_id + '/fragments');
+            }, function (err) {
+                log.error(err);
+                return res.redirect('/?e=' + encodeURIComponent(err))
+            });
+    } else {
+        return res.redirect('/?e=' + encodeURIComponent('Missing parameter'));
+    }
+});
+
+
+app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/toggle-complete', function (req, res) {
+    if (req.params.image_id && req.params.fragment_id) {
+        database.toggle_fragment_completed(req.params.image_id, req.params.fragment_id)
             .then(function (result) {
                 res.redirect('/image/' + req.params.image_id + '/fragments');
             }, function (err) {
@@ -360,7 +378,7 @@ app.get('/image/:id(\\d+)/fragments', function (req, res) {
     );
 });
 
-// TODO: heatmap needs to execute cypher -> only on local installation available -> setting activation!!
+// heatmap needs to execute cypher -> only on local installation available -> setting activation!!
 app.get('/heatmap', function (req, res) {
     res.render('heatmap_config', {message: ''});
 });
@@ -414,6 +432,18 @@ app.get('/settings', function (req, res) {
         settings: settings,
         message: ''
     });
+});
+
+app.get('/batch-add-to-neo4j', function (req, res) {
+    codec.add_all_completed_fragments_to_neo4j().then(
+        function() {
+            res.redirect('/?m=' + encodeURIComponent('Success'));
+        },
+        function(err) {
+            console.error(err);
+            return res.redirect('/?e=' + encodeURIComponent('Error in batch add'));
+        }
+    );
 });
 
 app.post('/settings', function (req, res) {

@@ -454,6 +454,47 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
     })
 };
 
+Codec.add_all_completed_fragments_to_neo4j = function() {
+    var p = new Promise(function(resolve, reject){
+        // TODO: refactor everything with promises
+        var counter = 0;
+        var target = -1;
+        function callback_counter(err) {
+            if (err) {
+                console.error(err);
+            }
+            counter++;
+            console.log(counter, target);
+            if (counter === target) {
+                resolve();
+            }
+        }
+        database.get_all_completed_fragments().then(
+            function(records) {
+                target = records.length;
+                records.forEach(function(record){
+                    var image_id = record.get('image_id');
+                    var fragment_id = record.get('fragment_id');
+                    database.remove_fragment(image_id, fragment_id, true).then(function (success) {
+                        Codec.mxgraph_to_neo4j(image_id, fragment_id, callback_counter);
+                    }, function (err) {
+                        console.error(err);
+                        reject(err);
+                    });
+                });
+                if (records.length === 0) {
+                    resolve();
+                }
+            },
+            function(err) {
+                console.error(err);
+                reject(err);
+            }
+        );
+    });
+    return p;
+};
+
 /**
  * Loads an mxGraph over the flat xml2js-object into the neo4j database
  *

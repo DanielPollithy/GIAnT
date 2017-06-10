@@ -177,13 +177,32 @@ Database.init = function(callback) {
 };
 
 
-
+Database.toggle_fragment_completed = function(image_id, fragment_id) {
+    var session = this._get_session();
+    var prom = session.run("MATCH (a:Fragment)-[r:image]->(i:Image) " +
+        "WHERE ID(a) = toInteger({fragment_id}) AND ID(i) = toInteger({image_id}) " +
+        "SET a.completed = NOT a.completed " +
+        "RETURN a;",
+        {image_id: Number(image_id), fragment_id: Number(fragment_id)})
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            return records[0];
+        }, function(err){
+            console.error(err);
+            session.close();
+            return err;
+        });
+    return prom;
+};
 
 
 /**
  * Adds an image to the database
  * Sets the upload_date to now in seconds (Math.round(d.getTime() / 1000))
- * Sets completed to false
  *
  * @method add_image
  * @param file_path {string} The unique identifier for an image
@@ -194,7 +213,7 @@ Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime());
-    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
+    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}) RETURN ID(a) as ident;";
     var meta_data = null;
     if (exif_data) {
         cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) " +
@@ -670,6 +689,33 @@ Database.get_fragments_by_image_id = function(image_id) {
                 records.push(result.records[i]);
             }
             return records;
+        });
+    return prom;
+};
+
+/**
+ * Get all completed fragments
+ *
+ * @returns {*|Promise}
+ */
+Database.get_all_completed_fragments = function() {
+    var session = this._get_session();
+    var prom = session
+        .run("MATCH (a:Image)-[r]-(f:Fragment {completed:true}) " +
+            "WITH a,f " +
+            "RETURN " +
+            "ID(a) as image_id, " +
+            "ID(f) as fragment_id; ")
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(result.records[i]);
+            }
+            return records;
+        }, function(err){
+            console.error(err);
+            return err;
         });
     return prom;
 };
