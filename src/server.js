@@ -134,6 +134,13 @@ app.post('/', function (req, res) {
 
     // write file to uploaded_images
     image_file.mv(new_file_name, function (err) {
+        if (!err) {
+            var splitted = new_file_name.split('.');
+            var last_part = splitted[splitted.length - 1];
+            if (!['JPEG', 'jpeg', 'JPG', 'jpg'].includes(last_part)) {
+                err = 'Image has to be JPEG';
+            }
+        }
         if (err) {
             log.error('There was an error saving the image: ' + new_file_name);
             return res.redirect('/?e=' + encodeURIComponent('Missing image error saving the image'))
