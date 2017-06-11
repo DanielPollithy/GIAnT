@@ -78,9 +78,10 @@ describe('database', function () {
         })
     });
 
-    describe("#Database wrong port", function(){
-        it('Logout and login with wrong creds and then with correct ones', function(done) {
+    describe("#Database ", function(){
+        /*it('wrong port: Logout and login with wrong creds and then with correct ones', function(done) {
             database.logout();
+            database._get_driver().should.equal(false);
             database.login('bolt://localhost:7681', 'neo4', '1234').then(
                 function() {
                     database.login('bolt://localhost:7687', 'neo4j', '1234').then(
@@ -94,11 +95,9 @@ describe('database', function () {
                     );
                 }
             );
-        });
-    });
+        });*/
 
-    describe("#Database wrong protocol", function(){
-        it('Logout and login with wrong creds and then with correct ones', function(done) {
+        it('wrong protocol: Logout and login with wrong creds and then with correct ones', function(done) {
             database.logout();
             database._get_driver().should.equal(false);
             database.login('lt://localhost:7681', 'neo4j', '1234').then(
@@ -184,14 +183,14 @@ describe('database', function () {
             });
         });
         it("add a node to the fragment", function (done) {
-            database.add_node(file_path, fragment_name, {id: "1"}).then(function (number_of_created_nodes) {
+            database.add_node(file_path, fragment_name, 'Token', {id: "1"}).then(function (result) {
                 done();
             }, function (err) {
                 done(err);
             });
         });
         it("add a second node to the fragment", function (done) {
-            database.add_node(file_path, fragment_name, {id: "2"}).then(function (number_of_created_nodes) {
+            database.add_node(file_path, fragment_name, 'Token', {id: "2"}).then(function (result) {
                 done();
             }, function (err) {
                 done(err);
@@ -224,6 +223,35 @@ describe('database', function () {
                                 }
                             }
                         }, "../test/xml/9.xml");
+                    }, function (err) {
+                        return done(err);
+                    });
+                }, function (err) {
+                    return done(err);
+                });
+            }, function (err) {
+                return done(err);
+            })
+        });
+
+        it('Test the mxgraph_to_neo4j on 11.xml with groups', function (done) {
+            var frag_name_2 = '123456789';
+            database.get_image(file_path).then(function (record) {
+                database.add_fragment(record.get('ident'), frag_name_2).then(function () {
+                    database.get_fragment(file_path, frag_name_2).then(function (record) {
+                        var image_id = record.get('image_id');
+                        var fragment_id = record.get('ident');
+                        var called = false;
+                        Codec.mxgraph_to_neo4j(image_id, fragment_id, function (err, graphml) {
+                            if (!called) {
+                                called = true;
+                                if (err) {
+                                    return done(err)
+                                } else {
+                                    return done();
+                                }
+                            }
+                        }, "../test/xml/11.xml");
                     }, function (err) {
                         return done(err);
                     });

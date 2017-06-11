@@ -192,12 +192,15 @@ function add_autocomplete_to_input(input, url, field) {
     });
 }
 
-function get_token_type_of_cell(graph, cell) {
+function get_type_of_cell(graph, cell) {
     var token_type;
     var cell_style = graph.getCellStyle(cell);
     if (cell_style.hasOwnProperty('tokenType')) {
         token_type = cell_style.tokenType;
-    } else {
+    } else if (cell_style.hasOwnProperty('groupType')) {
+        token_type = cell_style.groupType;
+    }
+    else {
         token_type = '';
     }
 
@@ -216,7 +219,12 @@ function get_token_type_of_cell(graph, cell) {
 function generate_edges_between_overlapping_tokens(selected_cell, graph) {
     var cell = selected_cell;
 
-    var token_type = get_token_type_of_cell(graph, cell);
+    var token_type = get_type_of_cell(graph, cell);
+
+    var overwriting_relation = 'is_part_of';
+    if (token_type === 'modification') {
+        overwriting_relation = 'grak';
+    }
 
     if (token_type !== undefined && token_type !== 'connector') {
         // Type 2) Selected Token is bigger than something under it
@@ -224,9 +232,9 @@ function generate_edges_between_overlapping_tokens(selected_cell, graph) {
         var found = graph.getAllCells(state.x, state.y, state.width, state.height);
         found.pop(found.indexOf(cell));
         found.forEach(function(c) {
-            var tt = get_token_type_of_cell(graph, c);
+            var tt = get_type_of_cell(graph, c);
             if (tt !== undefined && tt !== 'connector') {
-                add_edge_between_cells(graph, cell.getParent(), c, cell, 'grak', token_type);
+                add_edge_between_cells(graph, cell.getParent(), c, cell, overwriting_relation, token_type);
             }
         });
     }

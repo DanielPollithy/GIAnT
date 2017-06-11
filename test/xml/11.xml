@@ -1,0 +1,62 @@
+<mxGraphModel dx="646" dy="494" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="640" pageHeight="480" background="#ffffff">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" style="locked=1;" parent="0"/>
+    <mxCell id="2" value="1" parent="0"/>
+    <mxCell id="5" value="" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=15;" parent="2" source="3" target="4" edge="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="170" y="100"/>
+          <mxPoint x="390" y="100"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="3" value="&lt;font style=&quot;font-size: 24px&quot;&gt;Brighton&lt;/font&gt;" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" parent="2" vertex="1">
+      <mxGeometry x="100" y="40" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="&lt;font style=&quot;font-size: 24px&quot;&gt;Brighton&lt;/font&gt;" style="tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;" parent="2" vertex="1">
+      <mxGeometry x="320" y="40" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="6" value="Modification" style="tokenType=modification;rounded=1;whiteSpace=wrap;fillColor=#666666;opacity=50;html=1;" vertex="1" parent="2">
+      <mxGeometry x="70" y="150" width="440" height="110" as="geometry"/>
+    </mxCell>
+    <object label="" relation_type="grak" id="7">
+      <mxCell style="strokeColor=pink;" edge="1" parent="2" source="3" target="6">
+        <mxGeometry relative="1" as="geometry"/>
+      </mxCell>
+    </object>
+    <object label="" relation_type="grak" id="8">
+      <mxCell style="strokeColor=pink;" edge="1" parent="2" source="4" target="6">
+        <mxGeometry relative="1" as="geometry"/>
+      </mxCell>
+    </object>
+    <mxCell id="9" value="&lt;font style=&quot;font-size: 18px&quot;&gt;Frame&lt;/font&gt;" style="groupType=frame;rounded=1;whiteSpace=wrap;fillColor=#ffff00;opacity=50;html=1;" vertex="1" parent="2">
+      <mxGeometry x="40" y="10" width="40" height="20" as="geometry"/>
+    </mxCell>
+    <object label="" relation_type="is_part_of" id="10">
+      <mxCell style="startArrow=none;" edge="1" parent="2" target="9">
+        <mxGeometry relative="1" as="geometry">
+          <mxPoint x="90" y="25.33333333333337" as="sourcePoint"/>
+        </mxGeometry>
+      </mxCell>
+    </object>
+    <object label="" relation_type="is_part_of" id="11">
+      <mxCell edge="1" parent="2" source="4" target="9">
+        <mxGeometry relative="1" as="geometry"/>
+      </mxCell>
+    </object>
+    <mxCell id="17" value="Comment" style="groupType=comment;rounded=1;whiteSpace=wrap;fillColor=#0000ff;opacity=50;html=1;" vertex="1" parent="2">
+      <mxGeometry x="85" y="30" width="410" height="60" as="geometry"/>
+    </mxCell>
+    <object label="" relation_type="is_part_of" id="18">
+      <mxCell edge="1" parent="2" source="3" target="17">
+        <mxGeometry relative="1" as="geometry"/>
+      </mxCell>
+    </object>
+    <object label="" relation_type="is_part_of" id="19">
+      <mxCell edge="1" parent="2" source="4" target="17">
+        <mxGeometry relative="1" as="geometry"/>
+      </mxCell>
+    </object>
+  </root>
+</mxGraphModel>

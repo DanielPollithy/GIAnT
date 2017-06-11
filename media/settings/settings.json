@@ -1,12 +1,12 @@
 {
     "styles": {
         "defaultVertex": {
-            "fontSize": "48"
+            "fontSize": "35"
         }
     },
     "defaultEdgeStyle": {
         "edgeStyle": "orthogonalEdgeStyle",
         "curved": "1",
-        "strokeWidth": "15"
+        "strokeWidth": "5"
     }
 }

@@ -173,7 +173,6 @@ Codec.mxgraph_to_object = function(filename, callback) {
                                 parent.children.push(node);
                             }
                         }
-
                         callback(err, result);
                     }
 
@@ -258,7 +257,7 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
 };
 
 /**
- * Converts an mxGraph to a flot object structured as follows
+ * Converts an mxGraph to a flat object structured as follows
  *
  * graph.mxGraphModel.data.token1
  * graph.mxGraphModel.data.token2
@@ -464,7 +463,6 @@ Codec.add_all_completed_fragments_to_neo4j = function() {
                 console.error(err);
             }
             counter++;
-            console.log(counter, target);
             if (counter === target) {
                 resolve();
             }
@@ -535,7 +533,7 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
                         }
                     });
                     // some times the text is in the property label and other times in value
-                    // => we want it everytime in value
+                    // => we want it every time in value
                     if (cell.$.hasOwnProperty('label')) {
                         cell.$['value'] = cell.$['label'];
                         delete cell.$['label'];
@@ -555,8 +553,18 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
             });
             // create all the nodes
             var all_node_promises = [];
+            // a graph can contain a frame
+            // These frames need to be connected to the 'meta frames'
+            var is_frame = false;
             nodes.forEach(function (cell) {
-                all_node_promises.push(database.add_node(image_id, fragment_id, cell.$))
+                var label = 'Group';
+                if (cell.$.hasOwnProperty('tokenType')) {
+                    label = 'Token';
+                    if (cell.$.tokenType === 'frame') {
+                        is_frame = true;
+                    }
+                }
+                all_node_promises.push(database.add_node(image_id, fragment_id, label, cell.$))
             });
             Promise.all(all_node_promises).then(function (values) {
                 // create all the edges
@@ -566,12 +574,12 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
                         all_edge_promises.push(
                             database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
                         );
-                        Promise.all(all_edge_promises).then(function(values){
+                    });
+                    Promise.all(all_edge_promises).then(function(values){
                             return callback(null, values);
                         }, function(err){
                             return callback(err, null);
                         });
-                    });
                 } else {
                     return callback(null, values);
                 }

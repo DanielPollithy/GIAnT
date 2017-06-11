@@ -905,6 +905,9 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	 	this.createVertexTemplateEntry('tokenType=token;rounded=1;whiteSpace=wrap;fillColor=#FFFFFF;opacity=50;html=1;', 120, 60, 'Token', 'Token', null, null, 'token'),
 	 	this.createVertexTemplateEntry('tokenType=modification;rounded=1;whiteSpace=wrap;fillColor=#666666;opacity=50;html=1;', 120, 60, 'Modification', 'Modification', null, null, 'modification'),
 	 	this.createVertexTemplateEntry('tokenType=symbol;rounded=1;whiteSpace=wrap;fillColor=#FFD966;opacity=50;html=1;', 120, 60, 'Symbol', 'Symbol', null, null, 'symbol'),
+	 	this.createVertexTemplateEntry('groupType=comment;rounded=1;whiteSpace=wrap;fillColor=#0000ff;opacity=50;html=1;', 120, 60, 'Comment', 'Comment', null, null, 'comment'),
+	 	this.createVertexTemplateEntry('groupType=frame;rounded=1;whiteSpace=wrap;fillColor=#ffff00;opacity=50;html=1;', 120, 60, 'Frame', 'Frame', null, null, 'frame'),
+	 	this.createVertexTemplateEntry('groupType=blanco;rounded=1;whiteSpace=wrap;fillColor=#ffb3d1;opacity=50;html=1;', 120, 60, 'Blanco', 'Blanco', null, null, 'blanco'),
  		/*this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Ellipse', null, null, 'oval ellipse state'),
 	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
  		this.createVertexTemplateEntry('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;',

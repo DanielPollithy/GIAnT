@@ -72,15 +72,24 @@ Database.login = function (url, user, password){
 
                 Database._driver.onError = function (error) {
                     Database._driver = null;
-                        Database.logged_in = false;
-                        reject(error);
+                    Database.logged_in = false;
+                    Database._driver = null;
+                    return reject(error);
                 };
 
                 var session = Database._get_session();
                 return session.run('return 1').then(
                     function() {
                         Database.logged_in = true;
-                        resolve();
+                        return Database._hygiene().then(function(res) {
+                            return resolve();
+                        },
+                        function(err){
+                            Database._driver = null;
+                            Database.logged_in = false;
+                            console.error(err);
+                            return reject(err);
+                        });
                     },
                     function(err) {
                         Database._driver = null;
@@ -97,6 +106,8 @@ Database.login = function (url, user, password){
     });
     return p;
 };
+
+
 
 /**
  * Logout from the current database neo4j session.
@@ -134,7 +145,14 @@ Database._get_driver = function (){
  * @return {session}
  */
 Database._get_session = function () {
-    return this._get_driver().session();
+    var driver = Database._get_driver();
+    if (!driver) {
+        console.error("Could not fetch driver");
+        return null;
+    } else {
+        return driver.session();
+    }
+
 };
 
 /**
@@ -150,6 +168,23 @@ Database._add_constraints = function() {
 };
 
 /**
+ * Clean up the database on login
+ *
+ * 1) remove nodes without edges (-> MetaGroups that are not referenced)
+ *
+* @method _hygiene
+* @return {Promise}
+*/
+Database._hygiene = function (){
+    console.log("HERE")
+    var session = Database._get_session();
+    console.log(session)
+    console.log("not")
+    // this query removes all free swimming nodes (without any edges)
+    return session.run("match (n) where not (n)--() delete (n);");
+};
+
+/**
  * Remove the constraints
  *
  * @method _remove_constraints
@@ -157,7 +192,7 @@ Database._add_constraints = function() {
  * @return {Promise}
  */
 Database._remove_constraints = function() {
-    var session = this._get_session();
+    var session = Database._get_session();
     return session.run("DROP CONSTRAINT ON (i:Image) ASSERT i.file_path IS UNIQUE; ");
 };
 
@@ -178,7 +213,7 @@ Database.init = function(callback) {
 
 
 Database.toggle_fragment_completed = function(image_id, fragment_id) {
-    var session = this._get_session();
+    var session = Database._get_session();
     var prom = session.run("MATCH (a:Fragment)-[r:image]->(i:Image) " +
         "WHERE ID(a) = toInteger({fragment_id}) AND ID(i) = toInteger({image_id}) " +
         "SET a.completed = NOT a.completed " +
@@ -213,7 +248,7 @@ Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime());
-    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}) RETURN ID(a) as ident;";
+    var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
     var meta_data = null;
     if (exif_data) {
         cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) " +
@@ -227,7 +262,6 @@ Database.add_image = function(file_path, exif_data) {
                 height: exif_data.exif.ExifImageHeight
             });
         }
-        console.dir(meta_data);
         // Get the upload_date from the creation date exif tag
         if (exif_data && exif_data.hasOwnProperty('exif') && exif_data['exif'].hasOwnProperty('CreateDate')) {
             // might look like this 2017:05:28 19:46:49
@@ -244,14 +278,14 @@ Database.add_image = function(file_path, exif_data) {
                 console.error(e);
             }
         }
+        Object.keys(meta_data).forEach(function(key) {
+            meta_data[key] = meta_data[key].valueOf();
+            if  (meta_data[key] instanceof Buffer) {
+                meta_data[key] = meta_data[key].toString();
+            }
+        });
     }
-    Object.keys(meta_data).forEach(function(key) {
-        meta_data[key] = meta_data[key].valueOf();
-        if  (meta_data[key] instanceof Buffer) {
-            meta_data[key] = meta_data[key].toString();
-        }
-    });
-    console.dir(meta_data);
+
     var p = session.run(cql,
         {file_path: file_path, upload_date: upload_date, meta_data: meta_data})
         .then(function (result) {
@@ -460,7 +494,7 @@ Database.add_comment_to_fragment = function(fragment_id, comment) {
 Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment) {
     if (dont_delete_fragment === undefined) {dont_delete_fragment=true;}
     var session = this._get_session();
-    return session.run("MATCH (i:Image)<-[:image]-(f:Fragment)-[:fragment]-(t:Token) " +
+    return session.run("MATCH (i:Image)<-[:image]-(f:Fragment)-[:fragment]-(t) " +
         "WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) " +
         "DETACH DELETE t;", {image_id: Number(image_id), fragment_id:Number(fragment_id)})
         .then(function(success) {
@@ -550,28 +584,70 @@ Database.get_fragment_by_id = function(image_id, fragment_id) {
  * @method add_node
  * @param image_id
  * @param fragment_id
+ * @param node_label
  * @param node_attributes
  * @return {Promise}
  */
-Database.add_node = function(image_id, fragment_id, node_attributes) {
+Database.add_node = function(image_id, fragment_id, node_label, node_attributes) {
     // check if all the necessary attributes are there
-
+    if (!['Token', 'Group'].includes(node_label)) {
+        throw Error('Invalid node label (add_node)');
+    }
     var enumerator = node_attributes.id;
     var session = this._get_session();
-    var prom = session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
+    var query = "MATCH (i:Image)<-[:image]-(f:Fragment) " +
         "WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) " +
         "WITH f " +
-        "CREATE (n:Token {enumerator:{enumerator}})-[:fragment]->(f) " +
-        "SET n += {props};",
+        "CREATE (n:" + node_label + " {enumerator:{enumerator}})-[:fragment]->(f) " +
+        "SET n += {props} " +
+        "RETURN ID(n) as ident;";
+    var prom = session.run(query,
         {fragment_id: Number(fragment_id), image_id: Number(image_id), enumerator:Number(enumerator),
-        props:node_attributes})
+        props:node_attributes, node_label: node_label})
         .then(function (result) {
             session.close();
-            var number_of_created_nodes = result.summary.updateStatistics._stats.nodesCreated;
-            return number_of_created_nodes;
+            if (node_attributes.hasOwnProperty('groupType')) {
+                if (node_attributes.groupType === 'frame') {
+                    var group_id = Number(result.records[0].get('ident'));
+                    return Database.add_frame_edge(group_id, node_attributes.value);
+                }
+            }
+            return result;
         }, function(err){
             session.close();
             console.log(err);
+            return err;
+        });
+    return prom;
+};
+
+/**
+ * Adds an edge between a frame from a group and a global frame
+ * so called 'meta frame'
+ *
+ * Also creates the 'meta frame' if it does not exist *
+ *
+ * @method add_edge
+ * @return {Promise}
+ * @param node_id
+ * @param frame_name
+ */
+Database.add_frame_edge = function(node_id, frame_name) {
+    var session = this._get_session();
+    var prom = session.run(
+        "MATCH (b:Group) " +
+        "WHERE ID(b) = toInteger({node_id}) " +
+        "WITH b " +
+        "MERGE (m:MetaGroup {name:{frame_name}}) " +
+        "CREATE (m)<-[n:PartOf]-(b) " +
+        "",
+        {node_id: node_id, frame_name:frame_name})
+        .then(function (result) {
+            session.close();
+            return result;
+        }, function(err) {
+            console.error(err);
+            session.close();
             return err;
         });
     return prom;
@@ -597,7 +673,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
     var prom = session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
         "WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) " +
         "WITH f " +
-        "MATCH (f)<-[:fragment]-(a:Token {enumerator: {source_enum} }), (f)<-[:fragment]-(b:Token {enumerator: {target_enum} }) " +
+        "MATCH (f)<-[:fragment]-(a {enumerator: {source_enum} }), (f)<-[:fragment]-(b {enumerator: {target_enum} }) " +
         "CREATE (a)-[n:edge]->(b) " +
         "SET n += {props};",
         {fragment_id: Number(fragment_id), image_id: Number(image_id),
@@ -608,7 +684,9 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
             session.close();
             return result;
         }, function(err) {
+            console.error(err);
             session.close();
+            return err;
         });
     return prom;
 };
