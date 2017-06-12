@@ -23,6 +23,8 @@ Contents
    sources/Configuration
    sources/Heatmap
    sources/Downloads
+   sources/GraphElements
+   sources/Editor
    sources/CHANGELOG
 
 
