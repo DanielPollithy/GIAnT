@@ -176,10 +176,7 @@ Database._add_constraints = function() {
 * @return {Promise}
 */
 Database._hygiene = function (){
-    console.log("HERE")
     var session = Database._get_session();
-    console.log(session)
-    console.log("not")
     // this query removes all free swimming nodes (without any edges)
     return session.run("match (n) where not (n)--() delete (n);");
 };
@@ -615,7 +612,7 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
             return result;
         }, function(err){
             session.close();
-            console.log(err);
+            console.error(err);
             return err;
         });
     return prom;

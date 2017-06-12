@@ -213,16 +213,17 @@ describe('database', function () {
                         var image_id = record.get('image_id');
                         var fragment_id = record.get('ident');
                         var called = false;
-                        Codec.mxgraph_to_neo4j(image_id, fragment_id, function (err, graphml) {
-                            if (!called) {
-                                called = true;
-                                if (err) {
-                                    return done(err)
-                                } else {
+                        Codec.mxgraph_to_neo4j(image_id, fragment_id, "../test/xml/9.xml").then(
+                            function (graphml) {
+                                if (!called) {
+                                    called = true;
                                     return done();
                                 }
+                            },
+                            function(err) {
+                                done(err);
                             }
-                        }, "../test/xml/9.xml");
+                        );
                     }, function (err) {
                         return done(err);
                     });
@@ -242,16 +243,14 @@ describe('database', function () {
                         var image_id = record.get('image_id');
                         var fragment_id = record.get('ident');
                         var called = false;
-                        Codec.mxgraph_to_neo4j(image_id, fragment_id, function (err, graphml) {
-                            if (!called) {
-                                called = true;
-                                if (err) {
-                                    return done(err)
-                                } else {
+                        Codec.mxgraph_to_neo4j(image_id, fragment_id, "../test/xml/11.xml").then(
+                            function (graphml) {
+                                if (!called) {
+                                    called = true;
                                     return done();
                                 }
-                            }
-                        }, "../test/xml/11.xml");
+                            }, done
+                        );
                     }, function (err) {
                         return done(err);
                     });
@@ -387,23 +386,25 @@ describe('database', function () {
                     database.add_fragment(image_id, fn3).then(
                         function (record) {
                             var fragment_id = Number(record.get('ident'));
-                            Codec.mxgraph_to_neo4j(image_id, fragment_id, function (err, data) {
-                                database.get_all_property_values_for_token('color', '').then(function (ary) {
-                                    if (ary.includes('nero') && ary.includes('rosso')) {
-                                        database.get_all_property_values_for_token('them_mak', '').then(function (ary) {
-                                            if (ary.includes('ultra')) {
-                                                database.remove_image_by_id(image_id).then(function () {
-                                                    done()
-                                                }, done);
-                                            } else {
-                                                done('missing attribute values');
-                                            }
-                                        }, done);
-                                    } else {
-                                        done('missing attribute values');
-                                    }
-                                }, done);
-                            }, '../test/xml/10.xml');
+                            Codec.mxgraph_to_neo4j(image_id, fragment_id, '../test/xml/10.xml').then(
+                                function (data) {
+                                    database.get_all_property_values_for_token('color', '').then(function (ary) {
+                                        if (ary.includes('nero') && ary.includes('rosso')) {
+                                            database.get_all_property_values_for_token('them_mak', '').then(function (ary) {
+                                                if (ary.includes('ultra')) {
+                                                    database.remove_image_by_id(image_id).then(function () {
+                                                        done()
+                                                    }, done);
+                                                } else {
+                                                    done('missing attribute values');
+                                                }
+                                            }, done);
+                                        } else {
+                                            done('missing attribute values');
+                                        }
+                                    }, done);
+                                }, done
+                            );
                         },
                         done
                     );
@@ -422,23 +423,25 @@ describe('database', function () {
                     database.add_fragment(image_id, fn3).then(
                         function (record) {
                             var fragment_id = Number(record.get('ident'));
-                            Codec.mxgraph_to_neo4j(image_id, fragment_id, function (err, data) {
-                                database.get_all_property_keys_for_token('').then(function (ary) {
-                                    if (ary.includes('color') && ary.includes('them_mak')) {
-                                        database.get_all_property_keys_for_token('t').then(function (ary) {
-                                            if (ary.includes('tool')) {
-                                                database.remove_image_by_id(image_id).then(function () {
-                                                    done()
-                                                }, done);
-                                            } else {
-                                                done('missing attribute values');
-                                            }
-                                        }, done);
-                                    } else {
-                                        done('missing attribute values');
-                                    }
-                                }, done);
-                            }, '../test/xml/10.xml');
+                            Codec.mxgraph_to_neo4j(image_id, fragment_id, '../test/xml/10.xml').then(
+                                function (err, data) {
+                                    database.get_all_property_keys_for_token('').then(function (ary) {
+                                        if (ary.includes('color') && ary.includes('them_mak')) {
+                                            database.get_all_property_keys_for_token('t').then(function (ary) {
+                                                if (ary.includes('tool')) {
+                                                    database.remove_image_by_id(image_id).then(function () {
+                                                        done()
+                                                    }, done);
+                                                } else {
+                                                    done('missing attribute values');
+                                                }
+                                            }, done);
+                                        } else {
+                                            done('missing attribute values');
+                                        }
+                                    }, done);
+                                }, done
+                            );
                         },
                         done
                     );

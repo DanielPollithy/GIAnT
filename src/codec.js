@@ -107,83 +107,85 @@ Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
  *
  * @method mxgraph_to_object
  * @param filename the resource to load
- * @param callback function(err, data) {...}
 */
-Codec.mxgraph_to_object = function(filename, callback) {
-    fs.readFile(__dirname + '/' + filename, function(err, data) {
-        if (!err) {
-            try {
-                Codec.parser.parseString(data, function (err, result) {
-                    if (err) {
-                        return callback(err);
-                    } else {
-                        if (result === undefined) {
-                            return callback('ParseString was not able to parse the xml');
-                        }
-                        var root = result.mxGraphModel.root[0];
+Codec.mxgraph_to_object = function(filename) {
+    var promise = new Promise(function(resolve, reject){
+        fs.readFile(__dirname + '/' + filename, function(err, data) {
+            if (!err) {
+                try {
+                    Codec.parser.parseString(data, function (err, result) {
+                        if (err) {
+                            return reject(err);
+                        } else {
+                            if (result === undefined) {
+                                return reject('ParseString was not able to parse the xml');
+                            }
+                            var root = result.mxGraphModel.root[0];
 
-                        // unwrap the <object>s
-                        // The objects under root (<object>)
-                        if (root.object) {
-                            for (var j = 0; j < root.object.length; j++) {
-                                var node2 = root.object[j].mxCell[0];
-                                if (node2.$.parent) {
-                                    // merge the object and the node into a new one
-                                    var merged = {};
-                                    Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
-                                    Object.assign(merged.$, root.object[j].mxCell[0].$);
-                                    delete merged.mxCell;
-                                    if (!root.mxCell) {
-                                        root.mxCell = [];
+                            // unwrap the <object>s
+                            // The objects under root (<object>)
+                            if (root.object) {
+                                for (var j = 0; j < root.object.length; j++) {
+                                    var node2 = root.object[j].mxCell[0];
+                                    if (node2.$.parent) {
+                                        // merge the object and the node into a new one
+                                        var merged = {};
+                                        Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
+                                        Object.assign(merged.$, root.object[j].mxCell[0].$);
+                                        delete merged.mxCell;
+                                        if (!root.mxCell) {
+                                            root.mxCell = [];
+                                        }
+                                        root.mxCell.push(merged);
                                     }
-                                    root.mxCell.push(merged);
+                                }
+
+                                delete root.object;
+                            }
+
+                            // remove groups
+                            // rewire the children to the parent of the group
+                            for (var i = 0; i < root.mxCell.length; i++) {
+                                var node = root.mxCell[i];
+                                if (node.$.style && node.$.style === "group") {
+                                    var parent = Codec.get_node_by_id(root, node.$.parent);
+                                    var children = Codec.get_nodes_by_parent_id(root, node.$.id);
+                                    for (var j = 0; j < children.length; j++) {
+                                        children[j].$.parent = parent.$.id;
+                                    }
+                                    root.mxCell[i] = 'x';
                                 }
                             }
 
-                            delete root.object;
-                        }
+                            // remove all TO DELETE entries
+                            root.mxCell = root.mxCell.filter(function (cell) {
+                                return (cell !== 'x')
+                            });
 
-                        // remove groups
-                        // rewire the children to the parent of the group
-                        for (var i = 0; i < root.mxCell.length; i++) {
-                            var node = root.mxCell[i];
-                            if (node.$.style && node.$.style === "group") {
-                                var parent = Codec.get_node_by_id(root, node.$.parent);
-                                var children = Codec.get_nodes_by_parent_id(root, node.$.id);
-                                for (var j = 0; j < children.length; j++) {
-                                    children[j].$.parent = parent.$.id;
+                            // The cells in the root (<mxCell>)
+                            for (var i = 0; i < root.mxCell.length; i++) {
+                                var node = root.mxCell[i];
+                                if (node.$.parent) {
+                                    var parent = Codec.get_node_by_id(root, node.$.parent);
+                                    if (!parent.children) {
+                                        parent.children = []
+                                    }
+                                    parent.children.push(node);
                                 }
-                                root.mxCell[i] = 'x';
                             }
+                            resolve(result);
                         }
 
-                        // remove all TO DELETE entries
-                        root.mxCell = root.mxCell.filter(function (cell) {
-                            return (cell !== 'x')
-                        });
-
-                        // The cells in the root (<mxCell>)
-                        for (var i = 0; i < root.mxCell.length; i++) {
-                            var node = root.mxCell[i];
-                            if (node.$.parent) {
-                                var parent = Codec.get_node_by_id(root, node.$.parent);
-                                if (!parent.children) {
-                                    parent.children = []
-                                }
-                                parent.children.push(node);
-                            }
-                        }
-                        callback(err, result);
-                    }
-
-                });
-            } catch (e) {
-                return callback(err);
+                    });
+                } catch (e) {
+                    return reject(err);
+                }
+            } else {
+                return reject(err);
             }
-        } else {
-            return callback(err);
-        }
+        });
     });
+    return promise;
 };
 
 /**
@@ -234,14 +236,13 @@ Codec.get_nodes_by_parent_id = function(root, parent_id) {
  *
  * @method mxgraph_to_layered_object
  * @param filename
- * @param callback function(err, result) {...}
  */
-Codec.mxgraph_to_layered_object = function(filename, callback) {
-    Codec.mxgraph_to_object(filename, function(err, result) {
-        if (err) {
-            return callback(err);
-        } else {
-			if (!result) {return callback('empty result');}
+Codec.mxgraph_to_layered_object = function(filename) {
+    return Codec.mxgraph_to_object(filename).then(
+        function(result) {
+            if (!result) {
+                return Promise.reject('empty result');
+            }
             var temp;
             for (var l = 0; l < result.mxGraphModel.root[0].mxCell.length; l++) {
                 var node = result.mxGraphModel.root[0].mxCell[l];
@@ -251,9 +252,12 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
             }
             result.mxGraphModel.root[0].mxCell = [temp];
             delete result.mxGraphModel.root[0].object;
-            callback(err, result);
-        }
-    });
+            return Promise.resolve(result);
+        },
+        function(err) {
+            console.error(err);
+            return err;
+        });
 };
 
 /**
@@ -265,38 +269,37 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
  *
  * @method mxgraph_to_flattened_object
  * @param filename
- * @param callback
  */
-Codec.mxgraph_to_flattened_object = function(filename, callback) {
-    Codec.mxgraph_to_layered_object(filename, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-            graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
+Codec.mxgraph_to_flattened_object = function(filename) {
+    return Codec.mxgraph_to_layered_object(filename).then(function (graph) {
+        graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
 
-            // remove the locked background layer which is the first element
-            graph.mxGraphModel.data.shift();
+        // remove the locked background layer which is the first element
+        graph.mxGraphModel.data.shift();
 
-            // so far there is only the 'value' attribute which is interesting for the children
-            // -> therefore we don't choose a general approach and only copy it to the children
+        // so far there is only the 'value' attribute which is interesting for the children
+        // -> therefore we don't choose a general approach and only copy it to the children
 
-            var only_children = [];
+        var only_children = [];
 
-            graph.mxGraphModel.data.forEach(function(layer){
-                layer.children.forEach(function(child){
-                    child.$.hand = layer.$.value;
-                    if (child.hasOwnProperty('mxGeometry')) {
-                        Object.assign(child.$, child.mxGeometry[0].$);
-                    }
-                    only_children.push(child);
-                });
+        graph.mxGraphModel.data.forEach(function(layer){
+            layer.children.forEach(function(child){
+                child.$.hand = layer.$.value;
+                if (child.hasOwnProperty('mxGeometry')) {
+                    Object.assign(child.$, child.mxGeometry[0].$);
+                }
+                only_children.push(child);
             });
+        });
 
-            graph.mxGraphModel.data = only_children;
-            delete graph.mxGraphModel.root;
-            callback(err, graph);
-        }
+        graph.mxGraphModel.data = only_children;
+        delete graph.mxGraphModel.root;
+        return graph;
     })
+        .catch(function(err) {
+            console.error(err);
+            return err;
+    });
 };
 
 /**
@@ -307,14 +310,9 @@ Codec.mxgraph_to_flattened_object = function(filename, callback) {
  *
  * @method mxgraph_to_graphml
  * @param filename
- * @param callback
  */
-Codec.mxgraph_to_graphml = function(filename, callback) {
-    Codec.mxgraph_to_flattened_object(filename, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-
+Codec.mxgraph_to_graphml = function(filename) {
+    return Codec.mxgraph_to_flattened_object(filename).then(function(graph) {
             var graphml = JSON.parse(JSON.stringify(graph));
             graphml.graphml = graphml.mxGraphModel;
             delete graphml.mxGraphModel;
@@ -441,48 +439,34 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
                         }
                     );
                 }
-
-
-
             });
 
             Codec.builder.attrkey = '@';
             var xml = Codec.builder.buildObject(graphml);
-            callback(err, xml);
-        }
-    })
+            return xml;
+        }).catch(function(err){console.error(err); return err;})
 };
 
 Codec.add_all_completed_fragments_to_neo4j = function() {
+    var all_promises = [];
     var p = new Promise(function(resolve, reject){
-        // TODO: refactor everything with promises
-        var counter = 0;
-        var target = -1;
-        function callback_counter(err) {
-            if (err) {
-                console.error(err);
-            }
-            counter++;
-            if (counter === target) {
-                resolve();
-            }
-        }
         database.get_all_completed_fragments().then(
             function(records) {
-                target = records.length;
                 records.forEach(function(record){
                     var image_id = record.get('image_id');
                     var fragment_id = record.get('fragment_id');
                     database.remove_fragment(image_id, fragment_id, true).then(function (success) {
-                        Codec.mxgraph_to_neo4j(image_id, fragment_id, callback_counter);
+                        all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
                     }, function (err) {
                         console.error(err);
                         reject(err);
                     });
                 });
-                if (records.length === 0) {
+                Promise.all(all_promises).then(function(all) {
                     resolve();
-                }
+                }).catch(function(err) {
+                    reject(err);
+                })
             },
             function(err) {
                 console.error(err);
@@ -499,10 +483,9 @@ Codec.add_all_completed_fragments_to_neo4j = function() {
  * @method mxgraph_to_neo4j
  * @param image_id
  * @param fragment_id
- * @param callback function(err, data) {...}
  * @param overwrite_xml_path if you don't want to load the standard xml file_path for the fragment use this
  */
-Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml_path) {
+Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
     if (overwrite_xml_path === undefined) {overwrite_xml_path = false;}
     var xml_path;
     if (!overwrite_xml_path) {
@@ -511,86 +494,76 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
         xml_path = overwrite_xml_path;
     }
 
-    Codec.mxgraph_to_flattened_object(xml_path, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-            var nodes = [];
-            var edges = [];
+    return Codec.mxgraph_to_flattened_object(xml_path).then(function (graph) {
+        var nodes = [];
+        var edges = [];
 
-            graph.mxGraphModel.data.forEach(function (cell) {
-                if (cell.$.style) {
-                    // split style
-                    var styles = cell.$.style.split(';').filter(function (a) {
-                        return (a.length > 0)
-                    });
-                    styles.forEach(function (style) {
-                        var splits = style.split('=');
-                        var key = splits[0];
-                        var value = splits[1];
-                        if (!cell.$.hasOwnProperty(key)) {
-                            cell.$[key] = value;
-                        }
-                    });
-                    // some times the text is in the property label and other times in value
-                    // => we want it every time in value
-                    if (cell.$.hasOwnProperty('label')) {
-                        cell.$['value'] = cell.$['label'];
-                        delete cell.$['label'];
+        graph.mxGraphModel.data.forEach(function (cell) {
+            if (cell.$.style) {
+                // split style
+                var styles = cell.$.style.split(';').filter(function (a) {
+                    return (a.length > 0)
+                });
+                styles.forEach(function (style) {
+                    var splits = style.split('=');
+                    var key = splits[0];
+                    var value = splits[1];
+                    if (!cell.$.hasOwnProperty(key)) {
+                        cell.$[key] = value;
                     }
-                    delete cell.$.style;
+                });
+                // some times the text is in the property label and other times in value
+                // => we want it every time in value
+                if (cell.$.hasOwnProperty('label')) {
+                    cell.$['value'] = cell.$['label'];
+                    delete cell.$['label'];
                 }
+                delete cell.$.style;
+            }
 
-                var for_ = "node";
-                if (cell.$.edge) {
-                    for_ = "edge";
-                    edges.push(cell);
-                } else {
-                    nodes.push(cell);
+            var for_ = "node";
+            if (cell.$.edge) {
+                for_ = "edge";
+                edges.push(cell);
+            } else {
+                nodes.push(cell);
+            }
+
+
+        });
+        // create all the nodes
+        var all_node_promises = [];
+        // a graph can contain a frame
+        // These frames need to be connected to the 'meta frames'
+        var is_frame = false;
+        nodes.forEach(function (cell) {
+            var label = 'Group';
+            if (cell.$.hasOwnProperty('tokenType')) {
+                label = 'Token';
+                if (cell.$.tokenType === 'frame') {
+                    is_frame = true;
                 }
-
-
-            });
-            // create all the nodes
-            var all_node_promises = [];
-            // a graph can contain a frame
-            // These frames need to be connected to the 'meta frames'
-            var is_frame = false;
-            nodes.forEach(function (cell) {
-                var label = 'Group';
-                if (cell.$.hasOwnProperty('tokenType')) {
-                    label = 'Token';
-                    if (cell.$.tokenType === 'frame') {
-                        is_frame = true;
-                    }
-                }
-                all_node_promises.push(database.add_node(image_id, fragment_id, label, cell.$))
-            });
-            Promise.all(all_node_promises).then(function (values) {
-                // create all the edges
-                var all_edge_promises = [];
-                if (edges.length > 0) {
-                    edges.forEach(function (cell) {
-                        all_edge_promises.push(
-                            database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
-                        );
-                    });
-                    Promise.all(all_edge_promises).then(function(values){
-                            return callback(null, values);
-                        }, function(err){
-                            return callback(err, null);
-                        });
-                } else {
-                    return callback(null, values);
-                }
-                },
-            function(err){
-                callback(err, null);
-            });
-
-
-
-        }
+            }
+            all_node_promises.push(database.add_node(image_id, fragment_id, label, cell.$))
+        });
+        return Promise.all(all_node_promises).then(function (values) {
+            // create all the edges
+            var all_edge_promises = [];
+            if (edges.length > 0) {
+                edges.forEach(function (cell) {
+                    all_edge_promises.push(
+                        database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
+                    );
+                });
+                return Promise.all(all_edge_promises);
+            } else {
+                return values
+            }
+        },
+        function(err){
+            console.error(err);
+            return err;
+        });
     });
 
 };
