@@ -25,6 +25,7 @@ Contents
    sources/Downloads
    sources/GraphElements
    sources/Editor
+   sources/FAQ
    sources/CHANGELOG
 
 
