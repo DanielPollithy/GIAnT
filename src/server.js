@@ -144,7 +144,7 @@ app.post('/', function (req, res) {
         }
         if (err) {
             log.error('There was an error saving the image: ' + new_file_name);
-            return res.redirect('/?e=' + encodeURIComponent('Missing image error saving the image'))
+            return res.redirect('/?e=' + encodeURIComponent(err))
         }
         utils.get_exif_from_image(new_file_name, function (exif_err, exif_data) {
             if (exif_err) {
@@ -215,7 +215,15 @@ app.get('/', function (req, res) {
     database.get_all_images().then(function (results) {
             var row_data = [];
             results.forEach(function (r) {
-                row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date')]);
+                row_data.push(
+                    [
+                        r.get('ident'),
+                        r.get('file_path'),
+                        r.get('upload_date'),
+                        Number(r.get('num_uncompleted_fragments')),
+                        Number(r.get('num_completed_fragments'))
+                    ]
+                );
             });
             res.render('image_table',
                 {
@@ -482,7 +490,7 @@ app.get('/settings', function (req, res) {
 });
 
 app.post('/settings', function (req, res) {
-    if (req.body.fontSize && req.body.curved && req.body.strokeWidth) {
+    if (req.body.fontSize && req.body.strokeWidth) {
         var curved = req.body.curved || "0";
         var fontSize = req.body.fontSize;
         var strokeWidth = req.body.strokeWidth;

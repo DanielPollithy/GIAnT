@@ -721,12 +721,16 @@ Database.get_all_images = function() {
     var session = this._get_session();
     var prom = session
         .run("MATCH (a:Image) " +
-            "WITH a " +
+            "OPTIONAL MATCH (a)-[]-(f1:Fragment {completed:false}) " +
+            "OPTIONAL MATCH (a)-[]-(f2:Fragment {completed:true}) " +
+            "WITH a, f1, f2 " +
             "ORDER BY a.last_edit_date, a.upload_date " +
             "RETURN " +
             "ID(a) as ident," +
             "a.file_path as file_path, " +
-            "a.upload_date as upload_date;")
+            "a.upload_date as upload_date, " +
+            "COUNT(f1) AS num_uncompleted_fragments," +
+            "COUNT(f2) AS num_completed_fragments;")
         .then(function (result) {
             session.close();
             var records = [];

@@ -23,13 +23,17 @@ block content
         th= 'Fragmente'
         th= 'Löschen'
       each row in rows
-        tr
+        - ident_ = row[0]
+        - base = Number(row[3] + row[4])
+        - row_class = ''
+        if base !== row[4]
+            - row_class = 'warning'
+        tr(class=row_class)
           td= row[0]
           td= row[1]
           td= new Date(Number(row[2])).toLocaleString()
           td
-            - ident_ = row[0]
-            a(href='/image/' + ident_ + '/fragments')= 'Fragmente'
+            a(href='/image/' + ident_ + '/fragments')= 'Fragmente ('+row[4]+'/'+base.toString()+' fertig)'
           td
             a(href='/image/' + ident_ + '/delete')= 'Löschen'
     h2= 'Upload'
