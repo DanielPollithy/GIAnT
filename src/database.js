@@ -117,6 +117,11 @@ Database.login = function (url, user, password){
 * @return {boolean}
 */
 Database.logout = function (){
+    var driver = Database._get_driver();
+    if (driver) {
+        console.log("... neo4j driver closed")
+        driver.close();
+    }
     Database._driver = null;
     Database.logged_in = false;
 };

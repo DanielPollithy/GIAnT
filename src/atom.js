@@ -2,6 +2,7 @@
 //const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
 
 var server = require('./server');
+var database = require('./database');
 var log = require('electron-log');
 
 function main() {
@@ -56,10 +57,11 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
     log.info('Electron windows closed');
-  if (process.platform !== 'darwin') {
+    database.logout();
     app.exit();
+  //if (process.platform !== 'darwin') {
     //server.kill('SIGINT');
-  }
+  //}
 })
 
 app.on('activate', () => {
@@ -68,7 +70,7 @@ app.on('activate', () => {
   if (win === null) {
     createWindow()
   }
-})
+});
 
 server.run();
 
