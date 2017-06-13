@@ -22,6 +22,8 @@ bootstrap - web framework - MIT - https://github.com/twbs/bootstrap/blob/master/
 bootswatch - theme for bootstrap - MIT - http://bootswatch.com - https://github.com/thomaspark/bootswatch/blob/gh-pages/LICENSE
 d3.JS - visualization in browser for heatmap - BSD-3 - https://github.com/d3/d3/blob/master/LICENSE
 jquery - necessary javascript framework for bootstrap - MIT - http://jquery.org/license
+DataTables - https://datatables.net/license/
+DataTables Bootstrap Integration - https://datatables.net/license/
 
 Application
 -----------
