@@ -18,4 +18,9 @@ $(document).ready(function() {
         }
         return true;
     });
+
+    // init datatable
+    $('table').DataTable({
+        searching: false
+    });
 });

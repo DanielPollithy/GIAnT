@@ -8,47 +8,49 @@ block content
     h1= 'Fragmente für Bild ' + image_id
     p= 'Hier sind alle Fragmente für ein Bild aufgelistet'
     table(class="table")
-      tr
-        th= 'Image-Id'
-        th= 'Image-Pfad'
-        th= 'Fragment-Id'
-        th= 'Fragment-Name'
-        th= 'Kommentar'
-        th= 'Erstellungsdatum'
-        th= 'Fertig'
-        th= 'Editor'
-        th= 'Neo4j Übertrag'
-        th= 'Löschen'
-      each row in rows
-        - image_path = row[1]
-        - fragment_id = row[2]
+      thead
         tr
-          td= row[0]
-          td= row[1]
-          td= row[2]
-          td= row[3]
-          if row[4].length < 1
-            td
-              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/comment', target="_blank")= 'Kommentar'
-          else
-            td
-              if row[4].length > 23
-                - com = row[4].substr(0, 20) + '...'
-              else
-                - com = row[4].substr(0, 23)
-              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/comment', target="_blank")= com
-          td= new Date(Number(row[5])).toLocaleString()
-          td
-            if row[6]
-              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'Fertig'
+          th= 'Image-Id'
+          th= 'Image-Pfad'
+          th= 'Fragment-Id'
+          th= 'Fragment-Name'
+          th= 'Kommentar'
+          th= 'Erstellungsdatum'
+          th= 'Fertig'
+          th= 'Editor'
+          th= 'Neo4j Übertrag'
+          th= 'Löschen'
+      tbody
+        each row in rows
+          - image_path = row[1]
+          - fragment_id = row[2]
+          tr
+            td= row[0]
+            td= row[1]
+            td= row[2]
+            td= row[3]
+            if row[4].length < 1
+              td
+                a(href='/image/' + image_id +'/fragment/' + fragment_id + '/comment', target="_blank")= 'Kommentar'
             else
-              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'In Bearbeitung'
-          td
-            a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id + '')= 'Editor'
-          td
-            a(href='/image/' + image_id +'/fragment/' + fragment_id + '/to-db')= 'Übertragen'
-          td
-            a(href='/image/' + image_id +'/fragment/' + fragment_id + '/delete')= 'Löschen'
+              td
+                if row[4].length > 23
+                  - com = row[4].substr(0, 20) + '...'
+                else
+                  - com = row[4].substr(0, 23)
+                a(href='/image/' + image_id +'/fragment/' + fragment_id + '/comment', target="_blank")= com
+            td= new Date(Number(row[5])).toLocaleString()
+            td
+              if row[6]
+                a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'Fertig'
+              else
+                a(href='/image/' + image_id +'/fragment/' + fragment_id + '/toggle-complete')= 'In Bearbeitung'
+            td
+              a(href='/editor/www/?image=/media/uploaded_images/' + image_path + '&xml_file=/media/uploaded_xmls/'+  fragment_id +'.xml&image_id='+image_id + '')= 'Editor'
+            td
+              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/to-db')= 'Übertragen'
+            td
+              a(href='/image/' + image_id +'/fragment/' + fragment_id + '/delete')= 'Löschen'
     h2= 'Hinzufügen'
     include create_fragment.pug
 
