@@ -13,8 +13,9 @@ setTimeout(function(){
 
 $(document).ready(function() {
     $("a").click(function () {
-        console.log("click")
-        $(this).addClass('loading-link');
+        if (!$(this).hasClass('no-loader')) {
+            $(this).addClass('loading-link');
+        }
         return true;
     });
 });

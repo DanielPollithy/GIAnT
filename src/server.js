@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 var fs = require('fs');
 var database = require('./database');
+var exp = require('./export');
 var path = require('path');
 var codec = require('./codec');
 var utils = require('./utils');
@@ -272,12 +273,11 @@ app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/toggle-complete', fu
 app.get('/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/to-db', function (req, res) {
     if (req.params.image_id && req.params.fragment_id) {
         database.remove_fragment(req.params.image_id, req.params.fragment_id, true).then(function (success) {
-            codec.mxgraph_to_neo4j(req.params.image_id, req.params.fragment_id, function (err, data) {
-                if (err) {
-                    log.error(err);
-                    return res.redirect('/?e=' + encodeURIComponent(err));
-                }
+            codec.mxgraph_to_neo4j(req.params.image_id, req.params.fragment_id).then(function (data) {
                 res.redirect('/image/' + req.params.image_id + '/fragments');
+            }).catch(function(err){
+                log.error(err);
+                return res.redirect('/?e=' + encodeURIComponent(err));
             });
         }, function (err) {
             log.error(err);
@@ -431,6 +431,41 @@ app.post('/heatmap-generate', function (req, res) {
     }
 });
 
+app.get('/export', function (req, res) {
+    res.render('export',
+    {
+        message: ''
+    });
+});
+
+app.get('/export/csv', function (req, res) {
+    exp.to_csv()
+        .then(function(file_path){
+            console.log(file_path)
+            res.setHeader('Content-disposition', 'attachment; filename='+path.basename(file_path));
+            var file_stream = fs.createReadStream(file_path);
+            file_stream.pipe(res);
+        })
+        .catch(function(err){
+            console.error(err);
+            return res.redirect('/?e=' + encodeURIComponent('Error in CSV dump'));
+        });
+});
+
+app.get('/export/sql', function (req, res) {
+    exp.to_sql()
+        .then(function(file_path){
+            console.log(file_path)
+            res.setHeader('Content-disposition', 'attachment; filename='+path.basename(file_path));
+            var file_stream = fs.createReadStream(file_path);
+            file_stream.pipe(res);
+        })
+        .catch(function(err){
+            console.error(err);
+            return res.redirect('/?e=' + encodeURIComponent('Error in SQL dump'));
+        });
+});
+
 app.get('/settings', function (req, res) {
     var sets = Settings.get_settings_for_frontend();
     console.dir(sets);
@@ -444,18 +479,6 @@ app.get('/settings', function (req, res) {
         settings: settings,
         message: ''
     });
-});
-
-app.get('/batch-add-to-neo4j', function (req, res) {
-    codec.add_all_completed_fragments_to_neo4j().then(
-        function() {
-            res.redirect('/?m=' + encodeURIComponent('Success'));
-        },
-        function(err) {
-            console.error(err);
-            return res.redirect('/?e=' + encodeURIComponent('Error in batch add'));
-        }
-    );
 });
 
 app.post('/settings', function (req, res) {
@@ -475,6 +498,18 @@ app.post('/settings', function (req, res) {
         log.warn('Missing params for /settings');
         return res.redirect('/?e=' + encodeURIComponent('Missing POST parameter for settings'));
     }
+});
+
+app.get('/batch-add-to-neo4j', function (req, res) {
+    codec.add_all_completed_fragments_to_neo4j().then(
+        function() {
+            res.redirect('/?m=' + encodeURIComponent('Success'));
+        },
+        function(err) {
+            console.error(err);
+            return res.redirect('/?e=' + encodeURIComponent('Error in batch add'));
+        }
+    );
 });
 
 function run() {

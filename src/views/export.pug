@@ -1,0 +1,13 @@
+extends layout.pug
+
+block title
+  title= 'Export'
+  - var selected = 'export'
+
+block content
+    p= message
+    h1= 'Export'
+    p= 'The export provides four different tables/sheets: Nodes, Relations, NodeProperties and RelationProperties'
+    a(href='/export/sql', class='btn btn-primary no-loader')= 'Download SQL'
+    b= ' or '
+    a(href='/export/csv', class='btn btn-primary no-loader')= 'Download CSV (zipped)'

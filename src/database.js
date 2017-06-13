@@ -606,7 +606,7 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
             if (node_attributes.hasOwnProperty('groupType')) {
                 if (node_attributes.groupType === 'frame') {
                     var group_id = Number(result.records[0].get('ident'));
-                    return Database.add_frame_edge(group_id, node_attributes.value);
+                    return Database.add_frame_edge(group_id, node_attributes.value, 'MetaFrame');
                 }
             }
             return result;
@@ -629,16 +629,16 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
  * @param node_id
  * @param frame_name
  */
-Database.add_frame_edge = function(node_id, frame_name) {
+Database.add_frame_edge = function(node_id, frame_name, groupType) {
     var session = this._get_session();
     var prom = session.run(
         "MATCH (b:Group) " +
         "WHERE ID(b) = toInteger({node_id}) " +
         "WITH b " +
-        "MERGE (m:MetaGroup {name:{frame_name}}) " +
+        "MERGE (m:MetaGroup {value:{frame_name}, groupType:{groupType}}) " +
         "CREATE (m)<-[n:PartOf]-(b) " +
         "",
-        {node_id: node_id, frame_name:frame_name})
+        {node_id: node_id, frame_name:frame_name, groupType:groupType})
         .then(function (result) {
             session.close();
             return result;
