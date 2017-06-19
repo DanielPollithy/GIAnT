@@ -469,7 +469,7 @@ var AboutDialog = function(editorUi)
 	var div = document.createElement('div');
 	div.setAttribute('align', 'center');
 	var h3 = document.createElement('h3');
-	mxUtils.write(h3, mxResources.get('about') + ' GraphEditor');
+	mxUtils.write(h3, mxResources.get('about') + ' TransliterationApplication');
 	div.appendChild(h3);
 	var img = document.createElement('img');
 	img.style.border = '0px';
@@ -478,12 +478,12 @@ var AboutDialog = function(editorUi)
 	img.setAttribute('src', IMAGE_PATH + '/logo.png');
 	div.appendChild(img);
 	mxUtils.br(div);
-	mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
+	mxUtils.write(div, 'Powered by mxGraph ');
 	mxUtils.br(div);
 	var link = document.createElement('a');
-	link.setAttribute('href', 'http://www.jgraph.com/');
+	link.setAttribute('href', 'https://github.com/DanielPollithy');
 	link.setAttribute('target', '_blank');
-	mxUtils.write(link, 'www.jgraph.com');
+	mxUtils.write(link, 'Created by Daniel Pollithy');
 	div.appendChild(link);
 	mxUtils.br(div);
 	mxUtils.br(div);
