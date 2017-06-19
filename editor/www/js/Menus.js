@@ -468,7 +468,7 @@ Menus.prototype.init = function()
 		// CHANGE MADE BY DANIEL
 		//this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
 		// this is how it should be
-		this.addMenuItems(menu, ['save', '-', 'export', 'exit'], parent);
+		this.addMenuItems(menu, ['save', '-', 'exit'], parent);
 	})));
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{

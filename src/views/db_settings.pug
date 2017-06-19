@@ -5,6 +5,9 @@ block title
   - var selected = 'database'
 
 block content
+    - var info = ''
+    include messages
+    p= message
     h1= 'Database settings'
     p= 'The application works only with a connection to a Neo4j-database. It can be local or remote.'
     p= message
@@ -12,4 +15,4 @@ block content
       input(type='text', name='url', value='bolt://localhost:7687')
       input(type='text', name='user', value='neo4j')
       input(type='text', name='password', value='1234')
-      input(type='submit', value='save')
+      input(type='submit', value='login')

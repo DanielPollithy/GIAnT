@@ -110,80 +110,85 @@ Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
 */
 Codec.mxgraph_to_object = function(filename) {
     var promise = new Promise(function(resolve, reject){
-        fs.readFile(__dirname + '/' + filename, function(err, data) {
-            if (!err) {
-                try {
-                    Codec.parser.parseString(data, function (err, result) {
-                        if (err) {
-                            return reject(err);
-                        } else {
-                            if (result === undefined) {
-                                return reject('ParseString was not able to parse the xml');
-                            }
-                            var root = result.mxGraphModel.root[0];
+        try {
+            fs.readFile(__dirname + '/' + filename, function(err, data) {
+                if (!err) {
+                    try {
+                        Codec.parser.parseString(data, function (err, result) {
+                            if (err) {
+                                return reject(err);
+                            } else {
+                                if (result === undefined) {
+                                    return reject('ParseString was not able to parse the xml');
+                                }
+                                var root = result.mxGraphModel.root[0];
 
-                            // unwrap the <object>s
-                            // The objects under root (<object>)
-                            if (root.object) {
-                                for (var j = 0; j < root.object.length; j++) {
-                                    var node2 = root.object[j].mxCell[0];
-                                    if (node2.$.parent) {
-                                        // merge the object and the node into a new one
-                                        var merged = {};
-                                        Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
-                                        Object.assign(merged.$, root.object[j].mxCell[0].$);
-                                        delete merged.mxCell;
-                                        if (!root.mxCell) {
-                                            root.mxCell = [];
+                                // unwrap the <object>s
+                                // The objects under root (<object>)
+                                if (root.object) {
+                                    for (var j = 0; j < root.object.length; j++) {
+                                        var node2 = root.object[j].mxCell[0];
+                                        if (node2.$.parent) {
+                                            // merge the object and the node into a new one
+                                            var merged = {};
+                                            Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
+                                            Object.assign(merged.$, root.object[j].mxCell[0].$);
+                                            delete merged.mxCell;
+                                            if (!root.mxCell) {
+                                                root.mxCell = [];
+                                            }
+                                            root.mxCell.push(merged);
                                         }
-                                        root.mxCell.push(merged);
+                                    }
+
+                                    delete root.object;
+                                }
+
+                                // remove groups
+                                // rewire the children to the parent of the group
+                                for (var i = 0; i < root.mxCell.length; i++) {
+                                    var node = root.mxCell[i];
+                                    if (node.$.style && node.$.style === "group") {
+                                        var parent = Codec.get_node_by_id(root, node.$.parent);
+                                        var children = Codec.get_nodes_by_parent_id(root, node.$.id);
+                                        for (var j = 0; j < children.length; j++) {
+                                            children[j].$.parent = parent.$.id;
+                                        }
+                                        root.mxCell[i] = 'x';
                                     }
                                 }
 
-                                delete root.object;
-                            }
+                                // remove all TO DELETE entries
+                                root.mxCell = root.mxCell.filter(function (cell) {
+                                    return (cell !== 'x')
+                                });
 
-                            // remove groups
-                            // rewire the children to the parent of the group
-                            for (var i = 0; i < root.mxCell.length; i++) {
-                                var node = root.mxCell[i];
-                                if (node.$.style && node.$.style === "group") {
-                                    var parent = Codec.get_node_by_id(root, node.$.parent);
-                                    var children = Codec.get_nodes_by_parent_id(root, node.$.id);
-                                    for (var j = 0; j < children.length; j++) {
-                                        children[j].$.parent = parent.$.id;
+                                // The cells in the root (<mxCell>)
+                                for (var i = 0; i < root.mxCell.length; i++) {
+                                    var node = root.mxCell[i];
+                                    if (node.$.parent) {
+                                        var parent = Codec.get_node_by_id(root, node.$.parent);
+                                        if (!parent.children) {
+                                            parent.children = []
+                                        }
+                                        parent.children.push(node);
                                     }
-                                    root.mxCell[i] = 'x';
                                 }
+                                resolve(result);
                             }
 
-                            // remove all TO DELETE entries
-                            root.mxCell = root.mxCell.filter(function (cell) {
-                                return (cell !== 'x')
-                            });
-
-                            // The cells in the root (<mxCell>)
-                            for (var i = 0; i < root.mxCell.length; i++) {
-                                var node = root.mxCell[i];
-                                if (node.$.parent) {
-                                    var parent = Codec.get_node_by_id(root, node.$.parent);
-                                    if (!parent.children) {
-                                        parent.children = []
-                                    }
-                                    parent.children.push(node);
-                                }
-                            }
-                            resolve(result);
-                        }
-
-                    });
-                } catch (e) {
+                        });
+                    } catch (e) {
+                        return reject(err);
+                    }
+                } else {
                     return reject(err);
                 }
-            } else {
-                return reject(err);
-            }
-        });
+            });
+        } catch (e) {
+            reject(e);
+        }
+
     });
     return promise;
 };
@@ -272,6 +277,9 @@ Codec.mxgraph_to_layered_object = function(filename) {
  */
 Codec.mxgraph_to_flattened_object = function(filename) {
     return Codec.mxgraph_to_layered_object(filename).then(function (graph) {
+        if (!(graph && graph.mxGraphModel)) {
+            return Promise.reject('Graph is empty');
+        }
         graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
 
         // remove the locked background layer which is the first element
@@ -498,6 +506,10 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
         var nodes = [];
         var edges = [];
 
+        if (!(graph && graph.mxGraphModel)) {
+            return Promise.reject('Graph is empty');
+        }
+
         graph.mxGraphModel.data.forEach(function (cell) {
             if (cell.$.style) {
                 // split style
@@ -564,6 +576,9 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
             console.error(err);
             return err;
         });
+    }, function(err){
+        console.error(err);
+        return err;
     });
 
 };

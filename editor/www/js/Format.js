@@ -4541,7 +4541,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		}
 		else
 		{
-			mxUtils.alert(mxResources.get('invalidName'));
+			console.log(mxResources.get('invalidName'));
 		}
 	});
 

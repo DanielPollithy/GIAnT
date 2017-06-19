@@ -369,7 +369,7 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
         if (normalization > SUPPORTED_NORMALIZATIONS || normalization < 1) {
             return reject('Unsupported normalization');
         }
-        if (pixel_size < 1 || pixel_size > 5) {
+        if (pixel_size < 1 || pixel_size > MAX_PIXEL_SIZE) {
             return reject('Wrong pixel_size');
         }
         // get the query result

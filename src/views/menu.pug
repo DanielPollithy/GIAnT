@@ -6,53 +6,55 @@ nav.navbar.navbar-default
         span.icon-bar
         span.icon-bar
         span.icon-bar
-      a.navbar-brand(href='/') Transliteration Application
+      a.navbar-brand(href='/', class='no-loader') Transliteration Application
     #bs-example-navbar-collapse-1.collapse.navbar-collapse
       ul.nav.navbar-nav
         if selected === 'images'
           li.active
-            a(href='/')
+            a(href='/', class='no-loader')
               | Index
               span.sr-only (current)
         else
           li
-            a(href='/') Index
+            a(href='/', class='no-loader') Index
         li
-          a(onclick="location.reload();", style="cursor:pointer;") Refresh
-
+          a(onclick="location.reload();", style="cursor:pointer;", class='no-loader')
+            span(class='glyphicon glyphicon-refresh')
 
       ul.nav.navbar-nav.navbar-right
         li
-          a(href='/batch-add-to-neo4j') Batch Add
+          a(href='/batch-add-to-neo4j')
+            | Batch add&nbsp;
+            span(class='glyphicon glyphicon-open')
         if selected === 'heatmap'
           li.active
-            a(href='/heatmap')
+            a(href='/heatmap', class='no-loader')
               | Heatmap
               span.sr-only (current)
         else
           li
-            a(href='/heatmap') Heatmap
+            a(href='/heatmap', class='no-loader') Heatmap
         if selected === 'export'
           li.active
-            a(href='/export')
+            a(href='/export', class='no-loader')
               | Export
               span.sr-only (current)
         else
           li
-            a(href='/export') Export
+            a(href='/export', class='no-loader') Export
         if selected === 'database'
           li.active
-            a(href='/db')
+            a(href='/db', class='no-loader')
               | Database
               span.sr-only (current)
         else
           li
-            a(href='/db') Database
+            a(href='/db', class='no-loader') Database
         if selected === 'settings'
           li.active
-            a(href='/settings')
+            a(href='/settings', class='no-loader')
               | Settings
               span.sr-only (current)
         else
           li
-            a(href='/settings') Settings
+            a(href='/settings', class='no-loader') Settings

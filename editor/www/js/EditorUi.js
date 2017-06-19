@@ -1986,6 +1986,7 @@ EditorUi.prototype.addBeforeUnloadListener = function()
             }
         });
     } else {
+		/*
 		window.onbeforeunload = function(e) {
 			var remote = require('remote');
 			var dialog = remote.require('dialog');
@@ -1999,6 +2000,7 @@ EditorUi.prototype.addBeforeUnloadListener = function()
 					});
 			return choice === 0;
 		};
+		*/
 	}
 };
 
@@ -3245,7 +3247,16 @@ EditorUi.prototype.save = function(name)
 				if (xml.length < MAX_REQUEST_SIZE)
 				{
 					new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(name) +
-						'&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
+						'&xml=' + encodeURIComponent(xml)).send(
+							function(data){
+								console.log("XML saved");
+								mxUtils.popup("Der Graph wurde als XML gespeichert.", true);
+							},
+							function(err){
+								console.error(err);
+								mxUtils.popup(err);
+							}
+						);
 				}
 				else
 				{

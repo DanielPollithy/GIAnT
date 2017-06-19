@@ -42,7 +42,7 @@ app.get('/db', function (req, res) {
     if (database.logged_in) {
         res.render('db_logout', {message: ''});
     } else {
-        res.render('db_settings', {message: ''});
+        res.render('db_settings', {message: 'You have to be logged in!'});
     }
 
 });

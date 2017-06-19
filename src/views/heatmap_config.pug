@@ -6,7 +6,8 @@ block title
 
 block content
     form(method='post', action='/heatmap-generate')
-        p= message
+        - var info = ''
+        include messages
         label(for='query') Query (Only do READS here!):
         textarea#query(name='query', rows="3", class="form-control")= 'MATCH (s:Token) RETURN s;'
         br
