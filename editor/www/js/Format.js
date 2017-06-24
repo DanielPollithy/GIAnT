@@ -4426,6 +4426,10 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		text.parentNode.appendChild(removeAttr);
 	};
 
+	function highlight_bg(e) {
+		$(e.target).css('background-color', '#ffffb3');
+	}
+
 	var addTextArea = function(index, name, value)
 	{
 		names[index] = name;
@@ -4435,6 +4439,8 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		console.log(names[count]);
 		add_autocomplete_to_input(texts[index], "/autocomplete/token/values", names[count]);
 		texts[index].style.width = '90%';
+		texts[index].onkeydown = highlight_bg;
+		texts[index].onchange = highlight_bg;
 		// DANIEl
 		// texts[index].addEventListener('input', applyChanges);
 		addRemoveButton(texts[index], name);
@@ -4610,7 +4616,6 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 			mxUtils.alert(e);
 		}
 	}
-	applyBtn.className = 'geBtn gePrimaryBtn';
 
 	function updateAddBtn()
 	{
