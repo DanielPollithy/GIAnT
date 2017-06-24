@@ -74,7 +74,7 @@ Actions.prototype.init = function()
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = function(){return true;};
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 230, true, true); }).isEnabled = function(){return true;};
 	this.addAction('exit', function() {
-		window.location.href = "../../";
+		window.location.href = "../../image/" + urlParams['image_id'] + "/fragments";
 	}).isEnabled = function(){return true;};
 	this.addAction('editDiagram...', function()
 	{
