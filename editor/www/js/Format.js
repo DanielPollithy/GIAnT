@@ -4357,8 +4357,10 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		return div;
 	}
 
-    var generateEdgesBtn = mxUtils.button(mxResources.get('generateEdges'), function() {
+    var generateEdgesBtn = mxUtils.button(mxResources.get('generateEdges'), function(e) {
+    	$(e.target).prop("disabled",true);
         generate_edges_between_overlapping_tokens(cell, graph);
+        $(e.target).prop("disabled",false);
     });
 	generateEdgesBtn.style.marginLeft = '5px';
 	generateEdgesBtn.style.width = '90%';

@@ -170,7 +170,6 @@ function open_xml_on_init_electron(editorUi) {
 
 function add_autocomplete_to_input(input, url, field) {
     var url = "http://localhost:4000" + url;
-    console.log($(input))
     window.$(input).autocomplete({
         source: function (request, response) {
             window.$.ajax({
