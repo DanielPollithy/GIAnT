@@ -550,6 +550,8 @@ Database.get_fragment = function(image_file_path, fragment_name) {
 };
 
 
+
+
 /**
  * Get the fragment of an image by name
  *
@@ -571,6 +573,29 @@ Database.get_fragment_by_id = function(image_id, fragment_id) {
                 records.push(result.records[i]);
             }
             return records[0];
+        }, function(err){
+            session.close();
+            return err;
+        });
+    return prom;
+};
+
+/**
+ * Get the fragment of an image by name
+ *
+ * @method get_all_fragments
+ * @return {Promise}
+ */
+Database.get_all_fragments = function() {
+    var session = this._get_session();
+    var prom = session.run("MATCH (f:Fragment) RETURN ID(f) as identifier;")
+        .then(function (result) {
+            session.close();
+            var records = [];
+            for (var i = 0; i < result.records.length; i++) {
+                records.push(Number(result.records[i].get('identifier')));
+            }
+            return records;
         }, function(err){
             session.close();
             return err;

@@ -8,5 +8,27 @@
         "edgeStyle": "orthogonalEdgeStyle",
         "curved": "1",
         "strokeWidth": "5"
+    },
+    "constraints": {
+        "count_constraints": [
+            {
+                "id": 1498744279660,
+                "min": "0",
+                "max": "3",
+                "query": "MATCH(f:Fragment)-[]-(t:Token) WHERE ID(f) = {fragment_id} RETURN t;"
+            }
+        ],
+        "free_constraints": [
+            {
+                "id": 1498746658301,
+                "query": "// session = a neo4j session\r\n// session.run(cypher_string) returns a promise (see the docs)\r\nnew Promise(function(resolve, reject){\r\n    var variables = {\"fragment_id\": fragment_id};\r\n    session.run(\"MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\", variables)\r\n        .then(function(result){ \r\n            var value;\r\n            result.records.forEach(function(res){\r\n                value = res.get('value');\r\n                if (value === \"Token2\") {\r\n                    reject(\"There was a token called Token.\");\r\n                }\r\n            });\r\n            resolve();\r\n    }).catch(function(err){\r\n        reject(err);\r\n    });\r\n});"
+            }
+        ],
+        "bool_constraints": [
+            {
+                "id": 1498747292635,
+                "query": "MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN COUNT(t) > 0;"
+            }
+        ]
     }
 }

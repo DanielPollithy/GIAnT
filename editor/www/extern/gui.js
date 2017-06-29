@@ -19,6 +19,13 @@ $(document).ready(function() {
         return true;
     });
 
+    $("button").click(function () {
+        if ($(this).hasClass('spinner')) {
+            $(this).append('<span class="glyphicon glyphicon-refresh spinning"></span>');
+        }
+        return true;
+    });
+
     // init datatable
     $('table').DataTable({
         searching: false

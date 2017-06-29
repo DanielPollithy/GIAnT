@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 var fs = require('fs');
 var database = require('./database');
+var constraints = require('./constraints');
 var exp = require('./export');
 var path = require('path');
 var codec = require('./codec');
@@ -476,16 +477,131 @@ app.get('/export/sql', function (req, res) {
 
 app.get('/settings', function (req, res) {
     var sets = Settings.get_settings_for_frontend();
-    console.dir(sets);
     var settings = {
         "fontSize": sets.styles.defaultVertex.fontSize,
         "curved": sets.defaultEdgeStyle.curved,
-        "strokeWidth": sets.defaultEdgeStyle.strokeWidth
+        "strokeWidth": sets.defaultEdgeStyle.strokeWidth,
     };
     res.render('settings',
     {
         settings: settings,
-        message: ''
+        message: '',
+        "javascript_demo_constraint": utils.javascript_demo_constraint
+    });
+});
+
+app.get('/constraints', function (req, res) {
+    var sets = Settings.get_settings_for_frontend();
+    var settings = {
+        "constraints": sets.constraints
+    };
+    console.dir(settings);
+    res.render('constraints',
+    {
+        settings: settings,
+        message: '',
+        "javascript_demo_constraint": utils.javascript_demo_constraint
+    });
+});
+
+app.post('/constraints', function (req, res) {
+    var num_unchanged = 0, num_changed = 0, num_new = 0;
+    var all_constraints = Settings.get_settings_for_frontend().constraints;
+    var new_constraints_storage = {
+        "count_constraints": [],
+        "free_constraints": [],
+        "bool_constraints": []
+    };
+    var changed_constraints = [];
+
+    Object.keys(req.body).forEach(function(key){
+        var value = req.body[key];
+        var constraint = null, id = null, constraint_type = null, new_ = false;
+        if (key.indexOf('bool_constraint_') === 0) {
+            constraint_type = 'bool_constraints';
+            if (key.indexOf('bool_constraint_new') === 0 ) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+            } else {
+                id = Number(key.replace('bool_constraint_', ''))
+            }
+            constraint = {
+                'id': id,
+                'query': value
+            }
+        } else if (key.indexOf('count_constraint_') === 0) {
+            constraint_type = 'count_constraints';
+            var min, max;
+            if (key.indexOf('count_constraint_new') === 0) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+                min = req.body['count_min_constraint_new'];
+                max = req.body['count_max_constraint_new'];
+            } else {
+                id = Number(key.replace('count_constraint_', ''))
+                min = req.body['count_min_constraint_' + id];
+                max = req.body['count_max_constraint_' + id];
+            }
+            constraint = {
+                'id': id,
+                'min': min,
+                'max': max,
+                'query': value
+            }
+        } else if (key.indexOf('free_constraint_') === 0) {
+            constraint_type = 'free_constraints';
+            if (key.indexOf('free_constraint_new') === 0) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+            } else {
+                id = Number(key.replace('free_constraint_', ''))
+            }
+            constraint = {
+                'id': id,
+                'query': value
+            }
+        }
+
+        if (constraint_type) {
+            if (new_) {
+                if (constraint.query.length > 0) {
+                    changed_constraints.push(constraint);
+                    num_new++;
+                    new_constraints_storage[constraint_type].push(constraint);
+                }
+            } else if (constraints.constraint_has_changes(constraint, constraint_type, all_constraints)) {
+                changed_constraints.push(constraint);
+                num_changed++;
+                new_constraints_storage[constraint_type].push(constraint);
+            } else {
+                num_unchanged++;
+                new_constraints_storage[constraint_type].push(constraint);
+            }
+        }
+    });
+
+    Settings.set('constraints', new_constraints_storage);
+    Settings.save();
+
+    constraints.check_all_fragments(new_constraints_storage.bool_constraints,
+        new_constraints_storage.count_constraints, new_constraints_storage.free_constraints)
+        .then(function(success){
+            return res.render('constraints',
+            {
+                settings: {'constraints': new_constraints_storage},
+                info: 'All constraints were successfully executed',
+                message: '',
+                "javascript_demo_constraint": utils.javascript_demo_constraint
+            });
+        }).catch(function(rejected_constraint){
+            console.dir(rejected_constraint);
+            return res.render('constraints',
+            {
+                settings: {'constraints': new_constraints_storage},
+                info: '',
+                message: 'Constraint #' + rejected_constraint.id + ' failed on ' + rejected_constraint.error_fragment + ' with ' + rejected_constraint.error,
+                "javascript_demo_constraint": utils.javascript_demo_constraint
+            });
     });
 });
 
@@ -531,3 +647,5 @@ if (!module.parent) {
 }
 
 module.exports = {'run': run};
+
+

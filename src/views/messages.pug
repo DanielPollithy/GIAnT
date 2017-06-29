@@ -1,8 +1,8 @@
-if message.length > 0
+if message && message.length > 0
     p= ''
     p(class="alert alert-dismissible alert-danger")= message
     p= ''
-if info.length > 0
+if info && info.length > 0
     p= ''
     p(class="alert alert-dismissible alert-info")= info
     p= ''

@@ -58,3 +58,11 @@ nav.navbar.navbar-default
         else
           li
             a(href='/settings', class='no-loader') Settings
+        if selected === 'constraints'
+          li.active
+            a(href='/constraints', class='no-loader')
+              | Constraints
+              span.sr-only (current)
+        else
+          li
+            a(href='/constraints', class='no-loader') Constraints

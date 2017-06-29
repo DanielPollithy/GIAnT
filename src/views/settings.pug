@@ -4,10 +4,12 @@ block title
   title= 'Settings'
   - var selected = 'settings'
 
+    link(rel="stylesheet", href="/editor/www/extern/activate_codemirror.css")
+
 block content
     p= message
     h1= 'Settings'
-    p= 'These are general settings'
+    p= 'These are general editor settings'
     form(method='post', action='/settings')
         div(class="form-group")
             label(for='1')= 'Default font size (pt)'

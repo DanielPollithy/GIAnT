@@ -24,6 +24,9 @@ d3.JS - visualization in browser for heatmap - BSD-3 - https://github.com/d3/d3/
 jquery - necessary javascript framework for bootstrap - MIT - http://jquery.org/license
 DataTables - https://datatables.net/license/
 DataTables Bootstrap Integration - https://datatables.net/license/
+CodeMirror - code highlighting in browser - MIT - https://github.com/codemirror/codemirror
+Neo4j CodeMirror mode - mode for neo4j - MIT - https://github.com/neo4j-contrib/CodeMirror
+Javascript CodeMirror mode - mode for neo4j - MIT - Marijn Haverbeke and others
 
 Application
 -----------

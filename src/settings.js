@@ -56,6 +56,7 @@ Settings.has = function(key) {
 
 Settings.get_settings_for_frontend = function() {
     Settings.check_loaded();
+    console.dir(Settings._store)
     return Settings._store;
 };
 
@@ -70,7 +71,6 @@ Settings.set_settings_from_frontend = function(new_settings) {
             Settings._store.defaultEdgeStyle.strokeWidth = strokeWidth;
         }
         var curved = new_settings.curved;
-        console.log(curved)
         if (curved === "1") {
             Settings._store.defaultEdgeStyle.curved = "1";
         } else {
@@ -80,6 +80,11 @@ Settings.set_settings_from_frontend = function(new_settings) {
     } catch (e) {
         log.error('settings could not be applied');
     }
+};
+
+Settings.get_settings_for_constraints = function() {
+    Settings.check_loaded();
+    return Settings._store.constraints;
 };
 
 module.exports = Settings;

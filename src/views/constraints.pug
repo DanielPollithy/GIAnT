@@ -1,0 +1,92 @@
+extends layout.pug
+
+block title
+  title= 'Constraints'
+  - var selected = 'constraints'
+
+block append script
+    script(type='text/javascript', src='/editor/www/extern/codemirror.js')
+    script(type='text/javascript', src='/editor/www/extern/cypher.js')
+    script(type='text/javascript', src='/editor/www/extern/javascript.js')
+    script(type='text/javascript', src='/editor/www/extern/activate_codemirror.js')
+
+block append css
+    link(rel="stylesheet", href="/editor/www/extern/codemirror.css")
+    link(rel="stylesheet", href="/editor/www/extern/neo.css")
+    link(rel="stylesheet", href="/editor/www/extern/activate_codemirror.css")
+
+block content
+    include messages.pug
+    h1= 'Constraints'
+    p= 'These functions/queries become executed every single time a fragment is added to Neo4j.'
+    p= 'The ID of the fragment is available as {fragment_id} in cypher'
+    form(method='post', action='constraints')
+        h2= 'Boolean constraints'
+        p= 'These constraints have to result in one row containing true.'
+        b= 'Example'
+        p(style="font-family:mono;")= "MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN COUNT(t) > 0;"
+        each boolc in settings.constraints.bool_constraints
+            fieldset
+                hr
+                b= 'Bool constraint #' + boolc.id
+                button(onclick='this.parentNode.parentNode.removeChild(this.parentNode);')='delete'
+                textarea(class="form-control cypher_textarea", rows="3", name="bool_constraint_" + boolc.id)=boolc.query
+                hr
+        button(data-toggle="collapse", data-target="#add_bool", type="button")="Create bool constraint"
+        div(id="add_bool", class="collapse")
+            legend= 'Bool constraint (new)'
+            textarea(class="form-control cypher_textarea", rows="3", name="bool_constraint_new")
+
+        h2= 'Count constraints'
+        p= 'These constraints return rows. The constraint fails if the number of rows is not in between the boundaries'
+        p= 'The interval is defined as follows: [min; max[ (if you leave them empty they are ignored)'
+        b= 'Example'
+        p(style="font-family:mono;")= "MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN t;"
+        each countc in settings.constraints.count_constraints
+            fieldset
+                hr
+                b='Count constraint #' + countc.id + ' '
+                //span(class="glyphicon glyphicon-ok")
+                button(onclick='this.parentNode.parentNode.removeChild(this.parentNode);')='delete'
+                textarea(class="form-control cypher_textarea", name="count_constraint_" + countc.id)=countc.query
+                label='Minimum: '
+                input(type="number", name="count_min_constraint_" + countc.id, min="0", value=countc.min)
+                label='Maximum: '
+                input(type="number", name="count_max_constraint_" + countc.id, min="0", value=countc.max)
+                hr
+        button(data-toggle="collapse", data-target="#add_count", type="button")="Create count constraint"
+        div(id="add_count", class="collapse")
+            legend= 'Count constraint (new)'
+            textarea(class="form-control cypher_textarea", name="count_constraint_new")
+            label='Minimum: '
+            input(type="number", name="count_min_constraint_new", min="0")
+            label='Maximum: '
+            input(type="number", name="count_max_constraint_new", min="0")
+
+        h2= 'Free constraints'
+        p= 'These constraints are javascript code. The promise has to return with success.'
+        button(data-toggle="collapse", data-target="#demo", type="button")="Example"
+        div(id="demo", class="collapse")
+            pre=javascript_demo_constraint
+        br
+
+        each freec in settings.constraints.free_constraints
+            fieldset
+                hr
+                b= 'Free constraint #' + freec.id
+                button(onclick='this.parentNode.parentNode.removeChild(this.parentNode);')='delete'
+                textarea(class="form-control javascript_textarea", name="free_constraint_" + freec.id)=freec.query
+                hr
+        button(data-toggle="collapse", data-target="#add_free", type="button")="Create free constraint"
+        div(id="add_free", class="collapse")
+            legend= 'Free constraint (new)'
+            textarea(class="form-control javascript_textarea", name="free_constraint_new")
+
+        br
+        br
+
+        button(type="submit", class="spinner")= 'Contstaints speichern und auswerten'
+
+        br
+        br
+        br
