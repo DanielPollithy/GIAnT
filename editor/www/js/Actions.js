@@ -73,9 +73,7 @@ Actions.prototype.init = function()
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = function(){return true;};
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = function(){return true;};
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 230, true, true); }).isEnabled = function(){return true;};
-	this.addAction('exit', function() {
-		window.location.href = "../../image/" + urlParams['image_id'] + "/fragments";
-	}).isEnabled = function(){return true;};
+	this.addAction('exit', function() {window.location.href = "../../image/" + urlParams['image_id'] + "/fragments";}, true, null, 'Ctrl+Q');
 	this.addAction('editDiagram...', function()
 	{
 		var dlg = new EditDiagramDialog(ui);
@@ -683,14 +681,14 @@ Actions.prototype.init = function()
 	{
 		graph.connectionArrowsEnabled = !graph.connectionArrowsEnabled;
 		ui.fireEvent(new mxEventObject('connectionArrowsChanged'));
-	}, null, null, 'Ctrl+Q');
+	}, null, null);
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionArrowsEnabled; });
 	action = this.addAction('connectionPoints', function()
 	{
 		graph.setConnectable(!graph.connectionHandler.isEnabled());
 		ui.fireEvent(new mxEventObject('connectionPointsChanged'));
-	}, null, null, 'Ctrl+Shift+Q');
+	}, null, null, null);
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isEnabled(); });
 	action = this.addAction('copyConnect', function()
