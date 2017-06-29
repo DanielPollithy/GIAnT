@@ -3250,7 +3250,28 @@ EditorUi.prototype.save = function(name)
 						'&xml=' + encodeURIComponent(xml)).send(
 							function(data){
 								console.log("XML saved");
-								mxUtils.popup("Der Graph wurde als XML gespeichert.", true);
+								var div = document.createElement('div');
+								div.style.overflow = 'scroll';
+								div.style.width = '636px';
+								div.style.height = '460px';
+
+								var pre = document.createElement('pre');
+								pre.innerHTML = mxUtils.htmlEntities("Der Graph wurde als XML gespeichert.", false).
+									replace(/\n/g,'<br>').replace(/ /g, '&nbsp;');
+
+								div.appendChild(pre);
+
+								var w = document.body.clientWidth;
+								var h = Math.max(document.body.clientHeight || 0, document.documentElement.clientHeight)
+								var wnd = new mxWindow('Popup Window', div,
+									w/2-320, h/2-240, 640, 480, false, true);
+								wnd.setClosable(true);
+								wnd.setVisible(true);
+								setTimeout(function(){
+									console.log(wnd);
+									wnd.destroy();
+								}, 1000);
+
 							},
 							function(err){
 								console.error(err);
