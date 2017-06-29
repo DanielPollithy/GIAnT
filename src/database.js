@@ -1,4 +1,5 @@
 var neo4j = require('neo4j-driver').v1;
+var utils = require('./utils')
 //var config = require('../config.json');
 
 /**
@@ -514,8 +515,20 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
                             }
                         );
                 } else {
-                    session.close();
-                    return success;
+                    var hash = utils.hash_xml_fragment(fragment_id);
+                    return session.run("MATCH (i:Image)<-[:image]-(f:Fragment) " +
+                        "WHERE ID(i) = toInteger({image_id}) AND ID(f) = toInteger({fragment_id}) " +
+                        "SET f.hash = {hash};", {image_id: Number(image_id), fragment_id: Number(fragment_id),
+                                                hash: hash})
+                        .then(
+                            function (result) {
+                                session.close();
+                                return result;
+                            }, function (err) {
+                                session.close();
+                                return err;
+                            }
+                        );
                 }
             }, function (err) {
                 session.close();
@@ -814,6 +827,7 @@ Database.get_all_completed_fragments = function() {
             "WITH a,f " +
             "RETURN " +
             "ID(a) as image_id, " +
+            "f.hash as hash, " +
             "ID(f) as fragment_id; ")
         .then(function (result) {
             session.close();

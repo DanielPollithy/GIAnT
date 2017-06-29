@@ -72,6 +72,9 @@ MAKE SOME TDD Test Driven Development here.
 var fs = require('fs');
 var xml2js = require('xml2js');
 var database = require('./database');
+var utils = require('./utils');
+
+
 
 /**
  *
@@ -101,6 +104,8 @@ Codec.parser = new xml2js.Parser();
  * @type {Object}
  */
 Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
+
+
 
 /**
 * Get the database driver
@@ -457,21 +462,30 @@ Codec.mxgraph_to_graphml = function(filename) {
 
 Codec.add_all_completed_fragments_to_neo4j = function() {
     var all_promises = [];
+    var num_changed = 0;
+    var num_not_changed = 0;
     var p = new Promise(function(resolve, reject){
         database.get_all_completed_fragments().then(
             function(records) {
                 records.forEach(function(record){
                     var image_id = record.get('image_id');
                     var fragment_id = record.get('fragment_id');
-                    database.remove_fragment(image_id, fragment_id, true).then(function (success) {
-                        all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
-                    }, function (err) {
-                        console.error(err);
-                        reject(err);
-                    });
+                    var hash = record.get('hash');
+                    var file_hash = utils.hash_xml_fragment(fragment_id);
+                    if (hash && file_hash && file_hash === hash) {
+                        num_not_changed++;
+                    } else {
+                        num_changed++;
+                        database.remove_fragment(image_id, fragment_id, true).then(function (success) {
+                            all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
+                        }, function (err) {
+                            console.error(err);
+                            reject(err);
+                        });
+                    }
                 });
                 Promise.all(all_promises).then(function(all) {
-                    resolve();
+                    resolve({'num_changed':num_changed, 'num_not_changed':num_not_changed});
                 }).catch(function(err) {
                     reject(err);
                 })
@@ -580,8 +594,9 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
         console.error(err);
         return err;
     });
-
 };
+
+
 
 module.exports = Codec;
 

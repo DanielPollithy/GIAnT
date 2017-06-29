@@ -8,6 +8,8 @@ var exp = require('./export');
 var path = require('path');
 var codec = require('./codec');
 var utils = require('./utils');
+var heatmap = require('./heatmap');
+var exif_utils = require('./exif_utils');
 var Settings = require('./settings');
 var sizeOf = require('image-size');
 
@@ -147,7 +149,7 @@ app.post('/', function (req, res) {
             log.error('There was an error saving the image: ' + new_file_name);
             return res.redirect('/?e=' + encodeURIComponent(err))
         }
-        utils.get_exif_from_image(new_file_name, function (exif_err, exif_data) {
+        exif_utils.get_exif_from_image(new_file_name, function (exif_err, exif_data) {
             if (exif_err) {
                 log.warn('There was an error reading exif from image: ' + new_file_name);
                 exif_data = null;
@@ -412,7 +414,7 @@ app.post('/heatmap-generate', function (req, res) {
         var height = req.body.height;
         var pixel_size = req.body.pixel_size;
 
-        utils.process_heatmap_query(query, Number(normalization), Number(width), Number(height), pixel_size)
+        heatmap.process_heatmap_query(query, Number(normalization), Number(width), Number(height), pixel_size)
             .then(
                 function (data) {
                     res.render('heatmap',
@@ -626,8 +628,8 @@ app.post('/settings', function (req, res) {
 
 app.get('/batch-add-to-neo4j', function (req, res) {
     codec.add_all_completed_fragments_to_neo4j().then(
-        function() {
-            res.redirect('/?m=' + encodeURIComponent('Success'));
+        function(params) {
+            res.redirect('/?m=' + encodeURIComponent('Success! Number of changed fragments: ' + params.num_changed));
         },
         function(err) {
             console.error(err);

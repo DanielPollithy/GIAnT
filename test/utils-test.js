@@ -2,13 +2,16 @@
 var mocha = require('mocha');
 var chai = require('chai');
 
-// To be tested
-var utils = require('../src/utils');
-var database = require('../src/database');
-var path = require('path');
-
 var database = require('../src/database');
 database.login('bolt://localhost:7687', 'neo4j', '1234');
+
+// To be tested
+var utils = require('../src/utils');
+var exif_utils = require('../src/exif_utils');
+var heatmap = require('../src/heatmap');
+var path = require('path');
+
+
 
 // Activate should-syntax (http://chaijs.com/guide/styles/#should)
 chai.should();
@@ -17,7 +20,7 @@ describe('utils', function() {
     describe('#extract exif from jpeg', function () {
         console.log(__dirname);
         it("load png", function (done) {
-            utils.get_exif_from_image(path.join(__dirname, "/exif/png.png"), function(err, data) {
+            exif_utils.get_exif_from_image(path.join(__dirname, "/exif/png.png"), function(err, data) {
                 if (err) {
                     if (err === "The given image is not a JPEG and thus unsupported right now.") {
                         done();
@@ -31,7 +34,7 @@ describe('utils', function() {
         });
 
         it("load empty jpg", function (done) {
-            utils.get_exif_from_image(path.join(__dirname, "exif/empty.jpg"), function(err, data) {
+            exif_utils.get_exif_from_image(path.join(__dirname, "exif/empty.jpg"), function(err, data) {
                 if (err) {
                     if (err === "No Exif segment found in the given image.") {
                         done();
@@ -45,7 +48,7 @@ describe('utils', function() {
         });
 
         it("load valid exif gps", function (done) {
-            utils.get_exif_from_image(path.join(__dirname, "exif/test.jpg"), function(err, data) {
+            exif_utils.get_exif_from_image(path.join(__dirname, "exif/test.jpg"), function(err, data) {
                 if (err) {
                     done(err);
                 } else {
@@ -65,7 +68,7 @@ describe('utils', function() {
         });
 
         it("add valid exif to image", function (done) {
-            utils.get_exif_from_image(path.join(__dirname, "exif/test.jpg"), function(err, data) {
+            exif_utils.get_exif_from_image(path.join(__dirname, "exif/test.jpg"), function(err, data) {
                 if (err) {
                     done(err);
                 }
@@ -104,7 +107,7 @@ describe('utils', function() {
 
 
         it("extract creation date from exif", function (done) {
-            utils.get_exif_from_image(path.join(__dirname, "exif/date.jpg"), function(err, data) {
+            exif_utils.get_exif_from_image(path.join(__dirname, "exif/date.jpg"), function(err, data) {
                 if (err) {
                     done(err);
                 }
@@ -148,7 +151,7 @@ describe('utils', function() {
                             for (var i = 0; i < data.records.length; i++) {
                                 records.push(data.records[i]);
                             }
-                            var n = utils.count_images_in_result(records);
+                            var n = heatmap.count_images_in_result(records);
                             database.remove_image_by_id(image_id).then(
                                 function() {
                                     if (n !== 1) {
