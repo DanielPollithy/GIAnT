@@ -447,7 +447,7 @@ Database.add_fragment = function(image_id, fragment_name) {
     return session.run("MATCH (i:Image) " +
         "WHERE ID(i) = toInteger({image_id}) " +
         "WITH i " +
-        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]->(i)" +
+        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]->(i) " +
         "RETURN ID(f) as ident;",
         {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: ''})
         .then(function(result){

@@ -4460,7 +4460,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 
 	// DANIEL
     if (TOKEN_CONFIG.tokens.hasOwnProperty(token_type)) {
-        TOKEN_CONFIG.tokens[token_type].properties.forEach(function(prop) {
+        Object.keys(TOKEN_CONFIG.tokens[token_type].properties).forEach(function(prop) {
             var found = false;
             temp.forEach(function(row){
                 if (row.name === prop) {
@@ -4468,7 +4468,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
                 }
             });
             if (!found) {
-                temp.push({name: prop, value: ''});
+                temp.push({name: prop, value: TOKEN_CONFIG.tokens[token_type].properties[prop]});
             }
         });
     }

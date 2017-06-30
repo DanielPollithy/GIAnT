@@ -7,6 +7,7 @@ database.login('bolt://localhost:7687', 'neo4j', '1234');
 
 // To be tested
 var utils = require('../src/utils');
+var Codec = require('../src/codec');
 var exif_utils = require('../src/exif_utils');
 var heatmap = require('../src/heatmap');
 var path = require('path');
@@ -183,4 +184,39 @@ describe('utils', function() {
             );
         });
     });
+
+
 });
+
+/*
+describe('#massive heatmap test', function(){
+    it.only('Add 100.000 tokens to the db (100 fragment x 1000 tokens)', function (done) {
+        var num = 1;
+        this.timeout(100000);
+        var image_proms = [];
+        var add_frags = [];
+        for (var i = 0; i < num; i++) {
+            image_proms.push(database.add_image('y' + i));
+            console.log('y' + i);
+        }
+        Promise.all(image_proms).then(function (rows) {
+            rows.forEach(function(row){
+                var image_id = row.get('ident');
+                console.log('img: '+image_id);
+                add_frags.push(database.add_fragment(image_id, 'y' + i + 'frag').then(function (row2) {
+                    console.dir(row2);
+                    var fragment_id = row2.get('ident');
+                    console.log('frag: '+fragment_id);
+                    return Codec.mxgraph_to_neo4j(Number(image_id), Number(fragment_id), "../test/xml/5.xml");
+                }, function (err) {
+                    return done(err);
+                }));
+            });
+            Promise.all(add_frags).then(function(){
+                done();
+            });
+        });
+
+    })
+});
+*/

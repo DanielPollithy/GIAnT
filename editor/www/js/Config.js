@@ -8,28 +8,28 @@ TOKEN_CONFIG = {
   "tokens": {
     "symbol": {
       "color": "orange",
-      "properties": [
-          "them_mak"
-	  ]
+      "properties": {
+        "them_mak": ""
+      }
     },
     "token": {
       "color": "grey",
-      "properties": [
-        "pos",
-        "tool",
-        "lang",
-        "dialect",
-        "color"
-      ]
+      "properties": {
+          "ground":"",
+          "tool":"",
+          "lang":"",
+          "dialect":"",
+          "color":""
+      }
     },
     "erasure": {
       "color": "red",
-      "properties": []
+      "properties": {}
     },
 	"connector": {
-        "properties": [
-            "relation_type"
-		]
+        "properties": {
+            "relation_type": ""
+        }
 	}
   },
   "relations": {
