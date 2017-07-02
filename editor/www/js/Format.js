@@ -4459,6 +4459,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 	}
 
 	// DANIEL
+	// add the custom properties
     if (TOKEN_CONFIG.tokens.hasOwnProperty(token_type)) {
         Object.keys(TOKEN_CONFIG.tokens[token_type].properties).forEach(function(prop) {
             var found = false;
@@ -4472,6 +4473,55 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
             }
         });
     }
+
+    // when the element in the focus is connector
+	//
+    if (token_type === 'connector') {
+		var edge = cell;
+      	var source = graph.getModel().getTerminal(edge, true);
+      	var target = graph.getModel().getTerminal(edge, false);
+      	if (source) {
+      		var source_style = graph.getCellStyle(source);
+      		var source_type = source_style.tokenType;
+		}
+		if (target) {
+      		var target_style = graph.getCellStyle(target);
+      		var target_type = target_style.tokenType;
+		}
+	}
+
+    // overwrite the custom properties with the conditional properties
+    if (TOKEN_CONFIG.tokens.hasOwnProperty(token_type)) {
+		if (TOKEN_CONFIG.tokens[token_type].hasOwnProperty("conditional_properties")) {
+        	Object.keys(TOKEN_CONFIG.tokens[token_type].conditional_properties).forEach(function(prop) {
+        		var conditions = true;
+        		if (token_type === 'connector') {
+        			var from_condition = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].from;
+        			var to_condition = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].to;
+        			if (from_condition && from_condition !== source_type) {
+        				conditions = false;
+					}
+					if (to_condition && to_condition !== target_type) {
+        				conditions = false;
+					}
+				}
+				if (conditions) {
+        			var found = false;
+					temp.forEach(function(row){
+						if (row.name === prop) {
+							found = true;
+							row.name = prop;
+							row.value = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].value
+						}
+					});
+					if (!found) {
+						temp.push({name: prop, value: TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].value});
+					}
+				}
+        	});
+		}
+    }
+
 
 	// Sorts by name
 	temp.sort(function(a, b)

@@ -4,6 +4,14 @@ block title
   title= 'Settings'
   - var selected = 'settings'
 
+block append script
+    script(type='text/javascript', src='/editor/www/extern/codemirror.js')
+    script(type='text/javascript', src='/editor/www/extern/javascript.js')
+    script(type='text/javascript', src='/editor/www/extern/activate_codemirror.js')
+
+block append css
+    link(rel="stylesheet", href="/editor/www/extern/codemirror.css")
+    link(rel="stylesheet", href="/editor/www/extern/neo.css")
     link(rel="stylesheet", href="/editor/www/extern/activate_codemirror.css")
 
 block content
@@ -23,4 +31,8 @@ block content
         div(class="form-group")
             label(for='3')= 'Default stroke width of relations (1-200)'
             input(id='3', class="form-control", type='number', name='strokeWidth', value=settings.strokeWidth)
+        input(type='submit', value='save')
+        br
+        p= 'Setting javascript'
+        textarea(class="form-control javascript_textarea_big", name="js_config") #{settings.js_config}
         input(type='submit', value='save')

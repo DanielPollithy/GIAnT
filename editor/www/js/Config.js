@@ -1,9 +1,4 @@
 
-EDITOR_CONFIG = {
-    "default_font_size": "40pt"
-
-};
-
 TOKEN_CONFIG = {
   "tokens": {
     "symbol": {
@@ -29,7 +24,17 @@ TOKEN_CONFIG = {
 	"connector": {
         "properties": {
             "relation_type": ""
-        }
+        },
+        "conditional_properties":
+            {
+                "relation_type": {
+                    "from": "token",
+                    "to": "token",
+                    "value": "follows"
+                }
+
+            }
+
 	}
   },
   "relations": {

@@ -483,6 +483,7 @@ app.get('/settings', function (req, res) {
         "fontSize": sets.styles.defaultVertex.fontSize,
         "curved": sets.defaultEdgeStyle.curved,
         "strokeWidth": sets.defaultEdgeStyle.strokeWidth,
+        "js_config": fs.readFileSync(path.join(__dirname, '../media/settings/js_editor_settings.js'))
     };
     res.render('settings',
     {
@@ -608,10 +609,11 @@ app.post('/constraints', function (req, res) {
 });
 
 app.post('/settings', function (req, res) {
-    if (req.body.fontSize && req.body.strokeWidth) {
+    if (req.body.fontSize && req.body.strokeWidth && req.body.js_config) {
         var curved = req.body.curved || "0";
         var fontSize = req.body.fontSize;
         var strokeWidth = req.body.strokeWidth;
+        var js_config = req.body.js_config;
 
         var settings = {
             'fontSize': fontSize,
@@ -619,6 +621,7 @@ app.post('/settings', function (req, res) {
             'strokeWidth': strokeWidth
         };
         Settings.set_settings_from_frontend(settings);
+        fs.writeFile(path.join(__dirname, '../media/settings/js_editor_settings.js'), js_config);
         return res.redirect('/settings')
     } else {
         log.warn('Missing params for /settings');
