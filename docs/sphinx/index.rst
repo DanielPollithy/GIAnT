@@ -21,6 +21,7 @@ Contents
    
    sources/Deployment
    sources/Configuration
+   sources/Migration
    sources/Heatmap
    sources/Downloads
    sources/GraphElements
