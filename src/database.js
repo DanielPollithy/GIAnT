@@ -396,31 +396,42 @@ Database.get_fragment_bounding_box = function(token_id){
  * @param id_ {String|Number}
  * @return {Promise}
  */
-Database.remove_image_by_id = function(id_) {
+Database.remove_image_by_id = function (id_) {
     var session = this._get_session();
-    return session
-        .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t:Token) " +
-            "WHERE ID(n) = toInteger({ident}) " +
-            "DETACH DELETE t;", {ident: Number(id_)})
+    return session.run(
+        "MATCH (n:Image) " +
+        "WHERE ID(n) = toInteger({ident}) " +
+        "RETURN n.file_path as file_path", {ident: Number(id_)})
         .then(function (result) {
-            return session.run(
-                "MATCH (n:Image)-[:image]-(f:Fragment) " +
-                "WHERE ID(n) = toInteger({ident}) " +
-                "DETACH DELETE n,f", {ident: Number(id_)})
-                .then(function(result){
-                    return session.run(
-                    "MATCH (n:Image) " +
+            var file_path = result.records[0].get("file_path");
+            utils.remove_image(file_path);
+            return session
+                .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t:Token) " +
                     "WHERE ID(n) = toInteger({ident}) " +
-                    "DETACH DELETE n;", {ident: Number(id_)})
-                        .then(function(result){
-                            session.close();
-                            return result;
-                        }, function(err){
+                    "DETACH DELETE t;", {ident: Number(id_)})
+                .then(function (result) {
+                    return session.run(
+                        "MATCH (n:Image)-[:image]-(f:Fragment) " +
+                        "WHERE ID(n) = toInteger({ident}) " +
+                        "DETACH DELETE n,f", {ident: Number(id_)})
+                        .then(function (result) {
+                            return session.run(
+                                "MATCH (n:Image) " +
+                                "WHERE ID(n) = toInteger({ident}) " +
+                                "DETACH DELETE n;", {ident: Number(id_)})
+                                .then(function (result) {
+                                    session.close();
+                                    return result;
+                                }, function (err) {
+                                    session.close();
+                                    return err;
+                                });
+
+                        }, function (err) {
                             session.close();
                             return err;
                         });
-
-                }, function(err){
+                }, function (err) {
                     session.close();
                     return err;
                 });
