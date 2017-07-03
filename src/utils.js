@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var fs = require('fs');
+var path = require('path');
 
 var javascript_demo_constraint = "// session = a neo4j session\n" +
 "// session.run(cypher_string) returns a promise (see the docs)\n" +
@@ -33,9 +34,14 @@ function hash_xml_fragment (fragment_id) {
     return hash_of_file_content('../media/uploaded_xmls/' + fragment_id + '.xml');
 }
 
+function remove_image(file_path) {
+    return fs.unlinkSync(path.join(__dirname, '..', 'media', 'uploaded_images', file_path));
+}
+
 
 module.exports = {
     'javascript_demo_constraint':javascript_demo_constraint,
-    'hash_of_file_content':hash_of_file_content,
-    'hash_xml_fragment':hash_xml_fragment
+    'hash_of_file_content': hash_of_file_content,
+    'hash_xml_fragment': hash_xml_fragment,
+    'remove_image': remove_image
 };
