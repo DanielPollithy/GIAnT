@@ -38,10 +38,21 @@ function remove_image(file_path) {
     return fs.unlinkSync(path.join(__dirname, '..', 'media', 'uploaded_images', file_path));
 }
 
+function token_type_mapping(token_type) {
+    if (token_type === 'token') {
+        return 'Token';
+    }
+    if (token_type === 'frame' || token_type === 'comment' || token_type === 'blanco') {
+        return 'Group';
+    }
+    return null;
+}
+
 
 module.exports = {
     'javascript_demo_constraint':javascript_demo_constraint,
     'hash_of_file_content': hash_of_file_content,
     'hash_xml_fragment': hash_xml_fragment,
-    'remove_image': remove_image
+    'remove_image': remove_image,
+    'token_type_mapping': token_type_mapping,
 };

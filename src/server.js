@@ -187,21 +187,28 @@ app.post('/', function (req, res) {
     });
 });
 
-app.get('/autocomplete/token/values', function (req, res) {
+app.get('/autocomplete/:token_type/values', function (req, res) {
+    var token_type = utils.token_type_mapping(req.params.token_type);
+    if (!token_type) {
+        res.jsonp([]);
+    }
     var search_string = req.query.term || '';
     var key = req.query.field;
-    console.log(key);
     if (!key)
         return res.status(400).jsonp([]);
-    var values = database.get_all_property_values_for_token(key, search_string).then(function (values) {
+    var values = database.get_all_property_values_for_token(key, search_string, token_type).then(function (values) {
         res.jsonp(values);
     });
 });
 
 
-app.get('/autocomplete/token/keys', function (req, res) {
+app.get('/autocomplete/:token_type/keys', function (req, res) {
+    var token_type = utils.token_type_mapping(req.params.token_type);
+    if (!token_type) {
+        res.jsonp([]);
+    }
     var search_string = req.query.term || '';
-    var keys = database.get_all_property_keys_for_token(search_string).then(function (keys) {
+    var keys = database.get_all_property_keys_for_token(search_string, token_type).then(function (keys) {
         res.jsonp(keys);
     });
 });

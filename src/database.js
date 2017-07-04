@@ -459,7 +459,7 @@ Database.add_fragment = function(image_id, fragment_name) {
         "WHERE ID(i) = toInteger({image_id}) " +
         "WITH i " +
         "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]->(i) " +
-        "RETURN ID(f) as ident;",
+        "RETURN ID(f) as ident, ID(i) AS image_ident;",
         {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: ''})
         .then(function(result){
             session.close();
@@ -864,10 +864,13 @@ Database.get_all_completed_fragments = function() {
  * @param search_string {string} Empty string gives all possible values
  * @return {Promise}
  */
-Database.get_all_property_keys_for_token = function(search_string) {
+Database.get_all_property_keys_for_token = function(search_string, label) {
+    if (label === undefined) {
+        label = 'Token'
+    }
     var session = this._get_session();
     var prom = session
-        .run("MATCH (p:Token) WITH DISTINCT keys(p) AS keys " +
+        .run("MATCH (p:"+ label +") WITH DISTINCT keys(p) AS keys " +
             "UNWIND keys AS keyslisting WITH DISTINCT keyslisting AS allfields " +
             "WHERE allfields CONTAINS {search_string}" +
             "RETURN allfields;", {search_string: search_string || ''})
@@ -893,10 +896,13 @@ Database.get_all_property_keys_for_token = function(search_string) {
  * @param search_string {string} that filters the result (empty string is not filter)
  * @return {Promise}
  */
-Database.get_all_property_values_for_token = function(property, search_string) {
+Database.get_all_property_values_for_token = function(property, search_string, label) {
+    if (label === undefined) {
+        label = 'Token'
+    }
     var session = this._get_session();
     var prom = session
-        .run("MATCH (n: Token) " +
+        .run("MATCH (n:"+label+") " +
             "WHERE n[{property}] IS NOT NULL " +
             "AND n[{property}] CONTAINS {search_string} " +
             "RETURN distinct n[{property}];",

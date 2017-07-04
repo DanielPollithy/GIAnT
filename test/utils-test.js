@@ -200,23 +200,29 @@ describe('#massive heatmap test', function(){
             console.log('y' + i);
         }
         Promise.all(image_proms).then(function (rows) {
+            console.dir(rows);
             rows.forEach(function(row){
                 var image_id = row.get('ident');
                 console.log('img: '+image_id);
-                add_frags.push(database.add_fragment(image_id, 'y' + i + 'frag').then(function (row2) {
-                    console.dir(row2);
-                    var fragment_id = row2.get('ident');
-                    console.log('frag: '+fragment_id);
-                    return Codec.mxgraph_to_neo4j(Number(image_id), Number(fragment_id), "../test/xml/5.xml");
-                }, function (err) {
-                    return done(err);
-                }));
+                add_frags.push(database.add_fragment(image_id, 'y' + i + 'frag'));
             });
-            Promise.all(add_frags).then(function(){
-                done();
-            });
+            Promise.all(add_frags).then(function(fragments){
+                var all_mxgraphs = [];
+                fragments.forEach(function(row){
+                    console.dir(row);
+                    var fragment_id = row.get("ident");
+                    var image_id = row.get("image_ident");
+                    console.log("FRAGMENT: "+fragment_id);
+                    console.log("image_id: "+image_id);
+                    all_mxgraphs.push(Codec.mxgraph_to_neo4j(Number(image_id), Number(fragment_id), "../test/xml/100_elements.xml"));
+                });
+
+                Promise.all(all_mxgraphs).then(function(){
+                    done();
+                }).catch(done);
+
+            }).catch(done);;
         });
 
     })
-});
-*/
+});*/

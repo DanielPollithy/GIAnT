@@ -4328,6 +4328,8 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
     var token_type;
     if (cell_style.hasOwnProperty('tokenType')) {
         token_type = cell_style.tokenType;
+    } else if (cell_style.hasOwnProperty('groupType')) {
+        token_type = cell_style.groupType;
     } else {
         token_type = '';
     }
@@ -4439,7 +4441,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 		//texts[index] = form.addTextarea(names[count] + ':', value, 2);
 		texts[index] = form.addText(names[count] + ':', value, 'text');
 		console.log(names[count]);
-		add_autocomplete_to_input(texts[index], "/autocomplete/token/values", names[count]);
+		add_autocomplete_to_input(texts[index], "/autocomplete/"+token_type+"/values", names[count]);
 		texts[index].style.width = '90%';
 		texts[index].onkeydown = highlight_bg;
 		texts[index].onchange = highlight_bg;
@@ -4582,7 +4584,7 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 
 					names.push(name);
 					var text = form.addText(name + ':', '', 'text');
-					add_autocomplete_to_input(text, "/autocomplete/token/values", name);
+					add_autocomplete_to_input(text, "/autocomplete/"+token_type+"/values", name);
 					text.style.width = '90%';
 					texts.push(text);
 					addRemoveButton(text, name);
@@ -4686,7 +4688,9 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 	// Catches all changes that don't fire a keyup (such as paste via mouse)
 	mxEvent.addListener(nameInput, 'change', updateAddBtn);
 
-	add_autocomplete_to_input(nameInput, "/autocomplete/token/keys", null);
+	if (token_type.length > 0) {
+		add_autocomplete_to_input(nameInput, "/autocomplete/"+token_type+"/keys", null);
+	}
 
 	var buttons = document.createElement('div');
 	buttons.style.marginTop = '18px';
