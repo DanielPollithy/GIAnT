@@ -1,0 +1,20 @@
+TODOs für Dokumentation
+=======================
+
+Einstellungen für den Editor
+Javascript Einstellungen für Editor
+Benutzung des Editors
+Copy on connect
+
+Frames + MetaFrames
+BlancoGroup
+Comment
+
+Data model behind it (properties, labels)
+
+Batch add
+Mark as ready
+
+
+
+Constraints
