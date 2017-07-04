@@ -1,7 +1,7 @@
 {
     "styles": {
         "defaultVertex": {
-            "fontSize": "30"
+            "fontSize": "60"
         }
     },
     "defaultEdgeStyle": {

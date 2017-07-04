@@ -483,8 +483,8 @@ Menus.prototype.init = function()
 	this.put('extras', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		//this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
-		//DANIEL
-		this.addMenuItems(menu, ['copyConnect', '-', 'editDiagram']);
+		//DANIEL: 'copyConnect', '-',
+		this.addMenuItems(menu, ['editDiagram']);
 	})));
 	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	{

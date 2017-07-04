@@ -1,15 +1,13 @@
 function apply_custom_settings(editor_ui) {
     get_cross_resource('/media/settings/settings.json').then(
         function(text) {
-            console.log(editor_ui.editor.graph.stylesheet)
             var json = JSON.parse(text);
             var styles = {'styles': json.styles || {}};
             var defaultEdgeStyle = json.defaultEdgeStyle;
-            console.log(defaultEdgeStyle);
             editor_ui.editor.graph.stylesheet = realMerge(editor_ui.editor.graph.stylesheet, styles);
             editor_ui.editor.graph.defaultEdgeStyle = realMerge(editor_ui.editor.graph.defaultEdgeStyle,
                 defaultEdgeStyle);
-            console.log(editor_ui.editor.graph.defaultEdgeStyle)
+            console.log(editor_ui.editor.graph.stylesheet)
         },
         function(err){
             console.log(err);
@@ -276,12 +274,28 @@ function overwrite_mxgraph_edge_create(mxgraph) {
     };
 }
 
+function add_vertex_listener(editor_ui) {
+    console.log('add listener');
+    editor_ui.editor.graph.addListener("cellsInserted", function(sender, evt)
+    {
+      var vertex = evt.getProperty('cells')[0];
+      var fontSize = editor_ui.editor.graph.stylesheet.styles.defaultVertex.fontSize;
+      editor_ui.editor.graph.setCellStyles('fontSize', fontSize, [vertex]);
+
+    });
+}
+
 function apply_custom_changes(editor_ui) {
-    set_background_image_on_init(editor_ui);
-    open_xml_on_init(editor_ui);
+    //set_background_image_on_init(editor_ui);
+    if (require_exists) {
+        open_xml_on_init_electron(editor_ui);
+    } else {
+        open_xml_on_init(editor_ui);
+    }
     editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
     editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
     overwrite_mxgraph_edge_create(editor_ui.editor.graph);
+    add_vertex_listener(editor_ui);
 }
 
 
