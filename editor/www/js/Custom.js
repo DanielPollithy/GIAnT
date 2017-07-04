@@ -261,5 +261,30 @@ function add_edge_between_cells(graph, parent, origin_cell, target_cell, relatio
 
 
 
+function overwrite_mxgraph_edge_create(mxgraph) {
+    mxgraph.insertEdge = function(parent, id, value, source, target, style)
+    {
+        var parent_style = this.getCellStyle(parent);
+
+        if (Number(parent_style.locked) === 1) {
+            console.log('dont? ');
+            return null;
+        }
+        var edge = this.createEdge(parent, id, value, source, target, style);
+
+        return this.addEdge(edge, parent, source, target);
+    };
+}
+
+function apply_custom_changes(editor_ui) {
+    set_background_image_on_init(editor_ui);
+    open_xml_on_init(editor_ui);
+    editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
+    editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
+    overwrite_mxgraph_edge_create(editor_ui.editor.graph);
+}
+
+
+
 
 

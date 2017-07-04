@@ -160,10 +160,7 @@
 						}
 						// Main
 						editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-						set_background_image_on_init(editor_ui);
-						open_xml_on_init_electron(editor_ui);
-						editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
-						editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
+						apply_custom_changes(editor_ui);
 					});
 				});
 			} else {
@@ -178,10 +175,7 @@
 
 					// Main
 					editor_ui = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-					set_background_image_on_init(editor_ui);
-					open_xml_on_init(editor_ui);
-					editor_ui.editor.graph.allowLoops = ALLOW_LOOPS;
-					editor_ui.editor.graph.allowDanglingEdges = ALLOW_DANGLING_EDGES;
+					apply_custom_changes(editor_ui);
 				}, function()
 				{
 					document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
