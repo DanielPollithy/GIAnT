@@ -340,7 +340,7 @@ Database.get_image = function(file_path){
 Database.get_image_of_token = function(token_id){
     var session = this._get_session();
     var prom = session
-        .run("MATCH (t:Token)-[]-(:Fragment)-[]-(i:Image) WHERE ID(t) = toInteger({token_id}) RETURN i;",
+        .run("MATCH (t:Token)-[]-(f:Fragment)-[]-(i:Image) WHERE ID(t) = toInteger({token_id}) RETURN i, ID(f) as fragment_id, ID(i) AS image_id;",
             {token_id: Number(token_id)})
         .then(function (result) {
             session.close();
@@ -367,10 +367,10 @@ Database.get_fragment_bounding_box = function(token_id){
         .run("MATCH (t:Token)-[]-(f:Fragment) WHERE ID(t) = toInteger({token_id}) "+
             "WITH f " +
             "MATCH (x:Token)-[]-(f) " +
-            "WITH x "+
+            "WITH x, f "+
             "WHERE EXISTS(x.x) AND EXISTS(x.y) AND EXISTS(x.width) AND EXISTS(x.height) "+
             "RETURN MIN(toInteger(x.x)) as x, MIN(toInteger(x.y)) as y, " +
-            "MAX(toInteger(x.x)+toInteger(x.width)) as width, MAX(toInteger(x.y)+toInteger(x.height)) as height;",
+            "MAX(toInteger(x.x)+toInteger(x.width)) as width, MAX(toInteger(x.y)+toInteger(x.height)) as height, ID(f) AS fragment_id;",
             {token_id: Number(token_id)})
         .then(function (result) {
             session.close();
@@ -404,7 +404,11 @@ Database.remove_image_by_id = function (id_) {
         "RETURN n.file_path as file_path", {ident: Number(id_)})
         .then(function (result) {
             var file_path = result.records[0].get("file_path");
-            utils.remove_image(file_path);
+            try {
+                utils.remove_image(file_path);
+            } catch (e) {
+                console.log("Image node is being deleted but there was an error finding the local image file: "+e);
+            }
             return session
                 .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t:Token) " +
                     "WHERE ID(n) = toInteger({ident}) " +

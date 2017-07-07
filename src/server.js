@@ -414,16 +414,22 @@ app.get('/heatmap', function (req, res) {
 });
 
 app.post('/heatmap-generate', function (req, res) {
+    res.setTimeout(1000000, function(){
+    console.log('Request has timed out.');
+        res.send(408);
+    });
     if (req.body.query && req.body.normalization && req.body.width && req.body.height && req.body.pixel_size) {
         var query = req.body.query;
         var normalization = req.body.normalization;
         var width = req.body.width;
         var height = req.body.height;
         var pixel_size = req.body.pixel_size;
-
+        var before = new Date();
         heatmap.process_heatmap_query(query, Number(normalization), Number(width), Number(height), pixel_size)
             .then(
                 function (data) {
+                    console.log("The heatmap generation took [seconds]:");
+                    console.log(parseInt((new Date() - before)/1000.0));
                     res.render('heatmap',
                         {
                             message: '',

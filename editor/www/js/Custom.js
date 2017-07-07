@@ -286,7 +286,7 @@ function add_vertex_listener(editor_ui) {
 }
 
 function apply_custom_changes(editor_ui) {
-    //set_background_image_on_init(editor_ui);
+    set_background_image_on_init(editor_ui);
     if (require_exists) {
         open_xml_on_init_electron(editor_ui);
     } else {

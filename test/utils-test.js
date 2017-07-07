@@ -188,41 +188,51 @@ describe('utils', function() {
 
 });
 
-/*
+function add_100() {
+    var i = Math.round(new Date().getTime());
+    return new Promise(function(resolve, reject) {
+        return database.add_image('y' + i + 'urgh', {'exif': {'ExifImageWidth': 1000, 'ExifImageHeight':800}})
+            .then(function (row) {
+                console.dir(row._fields[0]);
+                var image_id = row._fields[0];
+                return database.add_fragment(image_id, 'y' + i + 'frag');
+            })
+            .then(function(row){
+                console.dir(row._fields[0]);
+                var fragment_id = Number(row._fields[0]);
+                var image_id = Number(row._fields[1]);
+                console.log("fragment_id: "+fragment_id+"\t"+"image_id: "+image_id);
+                return Codec.mxgraph_to_neo4j(Number(image_id), Number(fragment_id), "../test/xml/100_elements.xml")
+                    .then(function() {
+                        resolve();
+                    }).catch(function(e){
+                        reject(e);
+                    });
+            });
+    });
+}
+
+
 describe('#massive heatmap test', function(){
     it.only('Add 100.000 tokens to the db (100 fragment x 1000 tokens)', function (done) {
-        var num = 1;
-        this.timeout(100000);
-        var image_proms = [];
-        var add_frags = [];
-        for (var i = 0; i < num; i++) {
-            image_proms.push(database.add_image('y' + i));
-            console.log('y' + i);
+        var num = 1000;
+        this.timeout(10000000);
+        if (num > 0) {
+            var last = add_100(0);
+            console.log(last);
         }
-        Promise.all(image_proms).then(function (rows) {
-            console.dir(rows);
-            rows.forEach(function(row){
-                var image_id = row.get('ident');
-                console.log('img: '+image_id);
-                add_frags.push(database.add_fragment(image_id, 'y' + i + 'frag'));
+        for (var i=1; i<num; i++) {
+            last = last.then(function(){
+                return add_100();
             });
-            Promise.all(add_frags).then(function(fragments){
-                var all_mxgraphs = [];
-                fragments.forEach(function(row){
-                    console.dir(row);
-                    var fragment_id = row.get("ident");
-                    var image_id = row.get("image_ident");
-                    console.log("FRAGMENT: "+fragment_id);
-                    console.log("image_id: "+image_id);
-                    all_mxgraphs.push(Codec.mxgraph_to_neo4j(Number(image_id), Number(fragment_id), "../test/xml/100_elements.xml"));
-                });
+        }
+        if (last) {
+            last.then(function(){
+                done();
+            }).catch(done);
+        } else {
+            done();
+        }
 
-                Promise.all(all_mxgraphs).then(function(){
-                    done();
-                }).catch(done);
-
-            }).catch(done);;
-        });
-
-    })
-});*/
+    });
+});
