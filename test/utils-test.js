@@ -187,6 +187,10 @@ describe('utils', function() {
 
 
 });
+/*
+
+THIS CODE CAN BE USED AS BATCH CREATOR OF TOKENS
+================================================
 
 function add_100() {
     var i = Math.round(new Date().getTime());
@@ -235,4 +239,4 @@ describe('#massive heatmap test', function(){
         }
 
     });
-});
+});*/
