@@ -6,6 +6,9 @@ It might be interesting to see the density of tokens in a region or the outline 
 The input for this tool has to be a Cypher query. It will then only work with the tokens,
 therefore it is recommended to build your query to only return tokens.
 
+Example query:
+:code:`MATCH (s:Token) RETURN s;`
+
 The query is not analyzed or guarded. This means that any code can be executed.
 As a consequence must this feature kept on a local system and not exposed through a webserver!
 
