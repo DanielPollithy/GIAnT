@@ -34,6 +34,7 @@
  );
  */
 
+var log = require('electron-log');
 var fs = require('fs');
 var path = require('path');
 var zlib = require('zlib');
@@ -80,7 +81,7 @@ Export._nodes_to_sql = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -118,7 +119,7 @@ Export._relations_to_sql = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -159,7 +160,7 @@ Export._relation_properties_to_sql = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -200,7 +201,7 @@ Export._node_properties_to_sql = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -230,7 +231,7 @@ Export._nodes_to_csv = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -260,7 +261,7 @@ Export._relations_to_csv = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -293,7 +294,7 @@ Export._relation_properties_to_csv = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -326,7 +327,7 @@ Export._node_properties_to_csv = function (write_stream) {
                         return resolve();
                     },
                     onError: function (error) {
-                        console.error(error);
+                        log.error(error);
                         reject();
                     }
                 }
@@ -337,7 +338,8 @@ Export._node_properties_to_csv = function (write_stream) {
 Export.to_sql = function () {
     return new Promise(function (resolve, reject) {
         try {
-            var file_name = 'sql-' + Export._get_time() + '.sql';
+            var time_stamp = Export._get_time();
+            var file_name = 'sql-' + time_stamp + '.sql';
             var file_path = path.join(Export.to_folder, file_name);
             var wstream = fs.createWriteStream(file_path);
             return Export._nodes_to_sql(wstream).then(function (data) {
@@ -345,7 +347,32 @@ Export.to_sql = function () {
                     return Export._relation_properties_to_sql(wstream).then(function (data) {
                         return Export._node_properties_to_sql(wstream).then(function(data){
                             wstream.end();
-                            resolve(file_path);
+                            var output_path = path.join(Export.to_folder, 'sql-' + time_stamp + '.zip');
+
+                            var output = fs.createWriteStream(output_path);
+                            var archive = archiver('zip', {
+                                gzip: true,
+                                zlib: { level: 9 }
+                            });
+
+                            archive.on('error', function(err) {
+                              return reject(err);
+                            });
+
+                            // pipe archive data to the output file
+                            archive.pipe(output);
+
+                            // append files
+                            [file_path].forEach(function(file_path){
+                                archive.file(file_path, {name: path.basename(file_path)});
+                            });
+                            // finalize
+                            archive.finalize();
+
+                            output.on("close", function(){
+                                fs.unlinkSync(file_path);
+                                resolve(output_path);
+                            });
                         }).catch(function(err){
                             wstream.end();
                             reject(err);
@@ -426,6 +453,9 @@ Export.to_csv = function () {
                             archive.finalize();
 
                             output.on("close", function(){
+                                [file_path_nodes, file_path_relations, file_path_relationprops, file_path_nodeprops].forEach(function(file_path){
+                                    fs.unlinkSync(file_path);
+                                });
                                 resolve(output_path);
                             });
                         }).catch(function(err){
