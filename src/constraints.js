@@ -111,11 +111,8 @@ function run_free_constraint(constraint, fragment_id) {
 }
 
 function constraint_has_changes(constraint, constraint_type, all_constraints) {
-    console.log(constraint_type);
     var found = false;
     all_constraints[constraint_type].forEach(function(old_constraint){
-        console.dir(old_constraint);
-        console.dir(constraint);
         if (Number(old_constraint.id) === Number(constraint.id)) {
             if (old_constraint.query !== constraint.query) {
                 found = true;

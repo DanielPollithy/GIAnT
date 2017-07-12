@@ -1,5 +1,7 @@
 var neo4j = require('neo4j-driver').v1;
-var utils = require('./utils')
+var utils = require('./utils');
+var log = require('electron-log');
+
 //var config = require('../config.json');
 
 /**
@@ -88,7 +90,7 @@ Database.login = function (url, user, password){
                         function(err){
                             Database._driver = null;
                             Database.logged_in = false;
-                            console.error(err);
+                            log.error(err);
                             return reject(err);
                         });
                     },
@@ -120,7 +122,7 @@ Database.login = function (url, user, password){
 Database.logout = function (){
     var driver = Database._get_driver();
     if (driver) {
-        console.log("... neo4j driver closed")
+        log.info("... neo4j driver closed")
         driver.close();
     }
     Database._driver = null;
@@ -153,7 +155,7 @@ Database._get_driver = function (){
 Database._get_session = function () {
     var driver = Database._get_driver();
     if (!driver) {
-        console.error("Could not fetch driver");
+        log.error("Could not fetch driver");
         return null;
     } else {
         return driver.session();
@@ -230,7 +232,7 @@ Database.toggle_fragment_completed = function(image_id, fragment_id) {
             }
             return records[0];
         }, function(err){
-            console.error(err);
+            log.error(err);
             session.close();
             return err;
         });
@@ -278,7 +280,7 @@ Database.add_image = function(file_path, exif_data) {
                     }
                 }
             } catch (e) {
-                console.error(e);
+                log.error(e);
             }
         }
         Object.keys(meta_data).forEach(function(key) {
@@ -302,7 +304,7 @@ Database.add_image = function(file_path, exif_data) {
             }
             return records[0];
         }, function(err) {
-            console.error(err);
+            log.error(err);
             session.close();
             return err;
         });
@@ -407,7 +409,7 @@ Database.remove_image_by_id = function (id_) {
             try {
                 utils.remove_image(file_path);
             } catch (e) {
-                console.log("Image node is being deleted but there was an error finding the local image file: "+e);
+                log.warn("Image node is being deleted but there was an error finding the local image file: "+e);
             }
             return session
                 .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t:Token) " +
@@ -670,7 +672,7 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
             return result;
         }, function(err){
             session.close();
-            console.error(err);
+            log.error(err);
             return err;
         });
     return prom;
@@ -701,7 +703,7 @@ Database.add_frame_edge = function(node_id, frame_name, groupType) {
             session.close();
             return result;
         }, function(err) {
-            console.error(err);
+            log.error(err);
             session.close();
             return err;
         });
@@ -739,7 +741,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
             session.close();
             return result;
         }, function(err) {
-            console.error(err);
+            log.error(err);
             session.close();
             return err;
         });
@@ -852,7 +854,7 @@ Database.get_all_completed_fragments = function() {
             }
             return records;
         }, function(err){
-            console.error(err);
+            log.error(err);
             return err;
         });
     return prom;

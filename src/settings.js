@@ -56,7 +56,6 @@ Settings.has = function(key) {
 
 Settings.get_settings_for_frontend = function() {
     Settings.check_loaded();
-    console.dir(Settings._store)
     return Settings._store;
 };
 

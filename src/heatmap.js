@@ -1,3 +1,4 @@
+var log = require('electron-log');
 var database = require('./database');
 var path = require('path');
 var fs = require('fs');
@@ -132,13 +133,13 @@ function load_cache() {
     try {
         bundle = JSON.parse(fs.readFileSync(cache_path, 'utf8'));
     } catch (e) {
-        console.error('Could not load cache');
-        console.error(e);
+        log.error('Could not load cache');
+        log.error(e);
     }
     if (bundle) {
         IMAGE_FRAGMENT_CACHE = bundle[0];
         BOUNDING_BOX_CACHE = bundle[1];
-        console.log('Cache loaded from file successfully');
+        log.info('Cache loaded from file successfully');
     } else {
         clean_caches();
     }
@@ -243,7 +244,7 @@ function normalization_on_whole_image(token, normalization, target_width, target
 function normalization_on_bounding_box(token, normalization, target_width, target_height) {
     return get_bounding_box_of_fragment(token).then(function (bb) {
         if (!bb) {
-            console.error("no bb");
+            log.error("no bb");
             return null;
         }
         var bounding_box = {
@@ -255,7 +256,7 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
 
         // this happens if the bounding box could not be calculated
         if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
-            console.error("bb could not be calculated");
+            log.error("bb could not be calculated");
             return null;
         }
 
@@ -266,8 +267,8 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
             'height': bounding_box.y2 - bounding_box.y,
         };
 
-        //console.log('bb', bounding_box)
-        //console.log('n_bb', normalized_bb)
+        //log.log('bb', bounding_box)
+        //log.log('n_bb', normalized_bb)
 
         var width_ratio = normalized_bb.width / target_width;
         var height_ratio = normalized_bb.height / target_height;
@@ -276,9 +277,9 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
         var width = Number(token._fields[0].properties.width);
         var height = Number(token._fields[0].properties.height);
 
-        //console.log('token', x,y,width, height)
-        //console.log(width_ratio)
-        //console.log(height_ratio)
+        //log.log('token', x,y,width, height)
+        //log.log(width_ratio)
+        //log.log(height_ratio)
 
         // TODO: throw error if any value is smaller or equal to zero!
         var normalized = {
@@ -287,7 +288,7 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
             'width': Math.round(width / width_ratio),
             'height': Math.round(height / height_ratio)
         };
-        //console.log(normalized)
+        //log.log(normalized)
         return normalized;
     }, function (err) {
         return 'No bounding box found for the given token';
@@ -309,7 +310,7 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
         var y = Number(token._fields[0].properties.y);
         var width = Number(token._fields[0].properties.width);
         var height = Number(token._fields[0].properties.height);
-        //console.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
+        //log.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
         var normalized = {
             'x': Math.round(x / width_ratio),
             'y': Math.round(y / height_ratio),
@@ -371,13 +372,13 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
 
             return new_normalized;
         }, function (err) {
-            console.log(err)
+            log.error(err)
             return 'No bounding box found for the given token';
         });
 
         return normalized;
     }, function (err) {
-        console.log(err)
+        log.error(err)
         return 'No image found for the given token';
     });
 }
@@ -419,7 +420,8 @@ MAX_SIZE_HEATMAP = 300;
 MAX_PIXEL_SIZE = 10;
 SUPPORTED_NORMALIZATIONS = 3;
 function process_heatmap_query(query, normalization, width, height, pixel_size) {
-    load_cache();
+    // load_cache();
+    clean_caches();
     var p = new Promise(function (resolve, reject) {
         if (width < 1 || width > MAX_SIZE_HEATMAP || height < 1 || height > MAX_SIZE_HEATMAP) {
             return reject('Dimension of heat map are not in between 1 and ' + MAX_SIZE_HEATMAP);
@@ -478,7 +480,7 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                                     // calcalute all point spanned by the rects x,y,width,height
                                     for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
                                         for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
-                                            // console.log(x_, y_);
+                                            // log.log(x_, y_);
                                             heat_map[x_][y_]++;
                                         }
                                     }
@@ -492,13 +494,13 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                 },
                 onCompleted: function () {
                     session.close();
-                    console.log("Data finished streaming from db");
+                    log.info("Data finished streaming from db");
                     prom.then(function () {
                         //save_cache();
                         if (num_tokens === 0) {
                             return reject('Zero tokens found by query');
                         }
-                        console.log("Normalize the output matrix...");
+                        log.info("Normalize the output matrix...");
 
                         // calculate the maximum entry of the matrix
                         var max = 0;
@@ -528,7 +530,7 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                     });
                 },
                 onError: function (error) {
-                    console.error(error);
+                    log.error(error);
                     return reject(error);
                 },
             }

@@ -69,6 +69,7 @@ MAKE SOME TDD Test Driven Development here.
 * @requires xml2js
 */
 
+var log = require('electron-log');
 var fs = require('fs');
 var xml2js = require('xml2js');
 var database = require('./database');
@@ -265,7 +266,7 @@ Codec.mxgraph_to_layered_object = function(filename) {
             return Promise.resolve(result);
         },
         function(err) {
-            console.error(err);
+            log.error(err);
             return err;
         });
 };
@@ -310,7 +311,7 @@ Codec.mxgraph_to_flattened_object = function(filename) {
         return graph;
     })
         .catch(function(err) {
-            console.error(err);
+            log.error(err);
             return err;
     });
 };
@@ -457,7 +458,10 @@ Codec.mxgraph_to_graphml = function(filename) {
             Codec.builder.attrkey = '@';
             var xml = Codec.builder.buildObject(graphml);
             return xml;
-        }).catch(function(err){console.error(err); return err;})
+        }).catch(function(err){
+            log.error(err);
+            return err;
+        })
 };
 
 Codec.add_all_completed_fragments_to_neo4j = function() {
@@ -479,7 +483,7 @@ Codec.add_all_completed_fragments_to_neo4j = function() {
                         database.remove_fragment(image_id, fragment_id, true).then(function (success) {
                             all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
                         }, function (err) {
-                            console.error(err);
+                            log.error(err);
                             reject(err);
                         });
                     }
@@ -491,7 +495,7 @@ Codec.add_all_completed_fragments_to_neo4j = function() {
                 })
             },
             function(err) {
-                console.error(err);
+                log.error(err);
                 reject(err);
             }
         );
@@ -587,11 +591,11 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
             }
         },
         function(err){
-            console.error(err);
+            log.error(err);
             return err;
         });
     }, function(err){
-        console.error(err);
+        log.error(err);
         return err;
     });
 };

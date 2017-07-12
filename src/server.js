@@ -14,10 +14,11 @@ var Settings = require('./settings');
 var sizeOf = require('image-size');
 
 var log = require('electron-log');
+log.transports.file.level = 'debug';
 
 var app = module.exports = express();
 
-console.log('dirname', __dirname);
+log.info('dirname', __dirname);
 app.use(express.static(path.join(__dirname, '..')));
 
 app.use(bodyParser.urlencoded({
@@ -64,7 +65,7 @@ app.post('/db', function (req, res) {
         database.login(url, user, password).then(
             function(){
                 var s = Math.round(new Date().getTime());
-                console.log(s);
+                log.info(s);
                 res.redirect('/?i=' + s);
             }).catch(
             function(error){
@@ -164,7 +165,6 @@ app.post('/', function (req, res) {
                             'ExifImageHeight': dimensions.height
                         }
                     };
-                    console.log(alternative_meta);
                     database.add_image(image_file.name, alternative_meta).then(function () {
                         log.info('Added image: ' + new_file_name);
                         res.status(200).redirect('/');
@@ -174,7 +174,6 @@ app.post('/', function (req, res) {
                     });
                 })
             } else {
-                console.log(exif_data);
                 database.add_image(image_file.name, exif_data).then(function () {
                     log.info('Added image: ' + new_file_name);
                     res.status(200).redirect('/');
@@ -415,7 +414,7 @@ app.get('/heatmap', function (req, res) {
 
 app.post('/heatmap-generate', function (req, res) {
     res.setTimeout(1000000, function(){
-    console.log('Request has timed out.');
+    log.error('Heatmap Request has timed out.');
         res.send(408);
     });
     if (req.body.query && req.body.normalization && req.body.width && req.body.height && req.body.pixel_size) {
@@ -428,8 +427,8 @@ app.post('/heatmap-generate', function (req, res) {
         heatmap.process_heatmap_query(query, Number(normalization), Number(width), Number(height), pixel_size)
             .then(
                 function (data) {
-                    console.log("The heatmap generation took [seconds]:");
-                    console.log(parseInt((new Date() - before)/1000.0));
+                    log.info("The heatmap generation took [seconds]:");
+                    log.info(parseInt((new Date() - before)/1000.0));
                     res.render('heatmap',
                         {
                             message: '',
@@ -463,29 +462,37 @@ app.get('/export', function (req, res) {
 });
 
 app.get('/export/csv', function (req, res) {
+    res.setTimeout(1000*60*5, function(){
+        log.error('export/csv request timeout');
+        return res.redirect('/?e=' + encodeURIComponent('Timeout'));
+    });
     exp.to_csv()
         .then(function(file_path){
-            console.log(file_path)
+            log.info(file_path)
             res.setHeader('Content-disposition', 'attachment; filename='+path.basename(file_path));
             var file_stream = fs.createReadStream(file_path);
             file_stream.pipe(res);
         })
         .catch(function(err){
-            console.error(err);
+            log.error(err);
             return res.redirect('/?e=' + encodeURIComponent('Error in CSV dump'));
         });
 });
 
 app.get('/export/sql', function (req, res) {
+    res.setTimeout(1000*60*5, function(){
+        log.error('export/sql request timeout');
+        return res.redirect('/?e=' + encodeURIComponent('Timeout'));
+    });
     exp.to_sql()
         .then(function(file_path){
-            console.log(file_path)
+            log.info(file_path)
             res.setHeader('Content-disposition', 'attachment; filename='+path.basename(file_path));
             var file_stream = fs.createReadStream(file_path);
             file_stream.pipe(res);
         })
         .catch(function(err){
-            console.error(err);
+            log.error(err);
             return res.redirect('/?e=' + encodeURIComponent('Error in SQL dump'));
         });
 });
@@ -511,7 +518,6 @@ app.get('/constraints', function (req, res) {
     var settings = {
         "constraints": sets.constraints
     };
-    console.dir(settings);
     res.render('constraints',
     {
         settings: settings,
@@ -610,7 +616,7 @@ app.post('/constraints', function (req, res) {
                 "javascript_demo_constraint": utils.javascript_demo_constraint
             });
         }).catch(function(rejected_constraint){
-            console.dir(rejected_constraint);
+            log.error(rejected_constraint);
             return res.render('constraints',
             {
                 settings: {'constraints': new_constraints_storage},
@@ -648,7 +654,7 @@ app.get('/batch-add-to-neo4j', function (req, res) {
             res.redirect('/?m=' + encodeURIComponent('Success! Number of changed fragments: ' + params.num_changed));
         },
         function(err) {
-            console.error(err);
+            log.error(err);
             return res.redirect('/?e=' + encodeURIComponent('Error in batch add'));
         }
     );
@@ -657,7 +663,7 @@ app.get('/batch-add-to-neo4j', function (req, res) {
 function run() {
     app.listen(4000);
     log.info('TransliterationApplication Server started on http://localhost:4000/');
-    console.log('READY');
+    // console.log('READY');
 }
 
 if (!module.parent) {

@@ -1,13 +1,15 @@
 //const spawn = require('child_process').spawn;
 //const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
 
-var server = require('./server');
-var database = require('./database');
+var process = require('process');
 var log = require('electron-log');
 
-function main() {
+process.on('uncaughtException', function(err) {
+  log.error((err && err.stack) ? err.stack : err);
+});
 
-}
+var server = require('./server');
+var database = require('./database');
 
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
@@ -15,7 +17,7 @@ const url = require('url');
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-console.log(app.getAppPath())
+log.info(app.getAppPath())
 
 // var server = require(app.getAppPath() + '/src/server');
 
@@ -43,7 +45,8 @@ function createWindow () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    win = null
+      log.info('window closed');
+      win = null
   })
 }
 

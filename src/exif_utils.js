@@ -1,3 +1,4 @@
+var log = require('electron-log');
 var ExifImage = require('exif').ExifImage;
 
 function get_exif_from_image(path, cb) {
@@ -11,7 +12,7 @@ function get_exif_from_image(path, cb) {
             }
         });
     } catch (error) {
-        console.log('Error: ' + error.message);
+        log.error('Error: ' + error.message);
     }
 }
 
