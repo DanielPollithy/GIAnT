@@ -50,7 +50,7 @@
     "express": "^4.15.2",
     "express-fileupload": "^0.1.2",
     "image-size": "^0.5.4",
-    "mxgraph": "^3.7.2-2",
+    "mxgraph": "3.7.2-2",
     "neo4j-driver": "^1.1.1",
     "pug": "^2.0.0-beta11",
     "xml2js": "^0.4.17"
