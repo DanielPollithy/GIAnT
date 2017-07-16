@@ -1,13 +1,11 @@
 TOKEN_CONFIG = {
   "tokens": {
     "symbol": {
-      "color": "orange",
       "properties": {
         "them_mak": ""
       }
     },
     "token": {
-      "color": "grey",
       "properties": {
           "ground":"",
           "tool":"",
@@ -16,9 +14,23 @@ TOKEN_CONFIG = {
           "color":""
       }
     },
-    "erasure": {
-      "color": "red",
-      "properties": {}
+    "modification": {
+      "properties": {
+      }
+    },
+    "comment": {
+      "properties": {
+          "comment_type":"tbc"
+      }
+    },
+    "frame": {
+      "properties": {
+          "frame_type":""
+      }
+    },
+    "blanco": {
+      "properties": {
+      }
     },
 	"connector": {
         "properties": {
