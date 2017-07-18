@@ -47,6 +47,7 @@
     "body-parser": "^1.17.1",
     "electron-log": "^2.2.6",
     "exif": "^0.6.0",
+    "exif-date": "^2.0.1",
     "express": "^4.15.2",
     "express-fileupload": "^0.1.2",
     "image-size": "^0.5.4",

@@ -1,6 +1,7 @@
 var neo4j = require('neo4j-driver').v1;
 var utils = require('./utils');
 var log = require('electron-log');
+var parse = require('exif-date').parse;
 
 //var config = require('../config.json');
 
@@ -273,10 +274,9 @@ Database.add_image = function(file_path, exif_data) {
             try {
                 var raw_format = exif_data['exif']['CreateDate'];
                 if (raw_format.indexOf(" ") >= 0) {
-                    var splits = raw_format.split(" ");
-                    var parsed_date = Number(Date.parse(splits[0], 'yyyy:MM:dd'));
+                    var parsed_date = parse(raw_format);
                     if (parsed_date) {
-                        upload_date = parsed_date;
+                        upload_date = Math.round(parsed_date.getTime());
                     }
                 }
             } catch (e) {
