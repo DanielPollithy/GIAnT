@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Deployment &#8212; TransliterationApplication  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Welcome to TransliterationApplication’s documentation!" href="../../index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deployment">
+<h1>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="deployment-automation">
+<h2>Deployment automation<a class="headerlink" href="#deployment-automation" title="Permalink to this headline">¶</a></h2>
+<p>Since this project needs to be build on multiple platforms it is a good idea to not just run tests automated
+but also use <strong>TRAVIS-CI</strong> and <strong>AppVeyor</strong> to build and deploy the application.
+The configuration files can be found in the root directory of the repository.</p>
+<p>Travis is used for linux 32bit and 64bit builds and AppVeyor for both architectures for windows (called win32).
+See Deployment-Travis or Deployment-AppVeyor for configuration and documentation.</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#deployment-on-travis-ci">Deployment on Travis-CI</a></li>
+</ul>
+</div></blockquote>
+<div class="section" id="trigger-an-automatic-build">
+<h3>Trigger an automatic build<a class="headerlink" href="#trigger-an-automatic-build" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>A build shall only be triggered on tag push. This is how to do this:</dt>
+<dd><ul class="first last simple">
+<li>Tag the commit in Git by <code class="code docutils literal"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-a</span> <span class="pre">v0.0.0</span> <span class="pre">-m</span> <span class="pre">&quot;Release</span> <span class="pre">0.0.0&quot;</span></code></li>
+<li>Push the tag <code class="code docutils literal"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">v0.0.0</span></code></li>
+</ul>
+</dd>
+</dl>
+<p>Now the build triggers automatically the deployment to github releases.
+After some minutes there is a new release on the GitHub-Page with the zipped applications attached.</p>
+</div>
+</div>
+<div class="section" id="how-to-deploy-manually">
+<h2>How to Deploy manually<a class="headerlink" href="#how-to-deploy-manually" title="Permalink to this headline">¶</a></h2>
+<p>If you made a change to the code and want to ship this change in an electron app
+follow this procedure</p>
+<blockquote>
+<div><ul class="simple">
+<li>Tag the commit in Git by <code class="code docutils literal"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-a</span> <span class="pre">v0.0.0</span> <span class="pre">-m</span> <span class="pre">&quot;Release</span> <span class="pre">0.0.0&quot;</span></code></li>
+<li>Push the tag <code class="code docutils literal"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">v0.0.0</span></code></li>
+<li>Package the electron app for your platform with <code class="code docutils literal"><span class="pre">electron-packager</span></code></li>
+<li>If you haven&#8217;t done so, install <code class="code docutils literal"><span class="pre">electron-packager</span></code> globally:  <code class="code docutils literal"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">-g</span> <span class="pre">electron-packager</span></code></li>
+<li>If you are on the OS that you want to target with the build execute <code class="code docutils literal"><span class="pre">electron-packager</span></code>
+(consulate the documentation of electron-packager)</li>
+<li>Compress the created folder. Example for linux: <code class="code docutils literal"><span class="pre">zip</span> <span class="pre">-r</span> <span class="pre">[archive-name].zip</span> <span class="pre">[name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">folder]</span></code></li>
+<li>Navigate to the releases tab of the github repository</li>
+<li>Edit your release: Add the compressed archive.</li>
+<li>Add the release to the download section of the documentation</li>
+<li>Describe the changes made in the CHANGELIST of the documentation</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="deployment-on-travis-ci">
+<h2>Deployment on Travis-CI<a class="headerlink" href="#deployment-on-travis-ci" title="Permalink to this headline">¶</a></h2>
+<p>This is an explanation of the configuration and how the workflow works.
+If you know Travis-CI this will be boring.</p>
+<div class="section" id="what-is-travis-ci">
+<h3>What is Travis-CI<a class="headerlink" href="#what-is-travis-ci" title="Permalink to this headline">¶</a></h3>
+<p>It is a CI (continuous integration) provider that is free to use for public git repositories.
+It provides virtual machines that can automatize jobs for you, e.g. run your unit tests or test your code with various
+code versions and a lot more.</p>
+</div>
+<div class="section" id="setup-travis-ci">
+<h3>Setup Travis-CI<a class="headerlink" href="#setup-travis-ci" title="Permalink to this headline">¶</a></h3>
+<p>It is easily setup if you have a github account.
+You can use the github account as a single sign on for Travis-CI.org.
+There you activate the wanted repository in the overview.</p>
+<p>After you set that up, every time you push to the master branch Travis will start to work for you.</p>
+</div>
+<div class="section" id="what-does-travis-do">
+<h3>What does Travis do?<a class="headerlink" href="#what-does-travis-do" title="Permalink to this headline">¶</a></h3>
+<p>He (look at the logo) will pull our code and look for a configuration file called <code class="code docutils literal"><span class="pre">.travis.yml</span></code>.
+This file contains all the things we want Travis to do for us.</p>
+<dl class="docutils">
+<dt>In our case this is:</dt>
+<dd><ul class="first last simple">
+<li>downloading and installing the latest neo4j-community server</li>
+<li>install all other dependencies</li>
+<li>run the tests</li>
+<li>build the electron application and package it</li>
+<li>deploy the package to github releases (if the release doesn&#8217;t exist so far, he will create one)</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="detailed-description-of-the-configuration">
+<h3>Detailed description of the Configuration<a class="headerlink" href="#detailed-description-of-the-configuration" title="Permalink to this headline">¶</a></h3>
+<p>In Line 22 there is the installation script for neo4j triggered. This will only work on unix systems.</p>
+<p>In Line 40 you see there is a BASH variable. If you want to use this deploy configuration
+you have to go to github.com, login into your account, from there create an access token with the
+option &#8220;repo&#8221; ticked and copy paste the generated token into the environment variables in the TRAVIS
+web frontend. <strong>Don&#8217;t forget to activate encryption for this variable</strong> or else everyone can access
+your with ease.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">osx_image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xcode7.3</span>
+<span class="l l-Scalar l-Scalar-Plain">sudo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">required</span>
+<span class="l l-Scalar l-Scalar-Plain">dist</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">trusty</span>
+<span class="l l-Scalar l-Scalar-Plain">language</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">c</span>
+<span class="l l-Scalar l-Scalar-Plain">matrix</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">os</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">osx</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">os</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">linux</span>
+    <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CC=clang CXX=clang++ npm_config_clang=1</span>
+    <span class="l l-Scalar l-Scalar-Plain">compiler</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">clang</span>
+<span class="l l-Scalar l-Scalar-Plain">cache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">directories</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">node_modules</span>
+  <span class="p p-Indicator">-</span> <span class="s">&quot;$HOME/.electron&quot;</span>
+  <span class="p p-Indicator">-</span> <span class="s">&quot;$HOME/.cache&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">addons</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apt</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">packages</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">libgnome-keyring-dev</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">icnsutils</span>
+<span class="l l-Scalar l-Scalar-Plain">before_install</span><span class="p p-Indicator">:</span>
+<span class="hll"><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./install_neo4j.sh</span>
+</span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mkdir -p /tmp/git-lfs &amp;&amp; curl -L https://github.com/github/git-lfs/releases/download/v1.2.1/git-lfs-$([</span>
+  <span class="l l-Scalar l-Scalar-Plain">&quot;$TRAVIS_OS_NAME&quot; == &quot;linux&quot; ] &amp;&amp; echo &quot;linux&quot; || echo &quot;darwin&quot;)-amd64-1.2.1.tar.gz</span>
+  <span class="l l-Scalar l-Scalar-Plain">| tar -xz -C /tmp/git-lfs --strip-components 1 &amp;&amp; /tmp/git-lfs/git-lfs pull</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">if [[ &quot;$TRAVIS_OS_NAME&quot; == &quot;linux&quot; ]]; then sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils; fi</span>
+<span class="l l-Scalar l-Scalar-Plain">install</span><span class="p p-Indicator">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">nvm install 6</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm install electron-builder@next</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm install</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm prune</span>
+<span class="l l-Scalar l-Scalar-Plain">script</span><span class="p p-Indicator">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm run release</span>
+<span class="l l-Scalar l-Scalar-Plain">branches</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">except</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&quot;/^v\\d+\\.\\d+\\.\\d+$/&quot;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">releases</span>
+<span class="hll">  <span class="l l-Scalar l-Scalar-Plain">api_key</span><span class="p p-Indicator">:</span> <span class="s">&quot;$GH_TOKEN&quot;</span>
+</span>  <span class="l l-Scalar l-Scalar-Plain">file_glob</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="s">&quot;*.zip&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">skip_cleanup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="l l-Scalar l-Scalar-Plain">on</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="deployment-on-appveyor">
+<h2>Deployment on AppVeyor<a class="headerlink" href="#deployment-on-appveyor" title="Permalink to this headline">¶</a></h2>
+<p>AppVeyor provides a similar service to Travis-CI but is focused on windows.
+So they provide a <strong>Power shell</strong> on a win32 host system you can configure.</p>
+<p>You have to put a <code class="code docutils literal"><span class="pre">appveyor.yml</span></code> file into the base dir of the repo which
+might look like this.</p>
+<p>This configuration excludes the test because we already ran the tests on travis
+and at the moment you are going to have a hard time installing neo4j into their machines.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">version</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1.{build}</span>
+
+<span class="l l-Scalar l-Scalar-Plain">platform</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x64</span>
+
+<span class="l l-Scalar l-Scalar-Plain">cache</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">node_modules</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">app\node_modules</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;%APPDATA%\npm-cache&#39;</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;%USERPROFILE%\.electron&#39;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">init</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git config --global core.autocrlf input</span>
+
+<span class="l l-Scalar l-Scalar-Plain">install</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ps</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Install-Product node 6 x64</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git reset --hard HEAD</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm install npm -g</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm install electron-builder@next</span> <span class="c1"># force install next version to test electron-builder</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm install</span>
+<span class="hll">  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm prune</span>
+</span>
+<span class="l l-Scalar l-Scalar-Plain">build_script</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">node --version</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm --version</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">npm run release</span>
+
+<span class="l l-Scalar l-Scalar-Plain">test</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">off</span>
+
+<span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">release</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">TransliterationApplication-v$(appveyor_build_version)</span>
+  <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&#39;TransliterationApplication&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">GitHub</span>
+  <span class="l l-Scalar l-Scalar-Plain">auth_token</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">secure</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">QBn6bw8znM2WsrG32eTzA55Iu0iE6oymujVBos6XFUldN/biNahd6Csr6d9Y4u+E</span>
+  <span class="l l-Scalar l-Scalar-Plain">artifact</span><span class="p p-Indicator">:</span> <span class="s">&#39;**\*.zip&#39;</span>            <span class="c1"># upload all NuGet packages to release assets</span>
+  <span class="l l-Scalar l-Scalar-Plain">draft</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="l l-Scalar l-Scalar-Plain">prerelease</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="hll">  <span class="l l-Scalar l-Scalar-Plain">on</span><span class="p p-Indicator">:</span>
+</span>    <span class="l l-Scalar l-Scalar-Plain">branch</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">master</span>                 <span class="c1"># release from master branch only</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Deployment</a><ul>
+<li><a class="reference internal" href="#deployment-automation">Deployment automation</a><ul>
+<li><a class="reference internal" href="#trigger-an-automatic-build">Trigger an automatic build</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-deploy-manually">How to Deploy manually</a></li>
+<li><a class="reference internal" href="#deployment-on-travis-ci">Deployment on Travis-CI</a><ul>
+<li><a class="reference internal" href="#what-is-travis-ci">What is Travis-CI</a></li>
+<li><a class="reference internal" href="#setup-travis-ci">Setup Travis-CI</a></li>
+<li><a class="reference internal" href="#what-does-travis-do">What does Travis do?</a></li>
+<li><a class="reference internal" href="#detailed-description-of-the-configuration">Detailed description of the Configuration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deployment-on-appveyor">Deployment on AppVeyor</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../../index.html" title="previous chapter">Welcome to TransliterationApplication&#8217;s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/sources/Deployment/Deployment.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Pollithy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/sources/Deployment/Deployment.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
