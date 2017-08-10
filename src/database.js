@@ -688,6 +688,7 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
  * @return {Promise}
  * @param node_id
  * @param frame_name
+ * @param groupType
  */
 Database.add_frame_edge = function(node_id, frame_name, groupType) {
     var session = this._get_session();

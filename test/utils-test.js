@@ -119,7 +119,7 @@ describe('utils', function() {
                         var creation_date = record['upload_date'];
                         console.log(creation_date);
                         var wrong = true;
-                        if (Number(creation_date) === 1483244880000) {
+                        if (Number(creation_date) === 1496000809000) {
                             wrong = false;
                         }
                         if (wrong) {

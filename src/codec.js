@@ -574,18 +574,18 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
                     is_frame = true;
                 }
             }
-            all_node_promises.push(database.add_node(image_id, fragment_id, label, cell.$))
+            all_node_promises.push(function() {return database.add_node(image_id, fragment_id, label, cell.$)})
         });
-        return Promise.all(all_node_promises).then(function (values) {
+        return utils.chain_promises(all_node_promises).then(function (values) {
             // create all the edges
             var all_edge_promises = [];
             if (edges.length > 0) {
                 edges.forEach(function (cell) {
                     all_edge_promises.push(
-                        database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
+                        function() {return database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)}
                     );
                 });
-                return Promise.all(all_edge_promises);
+                return utils.chain_promises(all_edge_promises);
             } else {
                 return values
             }

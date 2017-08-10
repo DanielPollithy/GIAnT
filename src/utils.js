@@ -47,7 +47,40 @@ function token_type_mapping(token_type) {
     }
     return null;
 }
+/**
+ * chains a list of functions (that return promises) and executes them in the right order
+ * [function() {return Promise.resolve();}, function() {return Promise.resolve();}]
+ *
+ * @param funcs is an array of functions returning promises
+ * @returns {Promise}
+ */
+function chain_promises(funcs) {
+    if (funcs.length < 1) {
+        return Promise.resolve();
+    }
+    var i = 0;
+    return chain_executor(funcs, i);
+}
 
+/**
+ * Recursive help method for chain_promises
+ * 1) executes a function that returns a promise (no params allowed)
+ * 2) chains itself to the success resolve of the promise
+ *
+ * @param funcs is an array of functions returning promises
+ * @param i is the current working index
+ */
+function chain_executor(funcs, i) {
+    var promise = funcs[i]();
+    return promise.then(function(){
+        console.log(i);
+        if (funcs.length > i+1) {
+            return chain_executor(funcs, i+1);
+        } else {
+            return Promise.resolve();
+        }
+    })
+}
 
 module.exports = {
     'javascript_demo_constraint':javascript_demo_constraint,
@@ -55,4 +88,5 @@ module.exports = {
     'hash_xml_fragment': hash_xml_fragment,
     'remove_image': remove_image,
     'token_type_mapping': token_type_mapping,
+    'chain_promises': chain_promises
 };
