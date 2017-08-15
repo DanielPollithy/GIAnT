@@ -3,31 +3,36 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to TransliterationApplication's documentation!
-======================================================
+TransliterationApplication
+==========================
 
-This is a **technical documentation** of the components and how to use them.
-It powers ~well written "articles" on general questions. See Articles_ section.
+.. image:: sources/images/logo.png
 
-There is also an **API description** here:
+TransliterationApplication is an open source cross platform desktop application designed
+to aid scientists with graphical image annotation.
 
-`<https://danielpollithy.github.io/TransliterationApplication/api/>`_
+If you have a set of images, want to make annotations or even analyze how utters interact with each
+other  this application might be useful for your project.
+
+<YOUTUBE>
+
+This documentation is divided into three sections:
+1. Guides: An overview of the features for non-users and explanations to get you started
+2. Articles explaining the main features and advantages
+3. Documentations: A Technical documentation which enables programmers to extend this application
+
+(There is also an **API description** here:
+`<https://danielpollithy.github.io/TransliterationApplication/api/>`_ )
 
 Contents
 --------
 
 .. toctree::
    :maxdepth: 2
-   
-   sources/Deployment
-   sources/Configuration
-   sources/Migration
-   sources/Heatmap
-   sources/Downloads
-   sources/GraphElements
-   sources/Editor
-   sources/FAQ
-   sources/CHANGELOG
+
+   Guides
+   Articles
+   Documentations
 
 
 Articles
