@@ -412,7 +412,7 @@ Database.remove_image_by_id = function (id_) {
                 log.warn("Image node is being deleted but there was an error finding the local image file: "+e);
             }
             return session
-                .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t:Token) " +
+                .run("MATCH (n:Image)<-[:image]-(f:Fragment)<-[:fragment]-(t) " +
                     "WHERE ID(n) = toInteger({ident}) " +
                     "DETACH DELETE t;", {ident: Number(id_)})
                 .then(function (result) {
@@ -426,8 +426,15 @@ Database.remove_image_by_id = function (id_) {
                                 "WHERE ID(n) = toInteger({ident}) " +
                                 "DETACH DELETE n;", {ident: Number(id_)})
                                 .then(function (result) {
-                                    session.close();
-                                    return result;
+                                    return session.run(
+                                        "MATCH (a:MetaGroup) WHERE not ((a)--()) DELETE a;")
+                                        .then(function (result) {
+                                            session.close();
+                                            return result;
+                                        }, function (err) {
+                                            session.close();
+                                            return err;
+                                        });
                                 }, function (err) {
                                     session.close();
                                     return err;
