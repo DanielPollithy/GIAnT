@@ -39,10 +39,10 @@ function remove_image(file_path) {
 }
 
 function token_type_mapping(token_type) {
-    if (token_type === 'token') {
+    if (['token', 'modification', 'symbol'].includes(token_type)) {
         return 'Token';
     }
-    if (token_type === 'frame' || token_type === 'comment' || token_type === 'blanco') {
+    if (['frame', 'comment', 'blanco'].includes(token_type)) {
         return 'Group';
     }
     return null;

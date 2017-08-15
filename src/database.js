@@ -531,8 +531,15 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
                         "DETACH DELETE f;", {image_id: Number(image_id), fragment_id: Number(fragment_id)})
                         .then(
                             function (result) {
-                                session.close();
-                                return result;
+                                return session.run(
+                                    "MATCH (a:MetaGroup) WHERE not ((a)--()) DELETE a;")
+                                    .then(function (result) {
+                                        session.close();
+                                        return result;
+                                    }, function (err) {
+                                        session.close();
+                                        return err;
+                                    });
                             }, function (err) {
                                 session.close();
                                 return err;
@@ -876,18 +883,31 @@ Database.get_all_completed_fragments = function() {
  *
  * @method get_all_property_keys_for_token
  * @param search_string {string} Empty string gives all possible values
+ * @param label
+ * @param token_type
  * @return {Promise}
  */
-Database.get_all_property_keys_for_token = function(search_string, label) {
+Database.get_all_property_keys_for_token = function(search_string, label, token_type) {
     if (label === undefined) {
         label = 'Token'
     }
+    var extra_check = "";
+    if (token_type !== undefined) {
+        if (label === 'Token') {
+            extra_check = ' {tokenType:"'+token_type+'"}';
+        } else if (label === 'Group') {
+            extra_check = ' {groupType:"'+token_type+'"}';
+        }
+    }
+
     var session = this._get_session();
     var prom = session
-        .run("MATCH (p:"+ label +") WITH DISTINCT keys(p) AS keys " +
+        .run("MATCH (p:"+ label +""+ extra_check +")  WITH DISTINCT keys(p) AS keys " +
             "UNWIND keys AS keyslisting WITH DISTINCT keyslisting AS allfields " +
             "WHERE allfields CONTAINS {search_string}" +
-            "RETURN allfields;", {search_string: search_string || ''})
+            "RETURN allfields;", {search_string: search_string || '',
+                                  token_type: token_type
+        })
         .then(function (result) {
             session.close();
             var keys = [];

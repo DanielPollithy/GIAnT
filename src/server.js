@@ -202,13 +202,22 @@ app.get('/autocomplete/:token_type/values', function (req, res) {
 
 
 app.get('/autocomplete/:token_type/keys', function (req, res) {
-    var token_type = utils.token_type_mapping(req.params.token_type);
-    if (!token_type) {
-        res.jsonp([]);
+    var label = utils.token_type_mapping(req.params.token_type);
+    if (['modification', 'token', 'symbol', 'comment', 'frame', 'blanco'].includes(req.params.token_type)) {
+        var token_type = req.params.token_type;
+    }
+    if (!label) {
+        return res.jsonp([]);
     }
     var search_string = req.query.term || '';
-    var keys = database.get_all_property_keys_for_token(search_string, token_type).then(function (keys) {
-        res.jsonp(keys);
+    var keys = database.get_all_property_keys_for_token(search_string, label, token_type).then(function (keys) {
+        var blacklist = ['value', 'whiteSpace', 'width', 'height', 'opacity', 'hand', 'as', 'parent',
+        'enumerator', 'fillColor', 'id', 'html', 'rounded', 'x', 'y', 'vertex', 'tokenType',
+        'fontSize', 'groupType'];
+        return res.jsonp(keys.filter(function (key) {
+                return !blacklist.includes(key);
+        })
+        );
     });
 });
 
