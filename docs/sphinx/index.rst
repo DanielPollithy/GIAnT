@@ -17,9 +17,9 @@ other  this application might be useful for your project.
 <YOUTUBE>
 
 This documentation is divided into three sections:
-1. Guides: An overview of the features for non-users and explanations to get you started
-2. Articles explaining the main features and advantages
-3. Documentations: A Technical documentation which enables programmers to extend this application
+ 1. Guides: An overview of the features for non-users and explanations to get you started
+ 2. Articles explaining the main features and advantages
+ 3. Documentations: A Technical documentation which enables programmers to extend this application
 
 (There is also an **API description** here:
 `<https://danielpollithy.github.io/TransliterationApplication/api/>`_ )
