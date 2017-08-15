@@ -102,7 +102,7 @@ At the bottom of the page there is an upload button.
 
 Once uploaded a line appears in the table:
 
-.. image:: sources/images/screenshots/index_line.png
+.. image:: sources/images/screenshots/indexline.png
 
  - The **ID** is a unique identifier
  - The **Pfad** contains the name of the uploaded image
@@ -135,7 +135,7 @@ In order to transfer your data created within the editor you can
 
 .. image:: sources/images/screenshots/batch_add.png
 
-**The batch add makes use of hash codes. ** That means: Only fragments that have been changed or are not in
+ **The batch add makes use of hash codes.** That means: Only fragments that have been changed or are not in
 the database right now are transferred to neo4j.
 
 Using the editor
