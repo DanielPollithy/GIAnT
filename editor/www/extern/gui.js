@@ -28,6 +28,7 @@ $(document).ready(function() {
 
     // init datatable
     $('table').DataTable({
-        searching: false
+        searching: true,
+        aaSorting: [[0, 'desc']]
     });
 });
