@@ -7,7 +7,6 @@ function apply_custom_settings(editor_ui) {
             editor_ui.editor.graph.stylesheet = realMerge(editor_ui.editor.graph.stylesheet, styles);
             editor_ui.editor.graph.defaultEdgeStyle = realMerge(editor_ui.editor.graph.defaultEdgeStyle,
                 defaultEdgeStyle);
-            console.log(editor_ui.editor.graph.stylesheet)
         },
         function(err){
             console.log(err);
@@ -258,30 +257,128 @@ function add_edge_between_cells(graph, parent, origin_cell, target_cell, relatio
 }
 
 
+function initialize_node_with_properties(graph, vertex) {
 
-function overwrite_mxgraph_edge_create(mxgraph) {
-    mxgraph.insertEdge = function(parent, id, value, source, target, style)
+        var vertex_value = graph.getModel().getValue(vertex);
+        // Converts the value to an XML node
+        if (!mxUtils.isNode(vertex_value))
+        {
+            var doc = mxUtils.createXmlDocument();
+            var obj = doc.createElement('object');
+            obj.setAttribute('label', vertex_value || '');
+            vertex_value = obj;
+        }
+
+        var token_type = get_type_of_cell(graph, vertex);
+
+        if (!token_type) {return null;}
+
+        var properties = {};
+
+        // get the relation properties
+        if (TOKEN_CONFIG.tokens.hasOwnProperty(token_type)) {
+            if (TOKEN_CONFIG.tokens[token_type].hasOwnProperty("properties")) {
+                properties = TOKEN_CONFIG.tokens[token_type]['properties'];
+            }
+        }
+
+        // iterate over the properties
+        // add them to the edge and call the custom event handler
+        Object.keys(properties).forEach(function(prop) {
+            vertex_value.setAttribute(prop, properties[prop]);
+            // call the custom event handler
+            if (CUSTOM_PROPERTY_CHANGE_HANDLERS.hasOwnProperty(prop)) {
+                CUSTOM_PROPERTY_CHANGE_HANDLERS[prop](edge, graph.getCellStyle(edge), value, graph, prop,
+                    properties[prop], token_type);
+            }
+        });
+        graph.getModel().setValue(vertex, vertex_value);
+}
+
+
+function overwrite_mxgraph_edge_create(graph) {
+
+    graph.insertEdge = function(parent, id, value, source, target, style)
     {
         var parent_style = this.getCellStyle(parent);
 
         if (Number(parent_style.locked) === 1) {
-            console.log('dont? ');
             return null;
         }
         var edge = this.createEdge(parent, id, value, source, target, style);
 
-        return this.addEdge(edge, parent, source, target);
+        var edge_value = graph.getModel().getValue(edge);
+        // Converts the value to an XML node
+        if (!mxUtils.isNode(value))
+        {
+            var doc = mxUtils.createXmlDocument();
+            var obj = doc.createElement('object');
+            obj.setAttribute('label', edge_value || '');
+            edge_value = obj;
+        }
+
+        var token_type = 'connector';
+        var properties = {relation_type:''};
+
+        // get the relation properties
+        if (TOKEN_CONFIG.tokens.hasOwnProperty(token_type)) {
+            if (TOKEN_CONFIG.tokens[token_type].hasOwnProperty("properties")) {
+                properties = TOKEN_CONFIG.tokens[token_type]['properties'];
+            }
+            // overwrite with conditional properties
+            if (TOKEN_CONFIG.tokens[token_type].hasOwnProperty("conditional_properties")) {
+                // iterate over the conditional properties
+                if (source) {
+                    var source_style = graph.getCellStyle(source);
+                    var source_type = source_style.tokenType;
+                }
+                if (target) {
+                    var target_style = graph.getCellStyle(target);
+                    var target_type = target_style.tokenType;
+                }
+                Object.keys(TOKEN_CONFIG.tokens[token_type].conditional_properties).forEach(function(prop) {
+                    var from_condition = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].from;
+                    var to_condition = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].to;
+                    var conditions = false;
+                    // if the source and the target match the given conditions
+                    // overwrite the property
+                    if (from_condition && source_type && from_condition === source_type) {
+                        if (to_condition && target_type && to_condition === target_type) {
+                            properties[prop] = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].value;
+                        }
+                    }
+                });
+            }
+        }
+
+        // iterate over the properties
+        // add them to the edge and call the custom event handler
+        Object.keys(properties).forEach(function(prop) {
+            edge_value.setAttribute(prop, properties[prop]);
+            // call the custom event handler
+            if (CUSTOM_PROPERTY_CHANGE_HANDLERS.hasOwnProperty(prop)) {
+                CUSTOM_PROPERTY_CHANGE_HANDLERS[prop](edge, graph.getCellStyle(edge), value, graph, prop,
+                    properties[prop], token_type);
+            }
+        });
+
+        var added_edge = this.addEdge(edge, parent, source, target);
+
+        graph.getModel().setValue(added_edge, edge_value);
+
+        return added_edge;
     };
 }
 
 function add_vertex_listener(editor_ui) {
-    console.log('add listener');
     editor_ui.editor.graph.addListener("cellsInserted", function(sender, evt)
     {
-      var vertex = evt.getProperty('cells')[0];
+      // var vertex = evt.getProperty('cells')[0];
       var fontSize = editor_ui.editor.graph.stylesheet.styles.defaultVertex.fontSize;
-      editor_ui.editor.graph.setCellStyles('fontSize', fontSize, [vertex]);
-
+      editor_ui.editor.graph.setCellStyles('fontSize', fontSize, evt.getProperty('cells'));
+        evt.getProperty('cells').forEach(function(cell){
+            initialize_node_with_properties(editor_ui.editor.graph, cell)
+        });
     });
 }
 

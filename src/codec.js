@@ -582,7 +582,9 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
             if (edges.length > 0) {
                 edges.forEach(function (cell) {
                     all_edge_promises.push(
-                        function() {return database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)}
+                        function() {
+                            return database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
+                        }
                     );
                 });
                 return utils.chain_promises(all_edge_promises);

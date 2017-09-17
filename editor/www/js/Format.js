@@ -4513,7 +4513,10 @@ StyleFormatPanel.prototype.addEditDataDialog = function(div) {
 						if (row.name === prop) {
 							found = true;
 							row.name = prop;
-							row.value = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].value
+							// only overwrite the given property if the string is empty
+							if (row.value === "") {
+								row.value = TOKEN_CONFIG.tokens[token_type].conditional_properties[prop].value
+							}
 						}
 					});
 					if (!found) {

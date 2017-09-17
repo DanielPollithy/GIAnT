@@ -49,8 +49,8 @@ TOKEN_CONFIG = {
 	}
   },
   "relations": {
-    "follow": {
-      "color": "grey"
+    "follows": {
+      "color": "black"
     },
     "add+": {
       "color": "green"
