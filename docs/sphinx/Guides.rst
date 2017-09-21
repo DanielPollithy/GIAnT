@@ -259,6 +259,7 @@ It follows a short explanation of the graph data.
 Every uploaded image is represented by a node. Neo4J label: :code:`:Image`
 
 The following Cypher query retrieves it for you:
+
 .. image:: sources/images/screenshots/1_image.PNG
 
 .. image:: sources/images/screenshots/image.PNG
@@ -268,19 +269,20 @@ The following Cypher query retrieves it for you:
 Image properties
 
 
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
-| Property                                                                                                    | Name                    |
-+=============================================================================================================+=========================+
-| A unique ID                                                                                                 | :code:`:id`             |
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
-| The reference to the file path of the image                                                                 | :code:`:file_path`      |
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
-| The width in pixels                                                                                         | :code:`:width`          |
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
-| The height in pixels                                                                                        | :code:`:height`         |
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
-| The date when the image was taking (extracted from the Meta EXIF information) or fallbacked the upload date | :code:`:upload_date`  |
-+-------------------------------------------------------------------------------------------------------------+-------------------------+
++------------------+-------------------------+
+| Property         | Name                    |
++==================+=========================+
+| A unique ID      | :code:`:id`             |
++------------------+-------------------------+
+| The reference to the file path of the image     | :code:`:file_path`      |
++------------------+-------------------------+
+| The width in pixels    | :code:`:width`  |
++------------------+-------------------------+
+| The height in pixels   | :code:`:height`   |
++------------------+-------------------------+
+| The date when the image was taking (extracted from EXIF) or fallbacked the upload date | :code:`:upload_date`  |
++------------------+-------------------------+
+
 
 .. image:: sources/images/screenshots/image_data.PNG
 
