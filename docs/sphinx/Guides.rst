@@ -275,15 +275,15 @@ Image properties
 +--------------------------+-------------------------+
 | Property                 | Name                    |
 +==========================+=========================+
-| A unique ID              | :code:`id`             |
+| A unique ID              | :code:`id`              |
 +--------------------------+-------------------------+
-| File path                | :code:`file_path`      |
+| File path                | :code:`file_path`       |
 +--------------------------+-------------------------+
-| The width in pixels      | :code:`width`          |
+| The width in pixels      | :code:`width`           |
 +--------------------------+-------------------------+
-| The height in pixels     | :code:`height`         |
+| The height in pixels     | :code:`height`          |
 +--------------------------+-------------------------+
-| EXIF date or upload date | :code:`upload_date`    |
+| EXIF date or upload date | :code:`upload_date`     |
 +--------------------------+-------------------------+
 
 
@@ -316,15 +316,15 @@ Properties of Fragments
 +--------------------------+-------------------------+
 | Property                 | Name                    |
 +==========================+=========================+
-| A unique ID              | :code:`id`             |
+| A unique ID              | :code:`id`              |
 +--------------------------+-------------------------+
-| Fragment name            | :code:`fragment_name`  |
+| Fragment name            | :code:`fragment_name`   |
 +--------------------------+-------------------------+
-| Use with batch-add?      | :code:`completed`      |
+| Use with batch-add?      | :code:`completed`       |
 +--------------------------+-------------------------+
-| Helps to detect changes  | :code:`checksum`       |
+| Helps to detect changes  | :code:`checksum`        |
 +--------------------------+-------------------------+
-| Creation date            | :code:`upload_date`    |
+| Creation date            | :code:`upload_date`     |
 +--------------------------+-------------------------+
 
 .. image:: sources/images/screenshots/fragment_data.PNG
