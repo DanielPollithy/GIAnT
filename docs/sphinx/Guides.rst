@@ -343,12 +343,14 @@ The Neo4j label for Group Tokens is :code:`:Group`.
 
 The following image illustrates how the Groups and Singular Tokens can be seen as distinct hierarchy layers.
 
+
 .. image:: sources/images/screenshots/hierarchy_4.PNG
 
- 1. Image
- 2. Fragment
- 3. Singular Token (Symbole, Modification, Text)
- 4. Group Token (Comment, Frame, Blanco)
+
+1. Image
+2. Fragment
+3. Singular Token (Symbole, Modification, Text)
+4. Group Token (Comment, Frame, Blanco)
 
 Singular Tokens
 ...............
@@ -372,7 +374,7 @@ Interesting Properties of **Singular Tokens**
 +--------------------------+-------------------------+
 | The number of the layer  | :code:`:hand`           |
 +--------------------------+-------------------------+
-| + All custom properties  | e.g. color, tool, ...   |
+| All custom properties    | e.g. color, tool, ...   |
 +--------------------------+-------------------------+
 
 (*) Possible default tokenTypes are: token, symbol, modification
@@ -397,7 +399,7 @@ Interesting Properties of **Group Tokens**
 +--------------------------+-------------------------+
 | The number of the layer  | :code:`:hand`           |
 +--------------------------+-------------------------+
-| + All custom properties  | e.g. frame_type...      |
+| All custom properties    | e.g. frame_type...      |
 +--------------------------+-------------------------+
 
 (*) Possible default groupTypes are: comment, frame, blanco
@@ -450,7 +452,7 @@ Interesting Properties of **Edges**
 +--------------------------+-------------------------+
 | Type of relation         | :code:`:relation_type`  |
 +--------------------------+-------------------------+
-| + All custom properties  | e.g. frame_type...      |
+| All custom properties    | e.g. frame_type...      |
 +--------------------------+-------------------------+
 
 .. image:: sources/images/screenshots/edge_props.PNG
@@ -461,7 +463,7 @@ Using Cypher
 Now that you know how your data is structured in the graph database you might already have ideas on what kind of information you want to retrieve from your 'corpus'.
 
 **Using the TransliterationApplication but refusing to use Cypher is a waste of time!**
-Cypher is the SQL oriented query langauge for neo4j graph databases. https://neo4j.com/developer/cypher-query-language/
+Cypher is the SQL oriented query language for neo4j graph databases. https://neo4j.com/developer/cypher-query-language/
 
 It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.  TODO: Add links to the following resources!
 
@@ -470,7 +472,110 @@ TODO: Diesen Absatz ausbauen!
 Heatmap tool
 ------------
 
-.. include:: ./sources/Heatmap.rst
+The heatmap tool can be used to analyze the positions of tokens.
+It might be interesting to see the density of tokens in a region or the outline they form.
+The input for this tool has to be a Cypher query. It will then only work with the tokens,
+therefore it is recommended to build your query to only return tokens.
+
+Example query:
+:code:`MATCH (s:Token) RETURN s;`
+
+The query is not analyzed or guarded. This means that any code can be executed.
+As a consequence must this feature kept on a local system and not exposed through a webserver!
+
+The color scheme of the heatmap reaches from 0 (yellow) to 1 (red).
+
+Normalization techniques
+........................
+
+In this context the term normalization refers to an algorithm that makes the positions
+of tokens in different images comparable.
+
+There are three types of normalizations present:
+
+Normalization 1: Position in image
+..................................
+
+All images are normalized to the output size.
+The tokens are scaled accordingly.
+
+The final result is the distribution of tokens over the images.
+
+.. image:: sources/images/heatmap/n1_example.jpeg
+
+Normalization 2: Position in scritte (bounding box)
+...................................................
+
+This method fetches the Bounding Box(see below) of every image and scales
+the tokens according to it.
+
+The bounding box is the rectangle spanned by the lowest coordinate
+to the highest one.
+
+The result shows the distribution of tokens within the bounding box.
+
+.. image:: sources/images/heatmap/n2_example.jpeg
+
+Normalization 3: Bounding box centered
+......................................
+
+Here the bounding box is placed into the normalised image.
+But the position is changed: The box's center is placed over the normalisation target center.
+
+As a result, the bounding boxes and by that way the outlines of all scritte are comparable.
+
+This method could be used to extract the outline of fragments.
+Example: Do they have a horizontal orientation or are they grouped like a
+triangle.
+
+.. image:: sources/images/heatmap/n3_example.jpeg
+
+
+Performance
+...........
+
+The heatmap creation process happens as a stream.
+
+.. image:: sources/images/heatmap/flow.jpeg
+
+Processing every single token means some computation effort. Especially fetching images/bounding boxes
+from the database costs resources, in particulary time.
+The heatmap tool was never designed to be a big data application but rather a medium data application
+that shall work with up to 3000 images containing 1 fragment containing 100 elements.
+
+Based on this requirement a ram cache was introduced which is not persistent between heatmap generations
+but could be implemented easily.
+The cache prevents unnecessary database request.
+
+The performance evaluation has shown that it is possible to generate heatmaps in reasonable time.
+
+.. image:: sources/images/heatmap/performance.png
+
+The most computation intense normalization took 15 minutes with 300.000 elements.
+The data points of this chart are:
+
++----------------+----------------------+--------------+--------------+
+| Total elements | Normalization #1 [s] | Norm. #2 [s] | Norm. #3 [s] |
++================+======================+==============+==============+
+| 1.000          | 1                    | 1            | 1            |
++----------------+----------------------+--------------+--------------+
+| 2.000          | 1                    | 1            | 2            |
++----------------+----------------------+--------------+--------------+
+| 5.000          | 4                    | 9            | 7            |
++----------------+----------------------+--------------+--------------+
+| 10.000         | 9                    | 30           | 14           |
++----------------+----------------------+--------------+--------------+
+| 50.000         | 45                   | 156          | 83           |
++----------------+----------------------+--------------+--------------+
+| 100.000        | 100                  | 205          | 163          |
++----------------+----------------------+--------------+--------------+
+| 300.000        | 550                  | 989          | 701          |
++----------------+----------------------+--------------+--------------+
+
+The performance test took place on regular Ubuntu 16.04 with 64 bit on a laptop with
+Intel® Core™ i5-2520M CPU @ 2.50GHz × 4,
+and 3,7 GiB RAM and
+a HDD.
 
 Custom queries
 --------------
@@ -480,7 +585,68 @@ What kind of queries could make sense?
 Data constraints
 ----------------
 
-.. include:: ./sources/Constraints.rst
+In database context 'check constraints' are a mean to assure data integrity.
+
+This application could have varying use cases. From case to case the constraints for the graph
+scheme differ.
+
+One use case might restrict the number of edges between nodes. Another one the total amount of nodes
+and so on.
+
+As a result this application does not contain a set of 'hard coded' constraints but a configuration
+file that contains Cypher queries which will be executed every time a graph was inserted into
+Neo4j.
+
+The workflow
+............
+
+GraphEditor -> codec.js -> Neo4j -> constraints.js
+
+Opposite to usual RDMS Neo4j only comes with a limited set of data integrity constraints.
+Usually these constraints are checked before inserting data into the database.
+
+This workflow does not do so because we want the user to be able to write Cypher query code.
+In a future version it could be possible that a failing constraint triggers the transaction
+to be rolled back. So far this doesn't happen.
+
+Design of the constraints
+.........................
+
+In the end the constraints have to validate so their output is boolean.
+
+If all constraints are true -> then the constraint checking succeeded and there is no error
+
+Else: We hand the error to the user.
+
+
+Writing constraints
+...................
+
+There is an entry in the menu which is called 'Constraints'.
+In that view you can create two types of constraints:
+ - count constraints: You write a query and provide a minimum and/or maximum of accepted results to your query
+ - free constraints: you write javascript code (in detail a Promise: see below for an example)
+
+Example for count constraint
+............................
+
+You provide a query like :code:`MATCH (a:Token)-[]-(i:Image) RETURN DISTINCT a;`
+and the boundaries (lower is contained, upper exluded): [0, 200[
+
+Example for a free constraint
+.............................
+
+<any javascript code returning a promise>
+
+Security
+........
+
+The cypher queries are checked to not contain "CREATE", "MERGE", "SET" or any other operation
+that could change the data while performing the check. If that happens only a message is prompted
+to the user.
+
+These operations could be in the query willingly so they will still get executed in order to
+enhance the power of the user on the data.
 
 Exporting your data
 -------------------
