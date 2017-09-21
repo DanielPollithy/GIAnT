@@ -198,6 +198,7 @@ The Group Tokens shall not carry positional information. They are called "Groups
   - "Blanco" is a general purpose group
   
 Fictional example for comment groups:
+
 .. image:: sources/images/screenshots/comments.PNG
 
 Properties can be attached to tokens. See section "properties".
@@ -209,7 +210,7 @@ The entities of your image annotations are expressed by tokens.
 TranslationApplication becomes handy when these tokens interact with each others or the important information lays in "between" them.
 (This is also the case where graph databases can serve with their graph query languages.)
 
-.. image:: sources/images/screenshots/Book.PNG
+.. image:: sources/images/screenshots/book.PNG
 
 Different kinds of exemplary relations can be examined:
  - "part of" relations: a word is part of a sentence etc.
@@ -233,10 +234,12 @@ There is autocomletion on:
  - property names and
  - property values
  
-Selecting a new property from the autocompletion. 
+Selecting a new property from the autocompletion.
+
 .. image:: sources/images/screenshots/property_name.PNG
 
 Selecting a value for the given property from the autocompletion.
+
 .. image:: sources/images/screenshots/property_value.PNG
  
 The autocompletion is token type, property and relation type sensitive.
