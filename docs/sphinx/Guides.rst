@@ -167,7 +167,7 @@ The trash icon of course stands for the deletion of the layer. The only sideeffe
 appear. Say we created 3 layers. Deleted the second one. Now only layer "1" and "3" remain. The chronology of course is still there.
 
 If you closed the layers panel by clicking the "x" button in the upper right corner, 
-you can get the panel by clicking "View"->"Outline".
+you can get the panel by clicking "View" -> "Outline".
 
 Nodes
 .....
@@ -254,7 +254,10 @@ The TransliterationApplication can be seen as a Graphical Image Annotation Tool 
 
 Access to your neo4j database is usually at this local url: http://127.0.0.1:7474
 
-It follows a short explanation of the graph data.
+The boxes and edges you drawn in the editor are reflected by the following scheme in Neo4j.
+
+Images
+......
 
 Every uploaded image is represented by a node. Neo4J label: :code:`:Image`
 
@@ -269,19 +272,19 @@ The following Cypher query retrieves it for you:
 Image properties
 
 
-+------------------+-------------------------+
-| Property         | Name                    |
-+==================+=========================+
-| A unique ID      | :code:`:id`             |
-+------------------+-------------------------+
-| The reference to the file path of the image     | :code:`:file_path`      |
-+------------------+-------------------------+
-| The width in pixels    | :code:`:width`  |
-+------------------+-------------------------+
-| The height in pixels   | :code:`:height`   |
-+------------------+-------------------------+
-| The date when the image was taking (extracted from EXIF) or fallbacked the upload date | :code:`:upload_date`  |
-+------------------+-------------------------+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`             |
++--------------------------+-------------------------+
+| File path                | :code:`file_path`      |
++--------------------------+-------------------------+
+| The width in pixels      | :code:`width`          |
++--------------------------+-------------------------+
+| The height in pixels     | :code:`height`         |
++--------------------------+-------------------------+
+| EXIF date or upload date | :code:`upload_date`    |
++--------------------------+-------------------------+
 
 
 .. image:: sources/images/screenshots/image_data.PNG
@@ -289,6 +292,10 @@ Image properties
 By expanding the child relations (lower circle segment button)...
 
 .. image:: sources/images/screenshots/image.PNG
+
+
+Fragments
+.........
 
 You see that images are connected to fragments. Neo4J label: :code:`:Fragment`
 Fragments are interpretations or multiple areas of one image. 
@@ -306,50 +313,188 @@ The Neo4J Label of the relation between Fragment and Token is called :code:`:fra
 
 Properties of Fragments
 
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
-| Property                                                                                                                                          | Name                    |
-+===================================================================================================================================================+=========================+
-| A unique ID                                                                                                                                       | :code:`:id`             |
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
-| The human readable name of the fragment                                                                                                           | :code:`:fragment_name`  |
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
-| Whether the editing of the fragment is completed? (-> ready for the "Batch add")                                                                  | :code:`:completed`      |
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
-| A checksum of the fragment's data to detect whether changes where made within the editor that are
-not reflected in the database (-> "Batch add")  | :code:`:hash`           |
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
-| The creation date of the fragment                                                                                                                 | :code:`:upload_date`    |
-+---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`             |
++--------------------------+-------------------------+
+| Fragment name            | :code:`fragment_name`  |
++--------------------------+-------------------------+
+| Use with batch-add?      | :code:`completed`      |
++--------------------------+-------------------------+
+| Helps to detect changes  | :code:`checksum`       |
++--------------------------+-------------------------+
+| Creation date            | :code:`upload_date`    |
++--------------------------+-------------------------+
 
-Interpretation as a graph
-.........................
+.. image:: sources/images/screenshots/fragment_data.PNG
 
-Advantages of graphs
-....................
+Tokens
+......
+
+Tokens are what we also called boxes in the context of the Editor. 
+There are two groups:
+ - Singular Tokens: they carry positional information
+ - Group tokens: they group together and stand as an entity for multiple tokens that need to have relations between other groups
+ 
+The Neo4j label for singular Tokens is :code:`:Token`.
+
+The Neo4j label for Group Tokens is :code:`:Group`.
+
+The following image illustrates how the Groups and Singular Tokens can be seen as distinct hierarchy layers.
+
+.. image:: sources/images/screenshots/hierarchy_4.PNG
+
+ 1. Image
+ 2. Fragment
+ 3. Singular Token (Symbole, Modification, Text)
+ 4. Group Token (Comment, Frame, Blanco)
+
+Singular Tokens
+...............
+
+Interesting Properties of **Singular Tokens**
+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`              |
++--------------------------+-------------------------+
+| width [pixels]           | :code:`width`           |
++--------------------------+-------------------------+
+| height [pixels]          | :code:`height`          |
++--------------------------+-------------------------+
+| position [pixels]        | :code:`x, y`            |
++--------------------------+-------------------------+
+| The type of the Token*   | :code:`:tokenType`      |
++--------------------------+-------------------------+
+| The box's content**      | :code:`:value`          |
++--------------------------+-------------------------+
+| The number of the layer  | :code:`:hand`           |
++--------------------------+-------------------------+
+| + All custom properties  | e.g. color, tool, ...   |
++--------------------------+-------------------------+
+
+(*) Possible default tokenTypes are: token, symbol, modification
+
+(**) The content of the box is what you enter when you double click into the box
+
+.. image:: sources/images/screenshots/token_props.PNG
+
+Groups
+......
+
+Interesting Properties of **Group Tokens**
+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`              |
++--------------------------+-------------------------+
+| The type of the Group*   | :code:`:groupType`      |
++--------------------------+-------------------------+
+| The box's content**      | :code:`:value`          |
++--------------------------+-------------------------+
+| The number of the layer  | :code:`:hand`           |
++--------------------------+-------------------------+
+| + All custom properties  | e.g. frame_type...      |
++--------------------------+-------------------------+
+
+(*) Possible default groupTypes are: comment, frame, blanco
+
+(**) The content of the box is what you enter when you double click into the box
+
+.. image:: sources/images/screenshots/group_props.PNG
+
+
+
+**Attention:** The Group Token "Frame" introduces another Graph Database Node called **MetaFrame**. The Neo4j label for this is :code:`:MetaGroup`.
+This node is an interconnection of all "Frames" with the same name in order to ease graph exploration.
+
+Example: The Token with text "Kill" in one fragment is connected to a Frame called "Violence". In another image's fragment there is also
+a Token connected to Frame called "Violence". Both Token Groups "Frame" are connected to the MetaGroup "Violence" which is created automatically.
+
+.. image:: sources/images/screenshots/hierarchy_5.PNG
+
+
+Interesting Properties of **MetaGroups**
+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`              |
++--------------------------+-------------------------+
+| The type of the Group*   | :code:`:groupType`      |
++--------------------------+-------------------------+
+| value                    | :code:`:value`          |
++--------------------------+-------------------------+
+
+(*) Only MetaFrame is possible so far!
+
+Edges
+.....
+
+The tokens are interconneted with multiple edges. This is not a 1-n relationship but a many-to-many relationship (called m-n).
+The Neo4J Label of the relation between Token and Token is called :code:`:edge`. 
+
+Do not confuse this with the relations between Images and Fragments nor Fragments and Tokens!
+
+.. image:: sources/images/screenshots/edge.PNG
+
+Interesting Properties of **Edges**
+
++--------------------------+-------------------------+
+| Property                 | Name                    |
++==========================+=========================+
+| A unique ID              | :code:`id`              |
++--------------------------+-------------------------+
+| Type of relation         | :code:`:relation_type`  |
++--------------------------+-------------------------+
+| + All custom properties  | e.g. frame_type...      |
++--------------------------+-------------------------+
+
+.. image:: sources/images/screenshots/edge_props.PNG
 
 Using Cypher
 ............
 
+Now that you know how your data is structured in the graph database you might already have ideas on what kind of information you want to retrieve from your 'corpus'.
+
+**Using the TransliterationApplication but refusing to use Cypher is a waste of time!**
+Cypher is the SQL oriented query langauge for neo4j graph databases. https://neo4j.com/developer/cypher-query-language/
+
+It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.  TODO: Add links to the following resources!
+
+TODO: Diesen Absatz ausbauen!
+
 Heatmap tool
 ------------
 
-Normalization techniques
-........................
+.. include:: ./sources/Heatmap.rst
 
 Custom queries
-..............
+--------------
+
+What kind of queries could make sense? 
 
 Data constraints
 ----------------
 
+.. include:: ./sources/Constraints.rst
+
 Exporting your data
 -------------------
 
-SQL and CSV
-...........
+It is very likely that you don't only want to analyze your data but also take it with you to another application.
 
-Images
-......
+For this purpose TransliterationApplication comes with a **SQL and a CSV export**.
+
+Both of them are structured into four tables:
+ - Nodes table
+ - Properties of nodes table
+ - Relations table
+ - Properties of relations table
+
 
 
 
