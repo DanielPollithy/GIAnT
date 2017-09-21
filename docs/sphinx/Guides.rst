@@ -198,6 +198,7 @@ The Group Tokens shall not carry positional information. They are called "Groups
   - "Blanco" is a general purpose group
   
 Fictional example for comment groups:
+
 .. image:: sources/images/screenshots/comments.PNG
 
 Properties can be attached to tokens. See section "properties".
@@ -206,10 +207,10 @@ Relations
 .........
 
 The entities of your image annotations are expressed by tokens.
-TranslationApplication becomes handy when these tokens interact with each others or the important information lays in "between" them.
+TransliterationApplication becomes handy when these tokens interact with each others or the important information lays in "between" them.
 (This is also the case where graph databases can serve with their graph query languages.)
 
-.. image:: sources/images/screenshots/Book.PNG
+.. image:: sources/images/screenshots/book.PNG
 
 Different kinds of exemplary relations can be examined:
  - "part of" relations: a word is part of a sentence etc.
@@ -233,10 +234,12 @@ There is autocomletion on:
  - property names and
  - property values
  
-Selecting a new property from the autocompletion. 
+Selecting a new property from the autocompletion.
+
 .. image:: sources/images/screenshots/property_name.PNG
 
 Selecting a value for the given property from the autocompletion.
+
 .. image:: sources/images/screenshots/property_value.PNG
  
 The autocompletion is token type, property and relation type sensitive.
@@ -246,6 +249,75 @@ Different tokens need distinct properties. You can configure this with the setti
 
 Data scheme in neo4j
 --------------------
+
+The TransliterationApplication can be seen as a Graphical Image Annotation Tool that stores your data in Neo4j. So you get all of the advantages graph databases have. 
+
+Access to your neo4j database is usually at this local url: http://127.0.0.1:7474
+
+It follows a short explanation of the graph data.
+
+Every uploaded image is represented by a node. Neo4J label: :code:`:Image`
+
+The following Cypher query retrieves it for you:
+.. image:: sources/images/screenshots/1_image.PNG
+
+.. image:: sources/images/screenshots/image.PNG
+
+
+
+Image properties
+
+
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+| Property                                                                                                    | Name                    |
++=============================================================================================================+=========================+
+| A unique ID                                                                                                 | :code:`:id`             |
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+| The reference to the file path of the image                                                                 | :code:`:file_path`      |
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+| The width in pixels                                                                                         | :code:`:width`          |
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+| The height in pixels                                                                                        | :code:`:height`         |
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+| The date when the image was taking (extracted from the Meta EXIF information) or fallbacked the upload date | :code:`:upload_date`  |
++-------------------------------------------------------------------------------------------------------------+-------------------------+
+
+.. image:: sources/images/screenshots/image_data.PNG
+
+By expanding the child relations (lower circle segment button)...
+
+.. image:: sources/images/screenshots/image.PNG
+
+You see that images are connected to fragments. Neo4J label: :code:`:Fragment`
+Fragments are interpretations or multiple areas of one image. 
+Explicit: One image relates to many fragments but one fragment only relates to one image. We call this 1-n relationship.
+
+The Neo4J Label of the relation between Image and Fragment is called :code:`:image`.
+
+.. image:: sources/images/screenshots/image_fragment.PNG
+
+By expanding the Fragment's relations we see that the boxes we drew in the Editor are nodes on this hierarchy level.
+
+.. image:: sources/images/screenshots/image_fragment_nodes.PNG
+
+The Neo4J Label of the relation between Fragment and Token is called :code:`:fragment`. Every fragment is connected to many tokens (1-n relationship).
+
+Properties of Fragments
+
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+| Property                                                                                                                                          | Name                    |
++===================================================================================================================================================+=========================+
+| A unique ID                                                                                                                                       | :code:`:id`             |
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+| The human readable name of the fragment                                                                                                           | :code:`:fragment_name`  |
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+| Whether the editing of the fragment is completed? (-> ready for the "Batch add")                                                                  | :code:`:completed`      |
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+| A checksum of the fragment's data to detect whether changes where made within the editor that are
+not reflected in the database (-> "Batch add")  | :code:`:hash`           |
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+| The creation date of the fragment                                                                                                                 | :code:`:upload_date`    |
++---------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
 
 Interpretation as a graph
 .........................
