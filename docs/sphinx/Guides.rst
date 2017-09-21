@@ -135,7 +135,8 @@ In order to transfer your data created within the editor you can
 
 .. image:: sources/images/screenshots/batch_add.png
 
- **The batch add makes use of hash codes.** That means: Only fragments that have been changed or are not in
+**The batch add makes use of hash codes.**
+That means: Only fragments that have been changed or are not in
 the database right now are transferred to neo4j.
 
 Using the editor
@@ -144,14 +145,104 @@ Using the editor
 Overview
 ........
 
+The editor is where your work happens. We implemented some features to improve your productivity.
+But first comes the basics.
+
 Layers
 ......
+
+You start off only with the Background layer. It is not possible to attach any data to this layer (that is why you can't change the
+status of the lock icon). The only function it has is the checkbox which switches the visibility of the layer on and off.
+
+Imagine you already have a quite populated layers on top of the image. Sometimes it can be better (less distraction) to hide the
+background image for a while.
+
+.. image:: sources/images/screenshots/layers.PNG
+
+To start editing you have to click on the '+'-Button in order to add a new layer. The name of the layer is no changable on purpose. 
+The lock will be open on this layer because you are still editing it. If you want to make sure that no errors occur meanwhile you are
+editing another layer, feel free to lock it.
+
+The trash icon of course stands for the deletion of the layer. The only sideeffect that can happen here is that gaps in the enumeration
+appear. Say we created 3 layers. Deleted the second one. Now only layer "1" and "3" remain. The chronology of course is still there.
+
+If you closed the layers panel by clicking the "x" button in the upper right corner, 
+you can get the panel by clicking "View"->"Outline".
 
 Nodes
 .....
 
+We call every box which is drawn on a layer a node. The different types of boxes can be configured through the settings.
+In general every different entity should have its own node type (box type).
+
+.. image:: sources/images/screenshots/node_types.PNG
+
+By double clicking on one box you can edit the content of it. This might not be necessary for your use-case but is auxiliary if
+you want to make your annotations easy readable.
+
+The given box types are divided into to categories:
+ - Singular Tokens (positional)
+ - Group Tokens
+
+
+The default setup interprets them as follows: 
+
+The singular tokens contain text or at least a symbole.
+  - "Token" is a real textual component (maybe a word)
+  - "Modification" is always overlapping a "Token" (maybe a strike-through or an overwriting)
+  - "Symbol" is straight-forward a symbole
+  
+The Group Tokens shall not carry positional information. They are called "Groups".
+  - "Comment" is a group of singular tokens that relates over one single entity to another group (Imagine to grafitis on neighbouring walls relating to each others)
+  - "Frame" shall carry the psychological framing. The "Frame" Group is special because it connects to MetaGroups. (see next paragraph)
+  - "Blanco" is a general purpose group
+  
+Fictional example for comment groups:
+.. image:: sources/images/screenshots/comments.PNG
+
+Properties can be attached to tokens. See section "properties".
+
 Relations
 .........
+
+The entities of your image annotations are expressed by tokens.
+TranslationApplication becomes handy when these tokens interact with each others or the important information lays in "between" them.
+(This is also the case where graph databases can serve with their graph query languages.)
+
+.. image:: sources/images/screenshots/Book.PNG
+
+Different kinds of exemplary relations can be examined:
+ - "part of" relations: a word is part of a sentence etc.
+ - "follows" relation: a word follows another word
+ - "negates" relation: an expression negates the related expression
+ - "opens frame" relation: a word or symbole opens a psychological frame
+ - ... (lots of possibilites)
+
+Properties can be attached to relations. See section "properties".
+
+Properties
+..........
+
+Properties are attaches to relations and tokens. The stored information is transferred directly into the graph database so it can be used for querying your data.
+
+.. image:: sources/images/screenshots/properties.PNG
+
+**Cool Features:**
+Every property you have transferred into the neo4j graph database is used to enhance your experience by providing autocompletion:
+There is autocomletion on:
+ - property names and
+ - property values
+ 
+Selecting a new property from the autocompletion. 
+.. image:: sources/images/screenshots/property_name.PNG
+
+Selecting a value for the given property from the autocompletion.
+.. image:: sources/images/screenshots/property_value.PNG
+ 
+The autocompletion is token type, property and relation type sensitive.
+
+Different tokens need distinct properties. You can configure this with the settings and even give default values and javascript validations. There are a lot of possibilities to model your use-case with this tools.
+
 
 Data scheme in neo4j
 --------------------
