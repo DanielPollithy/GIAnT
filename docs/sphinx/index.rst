@@ -9,19 +9,23 @@ TransliterationApplication
 .. image:: sources/images/logo.png
 
 TransliterationApplication is an open source cross platform desktop application designed
-to aid scientists with graphical image annotation.
+to aid scientists with graphical image annotation in the process of creating a corpus.
 
 If you have a set of images, want to make annotations or even analyze how utters interact with each
 other  this application might be useful for your project.
 
-<YOUTUBE>
+We built it for the analyzing grafitis in Rome. Never the less the application is designed to be adapted for other studies.
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/4NRxlxq0TEY" frameborder="0" allowfullscreen></iframe>
 
 This documentation is divided into three sections:
  1. Guides: An overview of the features for non-users and explanations to get you started
  2. Articles explaining the main features and advantages
  3. Documentations: A Technical documentation which enables programmers to extend this application
 
-(There is also an **API description** here:
+(There is an **API description** available here:
 `<https://danielpollithy.github.io/TransliterationApplication/api/>`_ )
 
 Contents
