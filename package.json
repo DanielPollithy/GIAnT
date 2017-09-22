@@ -15,7 +15,7 @@
     "server": "node src/server.js",
     "release": "node_modules/.bin/electron-zip-packager . ",
     "debug": "node_modules/.bin/electron .",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "npm run cover -- --report lcovonly && cat ./docs/coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
