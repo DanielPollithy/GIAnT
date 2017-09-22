@@ -4,6 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](http://transliterationapplication.readthedocs.io/en/latest/?badge=latest)
 [![API Status](https://img.shields.io/badge/API-0.1-brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/api/)
 [![API Status](https://img.shields.io/badge/Test_Coverage--brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html)
+[![Coverage Status](https://coveralls.io/repos/github/DanielPollithy/TransliterationApplication/badge.svg?branch=master)](https://coveralls.io/github/DanielPollithy/TransliterationApplication?branch=master)
 
 **Youtube Video**
 [![Application Screencast](https://img.youtube.com/vi/4NRxlxq0TEY/0.jpg)](https://www.youtube.com/watch?v=4NRxlxq0TEY)
