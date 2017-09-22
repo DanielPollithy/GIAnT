@@ -5,6 +5,10 @@
 [![API Status](https://img.shields.io/badge/API-0.1-brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/api/)
 [![API Status](https://img.shields.io/badge/Test_Coverage--brightgreen.svg)](https://danielpollithy.github.io/TransliterationApplication/coverage/lcov-report/index.html)
 
+**Youtube Video**
+[![Application Screencast](https://img.youtube.com/vi/4NRxlxq0TEY/0.jpg)](https://www.youtube.com/watch?v=4NRxlxq0TEY)
+
+
 # Interesting for users
 
 The first part of the README is dedicated to users who want to work with the application.
