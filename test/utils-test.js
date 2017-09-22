@@ -140,53 +140,39 @@ describe('utils', function() {
             });
         });
     });
-    describe('#parse the heatmap result', function () {
-        it("check number of records in heatmap", function (done) {
-            database.add_image('xyz').then(
-                function(result){
-                    var image_id = Number(result.get('ident'));
-                    var session = database._get_session();
-                    session.run('MATCH (i:Image) RETURN i;').then(
-                        function(data) {
-                            var records = [];
-                            for (var i = 0; i < data.records.length; i++) {
-                                records.push(data.records[i]);
-                            }
-                            var n = heatmap.count_images_in_result(records);
-                            database.remove_image_by_id(image_id).then(
-                                function() {
-                                    if (n !== 1) {
-                                        done('n should be 1');
-                                    } else {
-                                        done();
-                                    }
-                                },
-                                function(err){
-                                    done(err);
-                                }
-                            )
-                        },
-                        function(err) {
-                            database.remove_image_by_id(image_id).then(
-                                function() {
-                                    done(err);
-                                },
-                                function(err2){
-                                    done(err);
-                                }
-                            )
-                        }
-                    );
-                },
-                function(err){
-                    done(err);
-                }
-            );
-        });
+
+    describe('#misc', function(){
+        it("check hash", function(){
+            var awaited_hash = '9ebc1323b5ebc175d79ef27d7b4363ea41fa7ac4';
+            var hash = utils.hash_of_file_content('../test/misc/hash_example.txt')
+            hash.should.equal(awaited_hash);
+        })
+
+        it("token type mapping", function(){
+            var tokens = ['token', 'modification', 'symbol'];
+            var groups = ['frame', 'comment', 'blanco'];
+            tokens.forEach(function(token){
+                utils.token_type_mapping(token).should.equal("Token");
+            });
+            groups.forEach(function(group){
+                utils.token_type_mapping(group).should.equal("Group");
+            });
+
+            var is_null = utils.token_type_mapping('a not known value') === null;
+            is_null.should.equal(true)
+        })
+
+        it("chain promise zero length", function(done){
+            utils.chain_promises([]).then(function(){done()}).catch(function(err){done(err);})
+        })
     });
-
-
 });
+
+
+
+
+
+
 /*
 
 THIS CODE CAN BE USED AS BATCH CREATOR OF TOKENS
@@ -215,6 +201,8 @@ function add_100() {
             });
     });
 }
+
+
 
 
 describe('#massive heatmap test', function(){

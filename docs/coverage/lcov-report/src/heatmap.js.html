@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src\heatmap.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> heatmap.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">84.45% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>201/238</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">71.43% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>60/84</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">81.25% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>39/48</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">84.45% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>201/238</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">261×</span>
+<span class="cline-any cline-yes">261×</span>
+<span class="cline-any cline-yes">261×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">261×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">348×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">348×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">58×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-yes">29×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">300×</span>
+<span class="cline-any cline-yes">30000×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">300×</span>
+<span class="cline-any cline-yes">300×</span>
+<span class="cline-any cline-yes">30000×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">59×</span>
+<span class="cline-any cline-yes">1020×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29212×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">300×</span>
+<span class="cline-any cline-yes">30000×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">300×</span>
+<span class="cline-any cline-yes">30000×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var log = require('electron-log');
+var database = require('./database');
+var path = require('path');
+var fs = require('fs');
+&nbsp;
+// cache all images with their tokens
+var IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || {
+        images: {
+            // image_id -&gt; image
+        },
+        fragments: {
+            // fragment_id -&gt; image_id
+        },
+        tokens: {
+            // token_id -&gt; fragment_id
+        }
+    };
+&nbsp;
+// cache the bounding box for every fragment
+var BOUNDING_BOX_CACHE = BOUNDING_BOX_CACHE || {
+        // fragment_id -&gt; bb
+    };
+&nbsp;
+function clean_caches() {
+    // cache all images with their tokens
+    IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || <span class="branch-1 cbranch-no" title="branch not covered" >{</span>
+        images: {
+            // image_id -&gt; image
+        },
+        fragments: {
+            // fragment_id -&gt; image_id
+        },
+        tokens: {
+            // token_id -&gt; fragment_id
+        }
+    };
+&nbsp;
+    // cache the bounding box for every fragment
+    BOUNDING_BOX_CACHE = BOUNDING_BOX_CACHE || <span class="branch-1 cbranch-no" title="branch not covered" >{</span>
+        // fragment_id -&gt; bb
+    };
+}
+&nbsp;
+function count_entities_by_label(records, label) {
+    var i = 0;
+    records.forEach(function (record) {
+        if (record._fields[0].labels.includes(label)) {
+            i++;
+        }
+    });
+    return i;
+}
+&nbsp;
+function count_images_in_result(result) {
+    return count_entities_by_label(result, "Image");
+}
+&nbsp;
+function count_fragments_in_result(result) {
+    return count_entities_by_label(result, "Fragment");
+}
+&nbsp;
+function count_tokens_in_result(result) {
+    return count_entities_by_label(result, "Token");
+}
+&nbsp;
+function assure_node_has_property(node, property_name) {
+    return node._fields[0].properties.hasOwnProperty(property_name);
+}
+&nbsp;
+function assure_node_has_properties(node, property_names) {
+    property_names.forEach(function (prop) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!assure_node_has_property(node, prop)) {
+<span class="cstat-no" title="statement not covered" >            return false;</span>
+        }
+    });
+    return true;
+}
+&nbsp;
+function check_all_tokens_are_spatial(records) {
+    var mandatory = ['x', 'y', 'width', 'height'];
+    records.forEach(function (record) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (record._fields[0].labels.includes('Token')) {
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (!assure_node_has_properties(record, mandatory)) {
+<span class="cstat-no" title="statement not covered" >                return false;</span>
+            }
+        }
+    });
+    return true;
+}
+&nbsp;
+function check_all_images_have_dimension(records) {
+    var mandatory = ['width', 'height'];
+    records.forEach(function (record) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (record._fields[0].labels.includes('Image')) {
+<span class="cstat-no" title="statement not covered" >            if (!assure_node_has_properties(record, mandatory)) {</span>
+<span class="cstat-no" title="statement not covered" >                return false;</span>
+            }
+        }
+    });
+    return true;
+}
+&nbsp;
+&nbsp;
+function get_cached_fragment_of_token(token_id) {
+    return IMAGE_FRAGMENT_CACHE.tokens[token_id];
+}
+&nbsp;
+function set_cached_fragment_of_token(token_id, fragment_id) {
+    IMAGE_FRAGMENT_CACHE.tokens[token_id] = fragment_id;
+}
+&nbsp;
+function set_cached_image(token_id, fragment_id, image_id, image) {
+    token_id = Number(token_id);
+    fragment_id = Number(fragment_id);
+    image_id = Number(image_id);
+    IMAGE_FRAGMENT_CACHE.tokens[token_id] = fragment_id;
+    IMAGE_FRAGMENT_CACHE.fragments[fragment_id] = image_id;
+    IMAGE_FRAGMENT_CACHE.images[image_id] = image;
+}
+&nbsp;
+/*function save_cache() {
+    var bundle = [
+        IMAGE_FRAGMENT_CACHE,
+        BOUNDING_BOX_CACHE
+    ];
+    var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
+    fs.writeFileSync(cache_path, JSON.stringify(bundle));
+}*/
+&nbsp;
+/*
+function load_cache() {
+    var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
+    var bundle;
+    try {
+        bundle = JSON.parse(fs.readFileSync(cache_path, 'utf8'));
+    } catch (e) {
+        log.error('Could not load cache');
+        log.error(e);
+    }
+    if (bundle) {
+        IMAGE_FRAGMENT_CACHE = bundle[0];
+        BOUNDING_BOX_CACHE = bundle[1];
+        log.info('Cache loaded from file successfully');
+    } else {
+        clean_caches();
+    }
+}*/
+&nbsp;
+function get_cached_fragment_bounding_box(fragment_id) {
+    return BOUNDING_BOX_CACHE[fragment_id];
+}
+&nbsp;
+function get_cached_fragment_bounding_box_for_token(token_id) {
+    var cached_fragment_id = get_cached_fragment_of_token(token_id);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (cached_fragment_id) {
+        return get_cached_fragment_bounding_box(cached_fragment_id);
+    }
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+}
+&nbsp;
+function set_fragment_bounding_box(token_id, fragment_id, bb) {
+    token_id = Number(token_id);
+    fragment_id = Number(fragment_id);
+    set_cached_fragment_of_token(token_id, fragment_id);
+    BOUNDING_BOX_CACHE[fragment_id] = bb;
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function get_cached_image(image_id) {</span>
+<span class="cstat-no" title="statement not covered" >    image_id = Number(image_id);</span>
+<span class="cstat-no" title="statement not covered" >    return IMAGE_FRAGMENT_CACHE.images[image_id];</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function get_cached_image_of_fragment(fragment_id) {</span>
+<span class="cstat-no" title="statement not covered" >    fragment_id = Number(fragment_id);</span>
+<span class="cstat-no" title="statement not covered" >    if (IMAGE_FRAGMENT_CACHE.fragments[fragment_id]) {</span>
+<span class="cstat-no" title="statement not covered" >        var image_id = IMAGE_FRAGMENT_CACHE.fragments[fragment_id];</span>
+<span class="cstat-no" title="statement not covered" >        return get_cached_image(image_id);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+}
+&nbsp;
+function get_cached_image_of_token(token_id) {
+    token_id = Number(token_id);
+    var cached_fragment_id = get_cached_fragment_of_token(token_id);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (cached_fragment_id) {
+<span class="cstat-no" title="statement not covered" >        return get_cached_image_of_fragment(cached_fragment_id);</span>
+    }
+    return null;
+}
+&nbsp;
+function get_bounding_box_of_fragment(token) {
+    var token_id = Number(token._fields[0].identity);
+    var cached_bb = get_cached_fragment_bounding_box_for_token(token_id);
+    if (cached_bb) {
+        return new Promise(function (resolve, reject) {
+            resolve(cached_bb);
+        });
+    }
+    return database.get_fragment_bounding_box(token_id).then(
+        function (bb) {
+            set_fragment_bounding_box(token_id, bb.get("fragment_id"), bb);
+            return bb;
+        },
+<span class="fstat-no" title="function not covered" >        function (err) {</span>
+<span class="cstat-no" title="statement not covered" >            return err;</span>
+        }
+    );
+}
+&nbsp;
+function normalization_on_whole_image(token, normalization, target_width, target_height) {
+    var token_id = Number(token._fields[0].identity);
+    var cached_image = get_cached_image_of_token(token_id);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (cached_image) {
+<span class="cstat-no" title="statement not covered" >        return new Promise(<span class="fstat-no" title="function not covered" >function (resolve, reject) {</span></span>
+<span class="cstat-no" title="statement not covered" >            resolve(cached_image);</span>
+        });
+    }
+    return database.get_image_of_token(token_id).then(function (img) {
+        set_cached_image(token_id, img.get('fragment_id'), img.get('image_id'), img);
+        var image_width = img._fields[0].properties.width;
+        var image_height = img._fields[0].properties.height;
+        // Check if image has width and height
+        if (!image_height || !image_width) {
+            return null;
+        }
+        var width_ratio = image_width / target_width;
+        var height_ratio = image_height / target_height;
+        var x = Number(token._fields[0].properties.x);
+        var y = Number(token._fields[0].properties.y);
+        var width = Number(token._fields[0].properties.width);
+        var height = Number(token._fields[0].properties.height);
+        // console.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
+        var normalized = {
+            'x': Math.round(x / width_ratio),
+            'y': Math.round(y / height_ratio),
+            'width': Math.round(width / width_ratio),
+            'height': Math.round(height / height_ratio)
+        };
+        return normalized;
+    }, <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >        return 'No image found for the given token';</span>
+    });
+}
+&nbsp;
+function normalization_on_bounding_box(token, normalization, target_width, target_height) {
+    return get_bounding_box_of_fragment(token).then(function (bb) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!bb) {
+<span class="cstat-no" title="statement not covered" >            log.error("no bb");</span>
+<span class="cstat-no" title="statement not covered" >            return null;</span>
+        }
+        var bounding_box = {
+            'x': Number(bb._fields[0]),
+            'y': Number(bb._fields[1]),
+            'x2': Number(bb._fields[2]),
+            'y2': Number(bb._fields[3])
+        };
+&nbsp;
+        // this happens if the bounding box could not be calculated
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
+<span class="cstat-no" title="statement not covered" >            log.error("bb could not be calculated");</span>
+<span class="cstat-no" title="statement not covered" >            return null;</span>
+        }
+&nbsp;
+        var normalized_bb = {
+            'x': 0,
+            'y': 0,
+            'width': bounding_box.x2 - bounding_box.x,
+            'height': bounding_box.y2 - bounding_box.y,
+        };
+&nbsp;
+        //log.log('bb', bounding_box)
+        //log.log('n_bb', normalized_bb)
+&nbsp;
+        var width_ratio = normalized_bb.width / target_width;
+        var height_ratio = normalized_bb.height / target_height;
+        var x = Number(token._fields[0].properties.x) - bounding_box.x;
+        var y = Number(token._fields[0].properties.y) - bounding_box.y;
+        var width = Number(token._fields[0].properties.width);
+        var height = Number(token._fields[0].properties.height);
+&nbsp;
+        //log.log('token', x,y,width, height)
+        //log.log(width_ratio)
+        //log.log(height_ratio)
+&nbsp;
+        // TODO: throw error if any value is smaller or equal to zero!
+        var normalized = {
+            'x': Math.round(x / width_ratio),
+            'y': Math.round(y / height_ratio),
+            'width': Math.round(width / width_ratio),
+            'height': Math.round(height / height_ratio)
+        };
+        //log.log(normalized)
+        return normalized;
+    }, <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >        return 'No bounding box found for the given token';</span>
+    });
+}
+&nbsp;
+function normalization_on_bounding_box_centered(token, normalization, target_width, target_height) {
+    var token_id = Number(token._fields[0].identity);
+    return database.get_image_of_token(token_id).then(function (img) {
+        var image_width = img._fields[0].properties.width;
+        var image_height = img._fields[0].properties.height;
+        // Check if image has width and height
+        if (!image_height || !image_width) {
+            return null;
+        }
+        var width_ratio = image_width / target_width;
+        var height_ratio = image_height / target_height;
+        var x = Number(token._fields[0].properties.x);
+        var y = Number(token._fields[0].properties.y);
+        var width = Number(token._fields[0].properties.width);
+        var height = Number(token._fields[0].properties.height);
+        //log.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
+        var normalized = {
+            'x': Math.round(x / width_ratio),
+            'y': Math.round(y / height_ratio),
+            'width': Math.round(width / width_ratio),
+            'height': Math.round(height / height_ratio)
+        };
+&nbsp;
+        return get_bounding_box_of_fragment(token).then(function (bb) {
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (!bb) {
+<span class="cstat-no" title="statement not covered" >                return null;</span>
+            }
+            var bounding_box = {
+                'x': Number(bb._fields[0]),
+                'y': Number(bb._fields[1]),
+                'x2': Number(bb._fields[2]),
+                'y2': Number(bb._fields[3])
+            };
+&nbsp;
+            // this happens if the bounding box could not be calculated
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
+<span class="cstat-no" title="statement not covered" >                return null;</span>
+            }
+&nbsp;
+            var normalized_bb = {
+                'x': bounding_box.x,
+                'y': bounding_box.y,
+                'width': bounding_box.x2 - bounding_box.x,
+                'height': bounding_box.y2 - bounding_box.y,
+            };
+&nbsp;
+            var bounding_box_center = {
+                'x': normalized_bb.x + normalized_bb.width / 2,
+                'y': normalized_bb.y + normalized_bb.height / 2,
+            };
+&nbsp;
+            var image_center = {
+                'x': image_width / 2,
+                'y': image_height / 2,
+            };
+&nbsp;
+            var movement_vector = {
+                'x': bounding_box_center.x - image_center.x,
+                'y': bounding_box_center.y - image_center.y
+            };
+&nbsp;
+            var normalized_movement_vector = {
+                'x': Math.round(movement_vector.x / width_ratio),
+                'y': Math.round(movement_vector.y / height_ratio)
+            };
+&nbsp;
+&nbsp;
+            var new_normalized = {
+                'x': normalized.x - normalized_movement_vector.x,
+                'y': normalized.y - normalized_movement_vector.y,
+                'width': normalized.width,
+                'height': normalized.height
+            };
+&nbsp;
+&nbsp;
+            return new_normalized;
+        }, <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >            log.error(err)</span>
+<span class="cstat-no" title="statement not covered" >            return 'No bounding box found for the given token';</span>
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return normalized;</span>
+    }, <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >        log.error(err)</span>
+<span class="cstat-no" title="statement not covered" >        return 'No image found for the given token';</span>
+    });
+}
+&nbsp;
+function normalize_token_spatials(token, normalization, target_width, target_height) {
+    if (normalization === 1) {
+        return normalization_on_whole_image(token, normalization, target_width, target_height);
+    } else if (normalization === 2) {
+        return normalization_on_bounding_box(token, normalization, target_width, target_height);
+    } else <span class="missing-if-branch" title="else path not taken" >E</span>if (normalization === 3) {
+        return normalization_on_bounding_box_centered(token, normalization, target_width, target_height);
+    }
+}
+&nbsp;
+function format_heat_map_to_d3js(heat_map) {
+    /*var data = [
+     {score: 0.5, row: 0, col: 0},
+     {score: 0.7, row: 0, col: 1},
+     {score: 0.2, row: 1, col: 0},
+     {score: 0.4, row: 1, col: 1}
+     ];*/
+    var data = [];
+    for (var x = 0; x &lt; heat_map.length; x++) {
+        for (var y = 0; y &lt; heat_map[0].length; y++) {
+            data.push(
+                {
+                    'score': heat_map[x][y],
+                    'row': x,
+                    'col': y
+                }
+            );
+        }
+    }
+    return data;
+}
+&nbsp;
+// shall return number of nodes, fragments, images and the normalized data array
+MAX_SIZE_HEATMAP = 300;
+MAX_PIXEL_SIZE = 10;
+SUPPORTED_NORMALIZATIONS = 3;
+function process_heatmap_query(query, normalization, width, height, pixel_size) {
+    // load_cache();
+    clean_caches();
+    var p = new Promise(function (resolve, reject) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (width &lt; 1 || width &gt; MAX_SIZE_HEATMAP || height &lt; 1 || height &gt; MAX_SIZE_HEATMAP) {
+<span class="cstat-no" title="statement not covered" >            return reject('Dimension of heat map are not in between 1 and ' + MAX_SIZE_HEATMAP);</span>
+        }
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (normalization &gt; SUPPORTED_NORMALIZATIONS || normalization &lt; 1) {
+<span class="cstat-no" title="statement not covered" >            return reject('Unsupported normalization');</span>
+        }
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (pixel_size &lt; 1 || pixel_size &gt; MAX_PIXEL_SIZE) {
+<span class="cstat-no" title="statement not covered" >            return reject('Wrong pixel_size');</span>
+        }
+&nbsp;
+        var all_promises = [];
+        // counts
+        var num_images = 0;
+        var num_fragments = 0;
+        var num_tokens = 0;
+        var num_errors = 0;
+&nbsp;
+        var heat_map = new Array(width);
+        for (var i = 0; i &lt; width; i++) {
+            heat_map[i] = new Array(height);
+            for (var z = heat_map[i].length - 1; z &gt;= 0; --z) {
+                heat_map[i][z] = 0;
+            }
+        }
+&nbsp;
+        var prom = Promise.resolve();
+&nbsp;
+        // get the query result
+        var session = database._get_session();
+        session.run(query).subscribe(
+            {
+                onNext: function (record) {
+                    num_images += count_images_in_result([record]);
+                    num_fragments += count_fragments_in_result([record]);
+                    num_tokens += count_tokens_in_result([record]);
+                    // is there a token without the position coordinates?
+                    // that means we have to check whether every token has the following attributes
+                    // x,y,width,height
+                    var all_tokens_are_spatial = check_all_tokens_are_spatial([record]);
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!all_tokens_are_spatial) {
+<span class="cstat-no" title="statement not covered" >                        return reject('not all tokens are spatial (have x, y, width and height property)');</span>
+                    }
+                    // check if all images have a width and height attribute
+                    var all_images_have_dimensions = check_all_images_have_dimension([record]);
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!all_images_have_dimensions) {
+<span class="cstat-no" title="statement not covered" >                        return reject('not all images have dimensions (have width and height property)');</span>
+                    }
+                    prom = prom.then(function(){
+                        var p = normalize_token_spatials(record, normalization, width, height)
+                            .then(function(normalized){
+                                if (!normalized) {
+                                    // normalization failed
+                                    num_errors++;
+                                } else {
+                                    // calcalute all point spanned by the rects x,y,width,height
+                                    for (var x_ = normalized.x; x_ &lt; normalized.x + normalized.width; x_++) {
+                                        for (var y_ = normalized.y; y_ &lt; normalized.y + normalized.height; y_++) {
+                                            // log.log(x_, y_);
+                                            heat_map[x_][y_]++;
+                                        }
+                                    }
+                                }
+                                return Promise.resolve();
+                            });
+                        return p;
+                    });
+&nbsp;
+&nbsp;
+                },
+                onCompleted: function () {
+                    session.close();
+                    log.info("Data finished streaming from db");
+                    prom.then(function () {
+                        //save_cache();
+                        <span class="missing-if-branch" title="if path not taken" >I</span>if (num_tokens === 0) {
+<span class="cstat-no" title="statement not covered" >                            return reject('Zero tokens found by query');</span>
+                        }
+                        log.info("Normalize the output matrix...");
+&nbsp;
+                        // calculate the maximum entry of the matrix
+                        var max = 0;
+                        for (var x = 0; x &lt; heat_map.length; x++) {
+                            for (var y = 0; y &lt; heat_map[0].length; y++) {
+                                if (heat_map[x][y] &gt; max) {
+                                    max = heat_map[x][y];
+                                }
+                            }
+                        }
+&nbsp;
+                        // transform the values of the matrix into the interval [0;1]
+                        // by dividing every entry by max
+                        for (var x = 0; x &lt; heat_map.length; x++) {
+                            for (var y = 0; y &lt; heat_map[0].length; y++) {
+                                heat_map[x][y] = heat_map[x][y] / max;
+                            }
+                        }
+                        var d3js_heat_map = format_heat_map_to_d3js(heat_map);
+                        return resolve({
+                            'num_images': num_images,
+                            'num_fragments': num_fragments,
+                            'num_tokens': num_tokens,
+                            'num_errors': num_errors,
+                            'heat_map': d3js_heat_map
+                        });
+                    });
+                },
+                onError: <span class="fstat-no" title="function not covered" >function (error) {</span>
+<span class="cstat-no" title="statement not covered" >                    log.error(error);</span>
+<span class="cstat-no" title="statement not covered" >                    return reject(error);</span>
+                },
+            }
+        );
+&nbsp;
+    });
+    return p;
+}
+&nbsp;
+&nbsp;
+module.exports = {
+    'process_heatmap_query': process_heatmap_query,
+    'count_images_in_result': count_images_in_result,
+    'count_fragments_in_result': count_fragments_in_result,
+    'count_tokens_in_result': count_tokens_in_result,
+    'IMAGE_FRAGMENT_CACHE': IMAGE_FRAGMENT_CACHE,
+    'BOUNDING_BOX_CACHE': BOUNDING_BOX_CACHE
+&nbsp;
+};</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Sep 22 2017 14:41:56 GMT+0200 (Mitteleuropäische Sommerzeit)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

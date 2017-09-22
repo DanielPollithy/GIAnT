@@ -118,15 +118,16 @@ function set_cached_image(token_id, fragment_id, image_id, image) {
     IMAGE_FRAGMENT_CACHE.images[image_id] = image;
 }
 
-function save_cache() {
+/*function save_cache() {
     var bundle = [
         IMAGE_FRAGMENT_CACHE,
         BOUNDING_BOX_CACHE
     ];
     var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
     fs.writeFileSync(cache_path, JSON.stringify(bundle));
-}
+}*/
 
+/*
 function load_cache() {
     var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
     var bundle;
@@ -143,7 +144,7 @@ function load_cache() {
     } else {
         clean_caches();
     }
-}
+}*/
 
 function get_cached_fragment_bounding_box(fragment_id) {
     return BOUNDING_BOX_CACHE[fragment_id];

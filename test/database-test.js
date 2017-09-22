@@ -7,6 +7,8 @@ var database = require('../src/database');
 
 var Codec = require('../src/codec');
 
+var heatmap = require('../src/heatmap');
+
 // Activate should-syntax (http://chaijs.com/guide/styles/#should)
 chai.should();
 
@@ -19,7 +21,52 @@ chai.should();
  });
  });*/
 
+describe('no database', function(){
 
+    it('Test database session fail', function () {
+        database.logout();
+        var session = database._get_session();
+    });
+
+});
+
+describe('database before', function(){
+
+    before(function(done) {
+        database.login('bolt://localhost:7687', 'neo4j', '1234').then(function(){done();}, done);
+    });
+
+    it('Test log_error_and_close_session', function () {
+        var session = database._get_session();
+        database.log_error_and_close_session(session)('TESTING THE ERROR TXT');
+    });
+
+});
+
+describe("Credentials test ", function(){
+    it('Try to login with wrong credentials', function(done) {
+        database.logout();
+        try {
+            database.login('bolt://localhost:7681', 'neo4', '1234').then(function() {
+                done("The login returned a resolve although the credentials were wrong");
+            }).catch(function(err){done();});
+        } catch (err) {
+            console.log("ERROR CATCHED!");
+            done();
+        }
+
+    });
+});
+
+describe("Doube login", function(){
+    it('Try to login twice', function(done) {
+        database.logout();
+        database.login('bolt://localhost:7687', 'neo4j', '1234').then(function(){
+            database.login('bolt://localhost:7687', 'neo4j', '1234').then(function(){done();}).catch(done);
+        }).catch(done);
+
+    });
+});
 
 describe('database', function () {
     var file_path = 'example_filepath.jpeg';
@@ -79,24 +126,6 @@ describe('database', function () {
     });
 
     describe("#Database ", function(){
-        /*it('wrong port: Logout and login with wrong creds and then with correct ones', function(done) {
-            database.logout();
-            database._get_driver().should.equal(false);
-            database.login('bolt://localhost:7681', 'neo4', '1234').then(
-                function() {
-                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
-                        function() {done('there should have been an error');},
-                        function() {done('there should have been an error');}
-                    );
-                }, function() {
-                    database.login('bolt://localhost:7687', 'neo4j', '1234').then(
-                        function() {done();},
-                        function() {done();}
-                    );
-                }
-            );
-        });*/
-
         it('wrong protocol: Logout and login with wrong creds and then with correct ones', function(done) {
             database.logout();
             database._get_driver().should.equal(false);
@@ -182,6 +211,58 @@ describe('database', function () {
                 done(err);
             });
         });
+
+        it("get all fragments", function (done) {
+            database.get_fragment(file_path, fragment_name).then(function (record) {
+            var fragment_id = record.get('ident');
+                database.get_all_fragments().then(function(records){
+                var found = false;
+                    records.forEach(function(record){
+                        if (Number(record) === Number(fragment_id)) {
+                            found = true;
+                        }
+                    });
+                    if (found) {done();} else{ done("Fragment Id was not part of all fragments"); }
+                }).catch(done);
+            }, function (err) {
+                done(err);
+            });
+        });
+
+
+
+        it("toggle the fragment completed and add comment", function (done) {
+            database.get_image(file_path).then(function (record) {
+                var image_id = record.get('ident');
+                database.get_fragment(file_path, fragment_name).then(function (record) {
+                    var fragment_id = record.get('ident');
+                    if (!record.get('fragment_name') === fragment_name) {
+                        done('fragment_name mismatch');
+                    }
+                    var next = database.add_comment_to_fragment(fragment_id, 'Hello, World');
+                    next.then(function(){
+                        database.toggle_fragment_completed(image_id, fragment_id).then(
+                            function() {
+                                database.get_all_completed_fragments().then(function(records){
+                                    var found = false;
+                                    records.forEach(function(record){
+                                        if (Number(record.get('fragment_id')) === Number(fragment_id)) {
+                                            found = true;
+                                        }
+                                    });
+                                    if (!found) {
+                                        done('Completed fragment was not part of get_all_completed_fragments');
+                                    } else  {
+                                        done();
+                                    }
+                                }).catch(done);
+                        }).catch(done);
+                }).catch(done);
+            }).catch(done);
+        }).catch(done);
+        });
+
+
         it("add a node to the fragment", function (done) {
             database.add_node(file_path, fragment_name, 'Token', {id: "1"}).then(function (result) {
                 done();
@@ -233,6 +314,14 @@ describe('database', function () {
             }, function (err) {
                 return done(err);
             })
+        });
+
+        it("check number of records in heatmap", function (done) {
+            var session = database._get_session();
+            var first = heatmap.process_heatmap_query("MATCH (s:Token) RETURN s;", 1, 100, 100, 5);
+            var second = first.then(function(){heatmap.process_heatmap_query("MATCH (s:Token) RETURN s;", 2, 100, 100, 5)}, function(err){done(err);});
+            var third = second.then(function(){heatmap.process_heatmap_query("MATCH (s:Token) RETURN s;", 3, 100, 100, 5)}, function(err){done(err);});
+            first.then(function() {done(); }, function(err) { done(err); });
         });
 
         it('Test the mxgraph_to_neo4j on 11.xml with groups', function (done) {

@@ -5,6 +5,14 @@ var parse = require('exif-date').parse;
 
 //var config = require('../config.json');
 
+function log_error_and_close_session(session) {
+    return function(err) {
+        log.error(err);
+        session.close();
+        return err;
+    }
+}
+
 /**
 * Database wrapper functions for Neo4J
 *
@@ -131,6 +139,15 @@ Database.logout = function (){
 };
 
 /**
+ * Generic catch error function for database promises
+ * Logs the error and closes the db session
+ *
+* @method log_error_and_close_session
+* @return {error}
+*/
+Database.log_error_and_close_session = log_error_and_close_session;
+
+/**
 * Get the database driver
  * stores the instance in _driver
  * makes use of the development flag in order to use or not use basic auth
@@ -232,11 +249,7 @@ Database.toggle_fragment_completed = function(image_id, fragment_id) {
                 records.push(result.records[i]);
             }
             return records[0];
-        }, function(err){
-            log.error(err);
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -303,11 +316,7 @@ Database.add_image = function(file_path, exif_data) {
                 throw Error('Zero elements created');
             }
             return records[0];
-        }, function(err) {
-            log.error(err);
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return p;
 };
 
@@ -332,10 +341,7 @@ Database.get_image = function(file_path){
                 records.push(result.records[i]);
             }
             return records[0];
-        }, function(err) {
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -351,10 +357,7 @@ Database.get_image_of_token = function(token_id){
                 records.push(result.records[i]);
             }
             return records[0];
-        }, function(err) {
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -384,10 +387,7 @@ Database.get_fragment_bounding_box = function(token_id){
                 return null;
             }
             return records[0];
-        }, function(err) {
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -431,27 +431,12 @@ Database.remove_image_by_id = function (id_) {
                                         .then(function (result) {
                                             session.close();
                                             return result;
-                                        }, function (err) {
-                                            session.close();
-                                            return err;
-                                        });
-                                }, function (err) {
-                                    session.close();
-                                    return err;
-                                });
+                                        }, log);
+                                }, log_error_and_close_session(session));
 
-                        }, function (err) {
-                            session.close();
-                            return err;
-                        });
-                }, function (err) {
-                    session.close();
-                    return err;
-                });
-        }, function (err) {
-            session.close();
-            return err;
-        });
+                        }, log_error_and_close_session(session));
+                }, log_error_and_close_session(session));
+        }, log_error_and_close_session(session));
 };
 
 /**
@@ -481,7 +466,7 @@ Database.add_fragment = function(image_id, fragment_name) {
                 records.push(result.records[i]);
             }
             return records[0];
-        }, function(err){return err;})
+        }, log_error_and_close_session(session))
 };
 
 Database.add_comment_to_fragment = function(fragment_id, comment) {
@@ -502,10 +487,7 @@ Database.add_comment_to_fragment = function(fragment_id, comment) {
             records.push(result.records[i]);
         }
         return records[0];
-    }, function(err){
-        session.close();
-        return err;
-    });
+    }, log_error_and_close_session(session));
 
 };
 
@@ -536,14 +518,8 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
                                     .then(function (result) {
                                         session.close();
                                         return result;
-                                    }, function (err) {
-                                        session.close();
-                                        return err;
-                                    });
-                            }, function (err) {
-                                session.close();
-                                return err;
-                            }
+                                    }, log_error_and_close_session(session));
+                            }, log_error_and_close_session(session)
                         );
                 } else {
                     var hash = utils.hash_xml_fragment(fragment_id);
@@ -555,16 +531,10 @@ Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment)
                             function (result) {
                                 session.close();
                                 return result;
-                            }, function (err) {
-                                session.close();
-                                return err;
-                            }
+                            }, log_error_and_close_session(session)
                         );
                 }
-            }, function (err) {
-                session.close();
-                return err;
-            }
+            }, log_error_and_close_session(session)
 
         );
 };
@@ -617,10 +587,7 @@ Database.get_fragment_by_id = function(image_id, fragment_id) {
                 records.push(result.records[i]);
             }
             return records[0];
-        }, function(err){
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -640,10 +607,7 @@ Database.get_all_fragments = function() {
                 records.push(Number(result.records[i].get('identifier')));
             }
             return records;
-        }, function(err){
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -684,11 +648,7 @@ Database.add_node = function(image_id, fragment_id, node_label, node_attributes)
                 }
             }
             return result;
-        }, function(err){
-            session.close();
-            log.error(err);
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -717,11 +677,7 @@ Database.add_frame_edge = function(node_id, frame_name, groupType) {
         .then(function (result) {
             session.close();
             return result;
-        }, function(err) {
-            log.error(err);
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -755,11 +711,7 @@ Database.add_edge = function(image_id, fragment_id, source_enum, target_enum, ed
         .then(function (result) {
             session.close();
             return result;
-        }, function(err) {
-            log.error(err);
-            session.close();
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -868,10 +820,7 @@ Database.get_all_completed_fragments = function() {
                 records.push(result.records[i]);
             }
             return records;
-        }, function(err){
-            log.error(err);
-            return err;
-        });
+        }, log_error_and_close_session(session));
     return prom;
 };
 
@@ -951,10 +900,7 @@ Database.get_all_property_values_for_token = function(property, search_string, l
             }
             return values;
         },
-        function (err) {
-            session.close();
-            return err;
-        });
+        log_error_and_close_session(session));
     return prom;
 };
 
