@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src/codec.js - TransliterationApplication API</title>
+    <title>src\codec.js - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.0.1</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -38,14 +38,20 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
                                 <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
                                 <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
                             </ul>
                 
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/Codec.html">Codec</a></li>
-                                <li><a href="../modules/Database.html">Database</a></li>
                             </ul>
                         </div>
                     </div>
@@ -79,95 +85,82 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src/codec.js</h1>
+<h1 class="file-heading">File: src\codec.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/* convert a mxgraph xml to a graphml xml file
-
-1. Load XML
-2. Add all nodes as children to the layers (unpack the &lt;mxCell&gt; from the &lt;object&gt; tag)
-    the &lt;object&gt; tag is used to wrap an mxCell with its attributes
-3. Remove groups
-4. Edges (There will be no edge without token -&gt; drop layer information)
-    - edges don&#x27;t work inter groups, but they can be intra groups
-        -&gt; they have to be unwrapped as well
-5. Flatten the hierarchical tree
-    - merge mxCells with their layers to obtain the layer-attributes
-6. Collect all possible attributes
-
-(1) Drop following attributes
-
-- Graph
-    - grid
-    - gridSize
-    - guides
-    - toolTips
-    - connect
-    - arrows
-    - fold
-    - page
-    - pageScale
-
-
-(2) Parse the style attribute in order to retrieve the following attributes
-
- - MxCell
-    - tokenType
-
-
- -&gt; first: read the saved mxgraph with xml2js into a javscript object
- -&gt; then make the validity checks
-    - is the structure of the xml correct
-        - mxGraph
-            - root
-                - cell
-                    - geometry
-                - object
-                    - cell
-                        - geometry
-
-    - are all necessary attributes at hand
-        - mxGraphModel
-            - dx
-            - dy
-            - pageWidth
-            - pageHeight
-        - mxCell
-            - id
-            - parent
- -&gt; then drop unnecessary attributes
- -&gt; export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
-
-
-MAKE SOME TDD Test Driven Development here.
-
-
- */
-
 /**
-* XML Handling
-*
-* mxGraph xml
-*
-* @module Codec
-* @requires xml2js
-*/
+ * This class converts the Editor&#x27;s XML format into a flat javascript format
+ * which is inserted into the Neo4j database.
+ *
+ *      1. Load XML
+ *      2. Add all nodes as children to the layers (unpack the &lt;mxCell&gt; from the &lt;object&gt; tag)
+ *          the &lt;object&gt; tag is used to wrap an mxCell with its attributes
+ *      3. Remove groups
+ *      4. Edges (There will be no edge without token -&gt; drop layer information)
+ *          - edges don&#x27;t work inter groups, but they can be intra groups
+ *              -&gt; they have to be unwrapped as well
+ *      5. Flatten the hierarchical tree
+ *          - merge mxCells with their layers to obtain the layer-attributes
+ *      6. Collect all possible attributes
+ *
+ *      (1) Drop following attributes
+ *
+ *      - Graph
+ *          - grid
+ *          - gridSize
+ *          - guides
+ *          - toolTips
+ *          - connect
+ *          - arrows
+ *          - fold
+ *          - page
+ *          - pageScale
+ *
+ *
+ *      (2) Parse the style attribute in order to retrieve the following attributes
+ *
+ *       - MxCell
+ *          - tokenType
+ *
+ *
+ *       -&gt; first: read the saved mxgraph with xml2js into a javscript object
+ *       -&gt; then make the validity checks
+ *          - is the structure of the xml correct
+ *              - mxGraph
+ *                  - root
+ *                      - cell
+ *                          - geometry
+ *                      - object
+ *                          - cell
+ *                              - geometry
+ *
+ *          - are all necessary attributes at hand
+ *              - mxGraphModel
+ *                  - dx
+ *                  - dy
+ *                  - pageWidth
+ *                  - pageHeight
+ *              - mxCell
+ *                  - id
+ *                  - parent
+ *       -&gt; then drop unnecessary attributes
+ *       -&gt; export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
+ *
+ *
+ *      This class was developed by Test Driven Development.
+ * @class Codec
+ * @requires xml2js
+ */
+var Codec = Codec || {};
 
+
+var log = require(&#x27;electron-log&#x27;);
 var fs = require(&#x27;fs&#x27;);
 var xml2js = require(&#x27;xml2js&#x27;);
 var database = require(&#x27;./database&#x27;);
+var utils = require(&#x27;./utils&#x27;);
 
-/**
- *
- * Codec
- * --------
- * Contains all the methods to convert a mxGraph into a GraphML or to neo4j
- * &lt;br&gt;
-*
- * @class Codec
-*/
-var Codec = Codec || {};
 
 /**
  * The xml2js parser
@@ -187,89 +180,98 @@ Codec.parser = new xml2js.Parser();
  */
 Codec.builder = new xml2js.Builder({&#x27;attrkey&#x27;:&#x27;@&#x27;, &#x27;charkey&#x27;: &#x27;#&#x27;});
 
+
+
 /**
-* Get the database driver
+* Parses the mxGraph XML file into a javascript object
  *
  * @method mxgraph_to_object
  * @param filename the resource to load
- * @param callback function(err, data) {...}
+ * return {Promise}
 */
-Codec.mxgraph_to_object = function(filename, callback) {
-    fs.readFile(__dirname + &#x27;/&#x27; + filename, function(err, data) {
-        if (!err) {
-            try {
-                Codec.parser.parseString(data, function (err, result) {
-                    if (err) {
-                        return callback(err);
-                    } else {
-                        if (result === undefined) {
-                            return callback(&#x27;ParseString was not able to parse the xml&#x27;);
-                        }
-                        var root = result.mxGraphModel.root[0];
+Codec.mxgraph_to_object = function(filename) {
+    var promise = new Promise(function(resolve, reject){
+        try {
+            fs.readFile(__dirname + &#x27;/&#x27; + filename, function(err, data) {
+                if (!err) {
+                    try {
+                        Codec.parser.parseString(data, function (err, result) {
+                            if (err) {
+                                return reject(err);
+                            } else {
+                                if (result === undefined) {
+                                    return reject(&#x27;ParseString was not able to parse the xml&#x27;);
+                                }
+                                var root = result.mxGraphModel.root[0];
 
-                        // unwrap the &lt;object&gt;s
-                        // The objects under root (&lt;object&gt;)
-                        if (root.object) {
-                            for (var j = 0; j &lt; root.object.length; j++) {
-                                var node2 = root.object[j].mxCell[0];
-                                if (node2.$.parent) {
-                                    // merge the object and the node into a new one
-                                    var merged = {};
-                                    Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
-                                    Object.assign(merged.$, root.object[j].mxCell[0].$);
-                                    delete merged.mxCell;
-                                    if (!root.mxCell) {
-                                        root.mxCell = [];
+                                // unwrap the &lt;object&gt;s
+                                // The objects under root (&lt;object&gt;)
+                                if (root.object) {
+                                    for (var j = 0; j &lt; root.object.length; j++) {
+                                        var node2 = root.object[j].mxCell[0];
+                                        if (node2.$.parent) {
+                                            // merge the object and the node into a new one
+                                            var merged = {};
+                                            Object.assign(merged, root.object[j].mxCell[0], root.object[j]);
+                                            Object.assign(merged.$, root.object[j].mxCell[0].$);
+                                            delete merged.mxCell;
+                                            if (!root.mxCell) {
+                                                root.mxCell = [];
+                                            }
+                                            root.mxCell.push(merged);
+                                        }
                                     }
-                                    root.mxCell.push(merged);
+
+                                    delete root.object;
                                 }
+
+                                // remove groups
+                                // rewire the children to the parent of the group
+                                for (var i = 0; i &lt; root.mxCell.length; i++) {
+                                    var node = root.mxCell[i];
+                                    if (node.$.style &amp;&amp; node.$.style === &quot;group&quot;) {
+                                        var parent = Codec.get_node_by_id(root, node.$.parent);
+                                        var children = Codec.get_nodes_by_parent_id(root, node.$.id);
+                                        for (var j = 0; j &lt; children.length; j++) {
+                                            children[j].$.parent = parent.$.id;
+                                        }
+                                        root.mxCell[i] = &#x27;x&#x27;;
+                                    }
+                                }
+
+                                // remove all TO DELETE entries
+                                root.mxCell = root.mxCell.filter(function (cell) {
+                                    return (cell !== &#x27;x&#x27;)
+                                });
+
+                                // The cells in the root (&lt;mxCell&gt;)
+                                for (var i = 0; i &lt; root.mxCell.length; i++) {
+                                    var node = root.mxCell[i];
+                                    if (node.$.parent) {
+                                        var parent = Codec.get_node_by_id(root, node.$.parent);
+                                        if (!parent.children) {
+                                            parent.children = []
+                                        }
+                                        parent.children.push(node);
+                                    }
+                                }
+                                resolve(result);
                             }
 
-                            delete root.object;
-                        }
-
-                        // remove groups
-                        // rewire the children to the parent of the group
-                        for (var i = 0; i &lt; root.mxCell.length; i++) {
-                            var node = root.mxCell[i];
-                            if (node.$.style &amp;&amp; node.$.style === &quot;group&quot;) {
-                                var parent = Codec.get_node_by_id(root, node.$.parent);
-                                var children = Codec.get_nodes_by_parent_id(root, node.$.id);
-                                for (var j = 0; j &lt; children.length; j++) {
-                                    children[j].$.parent = parent.$.id;
-                                }
-                                root.mxCell[i] = &#x27;x&#x27;;
-                            }
-                        }
-
-                        // remove all TO DELETE entries
-                        root.mxCell = root.mxCell.filter(function (cell) {
-                            return (cell !== &#x27;x&#x27;)
                         });
-
-                        // The cells in the root (&lt;mxCell&gt;)
-                        for (var i = 0; i &lt; root.mxCell.length; i++) {
-                            var node = root.mxCell[i];
-                            if (node.$.parent) {
-                                var parent = Codec.get_node_by_id(root, node.$.parent);
-                                if (!parent.children) {
-                                    parent.children = []
-                                }
-                                parent.children.push(node);
-                            }
-                        }
-
-                        callback(err, result);
+                    } catch (e) {
+                        return reject(err);
                     }
-
-                });
-            } catch (e) {
-                return callback(err);
-            }
-        } else {
-            return callback(err);
+                } else {
+                    return reject(err);
+                }
+            });
+        } catch (e) {
+            reject(e);
         }
+
     });
+    return promise;
 };
 
 /**
@@ -279,7 +281,7 @@ Codec.mxgraph_to_object = function(filename, callback) {
  * @method get_node_by_id
  * @param root mxGraph tree
  * @param id
- * @returns {node}
+ * @return {node}
  */
 Codec.get_node_by_id = function(root, id) {
     for (var i = 0; i&lt;root.mxCell.length; i++) {
@@ -297,7 +299,7 @@ Codec.get_node_by_id = function(root, id) {
  * @method get_nodes_by_parent_id
  * @param root
  * @param parent_id
- * @returns {Array}
+ * @return {Array}
  */
 Codec.get_nodes_by_parent_id = function(root, parent_id) {
     var nodes = [];
@@ -320,14 +322,13 @@ Codec.get_nodes_by_parent_id = function(root, parent_id) {
  *
  * @method mxgraph_to_layered_object
  * @param filename
- * @param callback function(err, result) {...}
  */
-Codec.mxgraph_to_layered_object = function(filename, callback) {
-    Codec.mxgraph_to_object(filename, function(err, result) {
-        if (err) {
-            return callback(err);
-        } else {
-			if (!result) {return callback(&#x27;empty result&#x27;);}
+Codec.mxgraph_to_layered_object = function(filename) {
+    return Codec.mxgraph_to_object(filename).then(
+        function(result) {
+            if (!result) {
+                return Promise.reject(&#x27;empty result&#x27;);
+            }
             var temp;
             for (var l = 0; l &lt; result.mxGraphModel.root[0].mxCell.length; l++) {
                 var node = result.mxGraphModel.root[0].mxCell[l];
@@ -337,13 +338,16 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
             }
             result.mxGraphModel.root[0].mxCell = [temp];
             delete result.mxGraphModel.root[0].object;
-            callback(err, result);
-        }
-    });
+            return Promise.resolve(result);
+        },
+        function(err) {
+            log.error(err);
+            return err;
+        });
 };
 
 /**
- * Converts an mxGraph to a flot object structured as follows
+ * Converts an mxGraph to a flat object structured as follows
  *
  * graph.mxGraphModel.data.token1
  * graph.mxGraphModel.data.token2
@@ -351,38 +355,40 @@ Codec.mxgraph_to_layered_object = function(filename, callback) {
  *
  * @method mxgraph_to_flattened_object
  * @param filename
- * @param callback
  */
-Codec.mxgraph_to_flattened_object = function(filename, callback) {
-    Codec.mxgraph_to_layered_object(filename, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-            graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
-
-            // remove the locked background layer which is the first element
-            graph.mxGraphModel.data.shift();
-
-            // so far there is only the &#x27;value&#x27; attribute which is interesting for the children
-            // -&gt; therefore we don&#x27;t choose a general approach and only copy it to the children
-
-            var only_children = [];
-
-            graph.mxGraphModel.data.forEach(function(layer){
-                layer.children.forEach(function(child){
-                    child.$.hand = layer.$.value;
-                    if (child.hasOwnProperty(&#x27;mxGeometry&#x27;)) {
-                        Object.assign(child.$, child.mxGeometry[0].$);
-                    }
-                    only_children.push(child);
-                });
-            });
-
-            graph.mxGraphModel.data = only_children;
-            delete graph.mxGraphModel.root;
-            callback(err, graph);
+Codec.mxgraph_to_flattened_object = function(filename) {
+    return Codec.mxgraph_to_layered_object(filename).then(function (graph) {
+        if (!(graph &amp;&amp; graph.mxGraphModel)) {
+            return Promise.reject(&#x27;Graph is empty&#x27;);
         }
+        graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
+
+        // remove the locked background layer which is the first element
+        graph.mxGraphModel.data.shift();
+
+        // so far there is only the &#x27;value&#x27; attribute which is interesting for the children
+        // -&gt; therefore we don&#x27;t choose a general approach and only copy it to the children
+
+        var only_children = [];
+
+        graph.mxGraphModel.data.forEach(function(layer){
+            layer.children.forEach(function(child){
+                child.$.hand = layer.$.value;
+                if (child.hasOwnProperty(&#x27;mxGeometry&#x27;)) {
+                    Object.assign(child.$, child.mxGeometry[0].$);
+                }
+                only_children.push(child);
+            });
+        });
+
+        graph.mxGraphModel.data = only_children;
+        delete graph.mxGraphModel.root;
+        return graph;
     })
+        .catch(function(err) {
+            log.error(err);
+            return err;
+    });
 };
 
 /**
@@ -393,14 +399,9 @@ Codec.mxgraph_to_flattened_object = function(filename, callback) {
  *
  * @method mxgraph_to_graphml
  * @param filename
- * @param callback
  */
-Codec.mxgraph_to_graphml = function(filename, callback) {
-    Codec.mxgraph_to_flattened_object(filename, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-
+Codec.mxgraph_to_graphml = function(filename) {
+    return Codec.mxgraph_to_flattened_object(filename).then(function(graph) {
             var graphml = JSON.parse(JSON.stringify(graph));
             graphml.graphml = graphml.mxGraphModel;
             delete graphml.mxGraphModel;
@@ -527,16 +528,61 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
                         }
                     );
                 }
-
-
-
             });
 
             Codec.builder.attrkey = &#x27;@&#x27;;
             var xml = Codec.builder.buildObject(graphml);
-            callback(err, xml);
-        }
-    })
+            return xml;
+        }).catch(function(err){
+            log.error(err);
+            return err;
+        })
+};
+
+/**
+* Adds all fragments that have the flag completed set to true to the database
+* There is SHA1 hash comparing done here in order to eliminate unnecessary computations.
+ *
+ * @method add_all_completed_fragments_to_neo4j
+ * @return {Promise}
+*/
+Codec.add_all_completed_fragments_to_neo4j = function() {
+    var all_promises = [];
+    var num_changed = 0;
+    var num_not_changed = 0;
+    var p = new Promise(function(resolve, reject){
+        database.get_all_completed_fragments().then(
+            function(records) {
+                records.forEach(function(record){
+                    var image_id = record.get(&#x27;image_id&#x27;);
+                    var fragment_id = record.get(&#x27;fragment_id&#x27;);
+                    var hash = record.get(&#x27;hash&#x27;);
+                    var file_hash = utils.hash_xml_fragment(fragment_id);
+                    if (hash &amp;&amp; file_hash &amp;&amp; file_hash === hash) {
+                        num_not_changed++;
+                    } else {
+                        num_changed++;
+                        database.remove_fragment(image_id, fragment_id, true).then(function (success) {
+                            all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
+                        }, function (err) {
+                            log.error(err);
+                            reject(err);
+                        });
+                    }
+                });
+                Promise.all(all_promises).then(function(all) {
+                    resolve({&#x27;num_changed&#x27;:num_changed, &#x27;num_not_changed&#x27;:num_not_changed});
+                }).catch(function(err) {
+                    reject(err);
+                })
+            },
+            function(err) {
+                log.error(err);
+                reject(err);
+            }
+        );
+    });
+    return p;
 };
 
 /**
@@ -545,10 +591,9 @@ Codec.mxgraph_to_graphml = function(filename, callback) {
  * @method mxgraph_to_neo4j
  * @param image_id
  * @param fragment_id
- * @param callback function(err, data) {...}
  * @param overwrite_xml_path if you don&#x27;t want to load the standard xml file_path for the fragment use this
  */
-Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml_path) {
+Codec.mxgraph_to_neo4j = function(image_id, fragment_id, overwrite_xml_path) {
     if (overwrite_xml_path === undefined) {overwrite_xml_path = false;}
     var xml_path;
     if (!overwrite_xml_path) {
@@ -557,79 +602,89 @@ Codec.mxgraph_to_neo4j = function(image_id, fragment_id, callback, overwrite_xml
         xml_path = overwrite_xml_path;
     }
 
-    Codec.mxgraph_to_flattened_object(xml_path, function (err, graph) {
-        if (err) {
-            return callback(err);
-        } else {
-            var nodes = [];
-            var edges = [];
+    return Codec.mxgraph_to_flattened_object(xml_path).then(function (graph) {
+        var nodes = [];
+        var edges = [];
 
-            graph.mxGraphModel.data.forEach(function (cell) {
-                if (cell.$.style) {
-                    // split style
-                    var styles = cell.$.style.split(&#x27;;&#x27;).filter(function (a) {
-                        return (a.length &gt; 0)
-                    });
-                    styles.forEach(function (style) {
-                        var splits = style.split(&#x27;=&#x27;);
-                        var key = splits[0];
-                        var value = splits[1];
-                        if (!cell.$.hasOwnProperty(key)) {
-                            cell.$[key] = value;
-                        }
-                    });
-                    // some times the text is in the property label and other times in value
-                    // =&gt; we want it everytime in value
-                    if (cell.$.hasOwnProperty(&#x27;label&#x27;)) {
-                        cell.$[&#x27;value&#x27;] = cell.$[&#x27;label&#x27;];
-                        delete cell.$[&#x27;label&#x27;];
-                    }
-                    delete cell.$.style;
-                }
-
-                var for_ = &quot;node&quot;;
-                if (cell.$.edge) {
-                    for_ = &quot;edge&quot;;
-                    edges.push(cell);
-                } else {
-                    nodes.push(cell);
-                }
-
-
-            });
-            // create all the nodes
-            var all_node_promises = [];
-            nodes.forEach(function (cell) {
-                all_node_promises.push(database.add_node(image_id, fragment_id, cell.$))
-            });
-            Promise.all(all_node_promises).then(function (values) {
-                // create all the edges
-                var all_edge_promises = [];
-                if (edges.length &gt; 0) {
-                    edges.forEach(function (cell) {
-                        all_edge_promises.push(
-                            database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
-                        );
-                        Promise.all(all_edge_promises).then(function(values){
-                            return callback(null, values);
-                        }, function(err){
-                            return callback(err, null);
-                        });
-                    });
-                } else {
-                    return callback(null, values);
-                }
-                },
-            function(err){
-                callback(err, null);
-            });
-
-
-
+        if (!(graph &amp;&amp; graph.mxGraphModel)) {
+            return Promise.reject(&#x27;Graph is empty&#x27;);
         }
-    });
 
+        graph.mxGraphModel.data.forEach(function (cell) {
+            if (cell.$.style) {
+                // split style
+                var styles = cell.$.style.split(&#x27;;&#x27;).filter(function (a) {
+                    return (a.length &gt; 0)
+                });
+                styles.forEach(function (style) {
+                    var splits = style.split(&#x27;=&#x27;);
+                    var key = splits[0];
+                    var value = splits[1];
+                    if (!cell.$.hasOwnProperty(key)) {
+                        cell.$[key] = value;
+                    }
+                });
+                // some times the text is in the property label and other times in value
+                // =&gt; we want it every time in value
+                if (cell.$.hasOwnProperty(&#x27;label&#x27;)) {
+                    cell.$[&#x27;value&#x27;] = cell.$[&#x27;label&#x27;];
+                    delete cell.$[&#x27;label&#x27;];
+                }
+                delete cell.$.style;
+            }
+
+            var for_ = &quot;node&quot;;
+            if (cell.$.edge) {
+                for_ = &quot;edge&quot;;
+                edges.push(cell);
+            } else {
+                nodes.push(cell);
+            }
+
+
+        });
+        // create all the nodes
+        var all_node_promises = [];
+        // a graph can contain a frame
+        // These frames need to be connected to the &#x27;meta frames&#x27;
+        var is_frame = false;
+        nodes.forEach(function (cell) {
+            var label = &#x27;Group&#x27;;
+            if (cell.$.hasOwnProperty(&#x27;tokenType&#x27;)) {
+                label = &#x27;Token&#x27;;
+                if (cell.$.tokenType === &#x27;frame&#x27;) {
+                    is_frame = true;
+                }
+            }
+            all_node_promises.push(function() {return database.add_node(image_id, fragment_id, label, cell.$)})
+        });
+        return utils.chain_promises(all_node_promises).then(function (values) {
+            // create all the edges
+            var all_edge_promises = [];
+            if (edges.length &gt; 0) {
+                edges.forEach(function (cell) {
+                    all_edge_promises.push(
+                        function() {
+                            return database.add_edge(image_id, fragment_id, cell.$.source, cell.$.target, cell.$)
+                        }
+                    );
+                });
+                return utils.chain_promises(all_edge_promises);
+            } else {
+                return values
+            }
+        },
+        function(err){
+            log.error(err);
+            return err;
+        });
+    }, function(err){
+        log.error(err);
+        return err;
+    });
 };
+
+
 
 module.exports = Codec;
 

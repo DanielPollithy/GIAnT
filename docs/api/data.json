@@ -2,77 +2,115 @@
     "project": {
         "name": "TransliterationApplication API",
         "description": "TransliterationApplication: A node/express/neo4j/electron application",
-        "version": "0.0.1",
+        "version": "1.0.0",
         "url": ""
     },
     "files": {
-        "src/codec.js": {
-            "name": "src/codec.js",
-            "modules": {
-                "Codec": 1
-            },
-            "classes": {
-                "Codec": 1
-            },
-            "fors": {},
-            "namespaces": {}
-        },
-        "src/database.js": {
-            "name": "src/database.js",
-            "modules": {
-                "Database": 1
-            },
-            "classes": {
-                "Database": 1
-            },
-            "fors": {},
-            "namespaces": {}
-        },
-        "src/utils.js": {
-            "name": "src/utils.js",
+        "src\\atom.js": {
+            "name": "src\\atom.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Atom": 1
+            },
             "fors": {},
             "namespaces": {}
-        }
-    },
-    "modules": {
-        "Codec": {
-            "name": "Codec",
-            "submodules": {},
-            "elements": {},
+        },
+        "src\\codec.js": {
+            "name": "src\\codec.js",
+            "modules": {},
             "classes": {
                 "Codec": 1
             },
             "fors": {},
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/codec.js",
-            "line": 76,
-            "description": "XML Handling\n\nmxGraph xml",
-            "requires": [
-                "xml2js"
-            ]
+            "namespaces": {}
         },
-        "Database": {
-            "name": "Database",
-            "submodules": {},
-            "elements": {},
+        "src\\constraints.js": {
+            "name": "src\\constraints.js",
+            "modules": {},
+            "classes": {
+                "Constraints": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\database.js": {
+            "name": "src\\database.js",
+            "modules": {},
             "classes": {
                 "Database": 1
             },
             "fors": {},
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/database.js",
-            "line": 11,
-            "description": "Database wrapper functions for Neo4J",
-            "requires": [
-                "neo4j-driver"
-            ]
+            "namespaces": {}
+        },
+        "src\\exif_utils.js": {
+            "name": "src\\exif_utils.js",
+            "modules": {},
+            "classes": {
+                "Exif": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\export.js": {
+            "name": "src\\export.js",
+            "modules": {},
+            "classes": {
+                "Export": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\heatmap.js": {
+            "name": "src\\heatmap.js",
+            "modules": {},
+            "classes": {
+                "Heatmap": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\server.js": {
+            "name": "src\\server.js",
+            "modules": {},
+            "classes": {
+                "Server": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\settings.js": {
+            "name": "src\\settings.js",
+            "modules": {},
+            "classes": {
+                "Settings": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\utils.js": {
+            "name": "src\\utils.js",
+            "modules": {},
+            "classes": {
+                "Utils": 1
+            },
+            "fors": {},
+            "namespaces": {}
         }
     },
+    "modules": {},
     "classes": {
+        "Atom": {
+            "name": "Atom",
+            "shortname": "Atom",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\atom.js",
+            "line": 1,
+            "description": "The cross platform electron interface: This is the main entry file for the desktop application.\n<br>\nIt controls: <br>\n1) the electron app <br>\n2) And the server <br>\n\nWe use electron-log to write logs to the hard drive. Uncaught exceptions are finally caught here.\n<br>\nAfter creating the Electron Window, this file starts the SERVER!"
+        },
         "Codec": {
             "name": "Codec",
             "shortname": "Codec",
@@ -81,11 +119,24 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "Codec",
-            "namespace": "",
-            "file": "src/codec.js",
-            "line": 76,
-            "description": "Codec\n --------\n Contains all the methods to convert a mxGraph into a GraphML or to neo4j\n <br>"
+            "file": "src\\codec.js",
+            "line": 1,
+            "description": "This class converts the Editor's XML format into a flat javascript format\nwhich is inserted into the Neo4j database.\n\n     1. Load XML\n     2. Add all nodes as children to the layers (unpack the <mxCell> from the <object> tag)\n         the <object> tag is used to wrap an mxCell with its attributes\n     3. Remove groups\n     4. Edges (There will be no edge without token -> drop layer information)\n         - edges don't work inter groups, but they can be intra groups\n             -> they have to be unwrapped as well\n     5. Flatten the hierarchical tree\n         - merge mxCells with their layers to obtain the layer-attributes\n     6. Collect all possible attributes\n\n     (1) Drop following attributes\n\n     - Graph\n         - grid\n         - gridSize\n         - guides\n         - toolTips\n         - connect\n         - arrows\n         - fold\n         - page\n         - pageScale\n\n\n     (2) Parse the style attribute in order to retrieve the following attributes\n\n      - MxCell\n         - tokenType\n\n\n      -> first: read the saved mxgraph with xml2js into a javscript object\n      -> then make the validity checks\n         - is the structure of the xml correct\n             - mxGraph\n                 - root\n                     - cell\n                         - geometry\n                     - object\n                         - cell\n                             - geometry\n\n         - are all necessary attributes at hand\n             - mxGraphModel\n                 - dx\n                 - dy\n                 - pageWidth\n                 - pageHeight\n             - mxCell\n                 - id\n                 - parent\n      -> then drop unnecessary attributes\n      -> export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)\n\n\n     This class was developed by Test Driven Development.",
+            "requires": [
+                "xml2js"
+            ]
+        },
+        "Constraints": {
+            "name": "Constraints",
+            "shortname": "Constraints",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\constraints.js",
+            "line": 1,
+            "description": "The constraints are used to check the data integrity in the Neo4J database.\n<br>\nThere are: <br>\n 1) Count constraints\n 2) Bool constraints\n 3) Free javascript constraints"
         },
         "Database": {
             "name": "Database",
@@ -95,58 +146,121 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "Database",
-            "namespace": "",
-            "file": "src/database.js",
-            "line": 11,
-            "description": "Database\n --------\n Contains all the database access methods\n <br>\n <b>Caution: The responses are promises</b>\n <p>Singleton because...</p>"
+            "file": "src\\database.js",
+            "line": 17,
+            "description": "Database\n --------\n Contains all the database access methods."
+        },
+        "Exif": {
+            "name": "Exif",
+            "shortname": "Exif",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\exif_utils.js",
+            "line": 1,
+            "description": "Wrapper for the EXIF methods"
+        },
+        "Export": {
+            "name": "Export",
+            "shortname": "Export",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\export.js",
+            "line": 1,
+            "description": "Export the neo4j data to sql or csv\n\n     Tables\n         - Nodes\n         - Edges\n         - NodeProperties\n         - EdgeProperties\n\n\n     1) stream the data into temporary files\n     2) make the files downloadable for the client\n     3) delete the temporary files\n\n\n     CREATE TABLE IF NOT EXISTS Node (\n     Node_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n     tokenType TEXT,\n     groupType TEXT\n     );\n\n     CREATE TABLE IF NOT EXISTS Relation (\n     Relation_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n     SourceNode_ID INTEGER,\n     TargetNode_ID INTEGER,\n     relationType TEXT\n     );\n\n     CREATE TABLE IF NOT EXISTS NodeProperties (\n     NodeProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n     key TEXT,\n     value TEXT,\n     Node_ID INTEGER\n     );\n\n     CREATE TABLE IF NOT EXISTS RelationProperties (\n     RelationProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n     key TEXT,\n     value TEXT\n     );"
+        },
+        "Heatmap": {
+            "name": "Heatmap",
+            "shortname": "Heatmap",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\heatmap.js",
+            "line": 1,
+            "description": "The collection of methods in order to generate the heat maps.\nThe final output is always a web D3.JS rendering!"
+        },
+        "Server": {
+            "name": "Server",
+            "shortname": "Server",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\server.js",
+            "line": 1,
+            "description": "1) This file controls the interface between the frontend and the backend<br>\n2) And renders the frontend with PUG templates\n<br>\n\nReason for this setup is, that one day this application should be able to be a website.<br>\nNO LOGIC HAPPENS HERE! M-V are separated. This is a collection of GET and POST views and Middlewares.<br>\nThe server runs on PORT 4000. This should become a setting in the future.<br>"
+        },
+        "Settings": {
+            "name": "Settings",
+            "shortname": "Settings",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\settings.js",
+            "line": 5,
+            "description": "Settings\n --------\n Gives easy access to a key value storage persisted in a single file. <br>\n<b>Takes care of the validation of editor settings and constraint settings.</b>"
+        },
+        "Utils": {
+            "name": "Utils",
+            "shortname": "Utils",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\utils.js",
+            "line": 1,
+            "description": "A collection of utility functions"
         }
     },
     "elements": {},
     "classitems": [
         {
-            "file": "src/codec.js",
-            "line": 87,
+            "file": "src\\codec.js",
+            "line": 74,
             "description": "The xml2js parser",
             "itemtype": "property",
             "name": "parser",
             "type": "{Object}",
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 95,
+            "file": "src\\codec.js",
+            "line": 82,
             "description": "The xml2js builder\n\nThis object can create xml files",
             "itemtype": "property",
             "name": "builder",
             "type": "{Object}",
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 105,
-            "description": "Get the database driver",
+            "file": "src\\codec.js",
+            "line": 94,
+            "description": "Parses the mxGraph XML file into a javascript object",
             "itemtype": "method",
             "name": "mxgraph_to_object",
             "params": [
                 {
                     "name": "filename",
-                    "description": "the resource to load"
-                },
-                {
-                    "name": "callback",
-                    "description": "function(err, data)",
-                    "type": "..."
+                    "description": "the resource to load\nreturn",
+                    "type": "Promise"
                 }
             ],
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 190,
+            "file": "src\\codec.js",
+            "line": 186,
             "description": "Works on a mxGraph xml2js-object\nFinds a node given an id",
             "itemtype": "method",
             "name": "get_node_by_id",
@@ -164,12 +278,11 @@
                 "description": "",
                 "type": "Node"
             },
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 208,
+            "file": "src\\codec.js",
+            "line": 204,
             "description": "Works on a mxGraph xml2js-object\nGets all nodes with a given parent",
             "itemtype": "method",
             "name": "get_nodes_by_parent_id",
@@ -187,12 +300,11 @@
                 "description": "",
                 "type": "Array"
             },
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 229,
+            "file": "src\\codec.js",
+            "line": 225,
             "description": "Converts the mxGraph to an object structured ad follows\n\nobj.mxGraphModel.layer1.node1\n\nIt removes groups",
             "itemtype": "method",
             "name": "mxgraph_to_layered_object",
@@ -200,37 +312,26 @@
                 {
                     "name": "filename",
                     "description": ""
-                },
-                {
-                    "name": "callback",
-                    "description": "function(err, result)",
-                    "type": "..."
                 }
             ],
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 260,
-            "description": "Converts an mxGraph to a flot object structured as follows\n\ngraph.mxGraphModel.data.token1\ngraph.mxGraphModel.data.token2\ngraph.mxGraphModel.data.edge1",
+            "file": "src\\codec.js",
+            "line": 258,
+            "description": "Converts an mxGraph to a flat object structured as follows\n\ngraph.mxGraphModel.data.token1\ngraph.mxGraphModel.data.token2\ngraph.mxGraphModel.data.edge1",
             "itemtype": "method",
             "name": "mxgraph_to_flattened_object",
             "params": [
                 {
                     "name": "filename",
                     "description": ""
-                },
-                {
-                    "name": "callback",
-                    "description": ""
                 }
             ],
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
+            "file": "src\\codec.js",
             "line": 303,
             "description": "Converts a mxGraph into the GraphML format\n\nIt removes groups and is not necessary for the code\nOnly nice to have",
             "itemtype": "method",
@@ -239,18 +340,25 @@
                 {
                     "name": "filename",
                     "description": ""
-                },
-                {
-                    "name": "callback",
-                    "description": ""
                 }
             ],
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/codec.js",
-            "line": 457,
+            "file": "src\\codec.js",
+            "line": 451,
+            "description": "Adds all fragments that have the flag completed set to true to the database\nThere is SHA1 hash comparing done here in order to eliminate unnecessary computations.",
+            "itemtype": "method",
+            "name": "add_all_completed_fragments_to_neo4j",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Codec"
+        },
+        {
+            "file": "src\\codec.js",
+            "line": 497,
             "description": "Loads an mxGraph over the flat xml2js-object into the neo4j database",
             "itemtype": "method",
             "name": "mxgraph_to_neo4j",
@@ -264,32 +372,151 @@
                     "description": ""
                 },
                 {
-                    "name": "callback",
-                    "description": "function(err, data)",
-                    "type": "..."
-                },
-                {
                     "name": "overwrite_xml_path",
                     "description": "if you don't want to load the standard xml file_path for the fragment use this"
                 }
             ],
-            "class": "Codec",
-            "module": "Codec"
+            "class": "Codec"
         },
         {
-            "file": "src/database.js",
-            "line": 24,
+            "file": "src\\constraints.js",
+            "line": 14,
+            "description": "Checks bool, count and free constraints\nIf one fails, the promise is rejected and contains the rejected_constraint\n\nA constraint is an object with different attributes\nexample attributes: query, min, max, code\nbut also: error, error_code",
+            "itemtype": "method",
+            "name": "check_all_fragments",
+            "params": [
+                {
+                    "name": "bool_constraints",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "count_constraints",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "free_constraints",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Constraints"
+        },
+        {
+            "file": "src\\constraints.js",
+            "line": 53,
+            "description": "Counts the number of results retrieved from the database and compares it to given boundaries\n\nNecessary attributes of the constraint: query, min, max\n\nExample query: <pre>MATCH(f:Fragment)-[]-(t:Token) WHERE ID(f) = {fragment_id} RETURN t</pre>",
+            "itemtype": "method",
+            "name": "run_count_constraint",
+            "params": [
+                {
+                    "name": "constraint",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Constraints"
+        },
+        {
+            "file": "src\\constraints.js",
+            "line": 97,
+            "description": "Compares the output of the constraint's cypher query to the boolean 'true'\n\nNecessary attribute of the constraint: query\n\nExample query: <pre>MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN COUNT(t) > 0;</pre>",
+            "itemtype": "method",
+            "name": "run_bool_constraint",
+            "params": [
+                {
+                    "name": "constraint",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Constraints"
+        },
+        {
+            "file": "src\\constraints.js",
+            "line": 136,
+            "description": "Runs javascript code that has to return a new Promise(...)\nIf it resolves then the constraint is fulfilled\n\nNecessary attribute of the constraint: query\n\nExample query: <pre>// session = a neo4j session\\r\\n// session.run(cypher_string) returns a promise (see the docs)\\r\\nnew Promise(function(resolve, reject){\\r\\n    var variables = {\\\"fragment_id\\\": fragment_id};\\r\\n    session.run(\\\"MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\\\", variables)\\r\\n        .then(function(result){ \\r\\n            var value;\\r\\n            result.records.forEach(function(res){\\r\\n                value = res.get('value');\\r\\n                if (value === \\\"Token2\\\") {\\r\\n                    reject(\\\"There was a token called Token.\\\");\\r\\n                }\\r\\n            });\\r\\n            resolve();\\r\\n    }).catch(function(err){\\r\\n        reject(err);\\r\\n    });\\r\\n});</pre>",
+            "itemtype": "method",
+            "name": "run_bool_constraint",
+            "params": [
+                {
+                    "name": "constraint",
+                    "description": ""
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Constraints"
+        },
+        {
+            "file": "src\\constraints.js",
+            "line": 173,
+            "description": "Compares a new constraint to a saved constraint in order to detect whether changes were made\n\nExample query: <pre>// session = a neo4j session\\r\\n// session.run(cypher_string) returns a promise (see the docs)\\r\\nnew Promise(function(resolve, reject){\\r\\n    var variables = {\\\"fragment_id\\\": fragment_id};\\r\\n    session.run(\\\"MATCH(f:Fragment)-[]-(t:Token {value: 'Token'}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\\\", variables)\\r\\n        .then(function(result){ \\r\\n            var value;\\r\\n            result.records.forEach(function(res){\\r\\n                value = res.get('value');\\r\\n                if (value === \\\"Token2\\\") {\\r\\n                    reject(\\\"There was a token called Token.\\\");\\r\\n                }\\r\\n            });\\r\\n            resolve();\\r\\n    }).catch(function(err){\\r\\n        reject(err);\\r\\n    });\\r\\n});</pre>",
+            "itemtype": "method",
+            "name": "constraint_has_changes",
+            "params": [
+                {
+                    "name": "constraint",
+                    "description": ""
+                },
+                {
+                    "name": "constraint_type",
+                    "description": "either count_constraint, bool_constraint or free_constraint",
+                    "type": "String"
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Constraints"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 27,
             "description": "The development flag controls the basic auth credentials",
             "itemtype": "property",
             "name": "development",
             "type": "{boolean}",
             "default": "false",
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 33,
+            "file": "src\\database.js",
+            "line": 36,
             "description": "Stores the neo4j-driver for the method <_get_driver>",
             "itemtype": "property",
             "name": "_driver",
@@ -297,36 +524,50 @@
             "access": "private",
             "tagname": "",
             "default": "null",
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 43,
+            "file": "src\\database.js",
+            "line": 46,
             "description": "Stores whether a successful login took place",
             "itemtype": "property",
             "name": "_logged_in",
             "type": "{boolean}",
             "default": "false",
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 52,
+            "file": "src\\database.js",
+            "line": 55,
             "description": "Try to fetch a neo4j driver with the given credentials\nif that works, the Database._driver is not null anymore.\nIt also set the Database.logged_in to true",
             "itemtype": "method",
             "name": "login",
+            "params": [
+                {
+                    "name": "url",
+                    "description": "the endpoint of neo4j",
+                    "type": "String"
+                },
+                {
+                    "name": "user",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "password",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
             "return": {
                 "description": "",
                 "type": "Boolean|error"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 101,
+            "file": "src\\database.js",
+            "line": 119,
             "description": "Logout from the current database neo4j session.\nDelete the saved neo4j session and set the Database.logged_in flag to false.",
             "itemtype": "method",
             "name": "logout",
@@ -334,12 +575,23 @@
                 "description": "",
                 "type": "Boolean"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 113,
+            "file": "src\\database.js",
+            "line": 136,
+            "description": "Generic catch error function for database promises\nLogs the error and closes the db session",
+            "itemtype": "method",
+            "name": "log_error_and_close_session",
+            "return": {
+                "description": "",
+                "type": "Error"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 145,
             "description": "Get the database driver\nstores the instance in _driver\nmakes use of the development flag in order to use or not use basic auth",
             "itemtype": "method",
             "name": "_get_driver",
@@ -349,12 +601,11 @@
                 "description": "Returns a bolt:// driver instance",
                 "type": "Driver"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 129,
+            "file": "src\\database.js",
+            "line": 161,
             "description": "Get a session to execute Neo4J Cypher code on",
             "itemtype": "method",
             "name": "_get_session",
@@ -364,12 +615,11 @@
                 "description": "",
                 "type": "Session"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 140,
+            "file": "src\\database.js",
+            "line": 179,
             "description": "Add the necessary constraints to create something like a schema\n1) The file_path of an image is unique",
             "itemtype": "method",
             "name": "add_constraints",
@@ -377,12 +627,23 @@
                 "description": "",
                 "type": "Session"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 152,
+            "file": "src\\database.js",
+            "line": 191,
+            "description": "Clean up the database on login\n\n1) remove nodes without edges (-> MetaGroups that are not referenced)",
+            "itemtype": "method",
+            "name": "_hygiene",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 205,
             "description": "Remove the constraints",
             "itemtype": "method",
             "name": "_remove_constraints",
@@ -392,12 +653,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 164,
+            "file": "src\\database.js",
+            "line": 217,
             "description": "Do the initialization on start\n1) drop and then create constraint",
             "itemtype": "method",
             "name": "init",
@@ -405,13 +665,24 @@
                 "description": "",
                 "type": "Session"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 183,
-            "description": "Adds an image to the database\nSets the upload_date to now in seconds (Math.round(d.getTime() / 1000))\nSets completed to false",
+            "file": "src\\database.js",
+            "line": 232,
+            "description": "Toggle the completed status of a fragment\nThe status is used for the batch-add functionality",
+            "itemtype": "method",
+            "name": "toggle_fragment_completed",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 258,
+            "description": "Adds an image to the database\nSets attributes according to the exif_data\nFallback for upload_date is now in seconds (Math.round(d.getTime()))\n\nThe exif_data shall be an objects with the attributes\n   'exif: {\n        'ExifImageWidth': ...,\n        'ExifImageHeight': ...,\n        'CreateDate': ...\n    }, 'gps: {...}\n\nCreateDate is handled by the parse(...) function",
             "itemtype": "method",
             "name": "add_image",
             "params": [
@@ -429,12 +700,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 243,
+            "file": "src\\database.js",
+            "line": 335,
             "description": "Get image from database by file_path\n\nPromise: success: Contains record for the image",
             "itemtype": "method",
             "name": "get_image",
@@ -449,28 +719,49 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 290,
+            "file": "src\\database.js",
+            "line": 360,
+            "description": "Get the image of a token",
+            "itemtype": "method",
+            "name": "get_image_of_token",
             "params": [
                 {
                     "name": "token_id",
-                    "description": ""
+                    "description": "The unique identifier for a token",
+                    "type": "Int"
                 }
             ],
             "return": {
                 "description": "",
-                "type": "*|Promise"
+                "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 323,
+            "file": "src\\database.js",
+            "line": 383,
+            "description": "Get the bounding box of a fragment\n\nThis method looks for the lowest x and y coordinates of all sibling tokens\nand for the highest x and y coordinates of all siblings\n\nUsed for heat map generation",
+            "itemtype": "method",
+            "name": "get_fragment_bounding_box",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "The unique identifier for a token",
+                    "type": "Int"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 420,
             "description": "Removes an image by ID",
             "itemtype": "method",
             "name": "remove_image_by_id",
@@ -485,12 +776,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 364,
+            "file": "src\\database.js",
+            "line": 468,
             "description": "Adds a fragment to an image\nEvery image can have multiple fragments\nthe name of the fragment is unique",
             "itemtype": "method",
             "name": "add_fragment",
@@ -508,13 +798,34 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 419,
-            "description": "Removes all fragments of an image with a given name",
+            "file": "src\\database.js",
+            "line": 498,
+            "description": "Sets the comment attribute of a fragment",
+            "itemtype": "method",
+            "name": "add_comment_to_fragment",
+            "params": [
+                {
+                    "name": "fragment_id",
+                    "description": ""
+                },
+                {
+                    "name": "comment",
+                    "description": "string"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 528,
+            "description": "Removes a fragment of an image or makes it empty\n\nThis method not only deletes the fragment but also its children",
             "itemtype": "method",
             "name": "remove_fragment",
             "params": [
@@ -528,19 +839,18 @@
                 },
                 {
                     "name": "dont_delete_fragment",
-                    "description": ""
+                    "description": "Activate this option to delete only the children"
                 }
             ],
             "return": {
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 460,
+            "file": "src\\database.js",
+            "line": 578,
             "description": "Get the fragment of an image by name",
             "itemtype": "method",
             "name": "get_fragment",
@@ -559,12 +869,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 485,
+            "file": "src\\database.js",
+            "line": 605,
             "description": "Get the fragment of an image by name",
             "itemtype": "method",
             "name": "get_fragment_by_id",
@@ -582,12 +891,23 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 513,
+            "file": "src\\database.js",
+            "line": 630,
+            "description": "Get the fragment of an image by name",
+            "itemtype": "method",
+            "name": "get_all_fragments",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 650,
             "description": "Adds a node to a fragment of an image\n\nPromise:success  number_of_created_nodes",
             "itemtype": "method",
             "name": "add_node",
@@ -601,6 +921,10 @@
                     "description": ""
                 },
                 {
+                    "name": "node_label",
+                    "description": ""
+                },
+                {
                     "name": "node_attributes",
                     "description": ""
                 }
@@ -609,12 +933,37 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 548,
+            "file": "src\\database.js",
+            "line": 691,
+            "description": "Adds an edge between a frame from a group and a global frame\nso called 'meta frame'\n\nAlso creates the 'meta frame' if it does not exist *",
+            "itemtype": "method",
+            "name": "add_edge",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "params": [
+                {
+                    "name": "node_id",
+                    "description": ""
+                },
+                {
+                    "name": "frame_name",
+                    "description": ""
+                },
+                {
+                    "name": "groupType",
+                    "description": ""
+                }
+            ],
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 720,
             "description": "Adds an edge between two nodes\nin a fragment of an image\n\nPromise:success  number_of_created_edges",
             "itemtype": "method",
             "name": "add_edge",
@@ -644,12 +993,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 585,
+            "file": "src\\database.js",
+            "line": 755,
             "description": "Returns a promise with an array of records of images\nordered by last_edit_date, upload_date",
             "example": [
                 "\n      database.get_all_images().then(function (results) {\n           var row_data = [];\n           results.forEach(function (r) {\n               row_data.push([r.get('ident'), r.get('file_path'), r.get('upload_date'), r.get('completed')]);\n           });\n           res.render('table',\n               {\n                   title: 'Hey',\n                   message: 'Hello there!',\n                   rows: row_data\n               });\n           }\n       );"
@@ -660,12 +1008,11 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 629,
+            "file": "src\\database.js",
+            "line": 803,
             "description": "Get all fragments of one image",
             "itemtype": "method",
             "name": "get_fragments_by_image_id",
@@ -679,12 +1026,23 @@
                 "description": "",
                 "type": "*|Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 664,
+            "file": "src\\database.js",
+            "line": 838,
+            "description": "Get all completed fragments",
+            "itemtype": "method",
+            "name": "get_all_completed_fragments",
+            "return": {
+                "description": "",
+                "type": "*|Promise"
+            },
+            "class": "Database"
+        },
+        {
+            "file": "src\\database.js",
+            "line": 864,
             "description": "Returns all possible property keys for tokens filtered by search_string\nIs used for the autocomplete function of the add-property-input\n\nPromise:success: Array of strings",
             "itemtype": "method",
             "name": "get_all_property_keys_for_token",
@@ -693,18 +1051,25 @@
                     "name": "search_string",
                     "description": "Empty string gives all possible values",
                     "type": "String"
+                },
+                {
+                    "name": "label",
+                    "description": ""
+                },
+                {
+                    "name": "token_type",
+                    "description": ""
                 }
             ],
             "return": {
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/database.js",
-            "line": 692,
+            "file": "src\\database.js",
+            "line": 908,
             "description": "Returns all distinct values for the given property in a string list in a promise\nIs used for the autocomplete function of the property values\n\nPromise:success: Array of strings *",
             "itemtype": "method",
             "name": "get_all_property_values_for_token",
@@ -724,41 +1089,1095 @@
                 "description": "",
                 "type": "Promise"
             },
-            "class": "Database",
-            "module": "Database"
+            "class": "Database"
         },
         {
-            "file": "src/utils.js",
-            "line": 1,
-            "description": "Created by daniel on 19.05.17.",
-            "class": "",
-            "module": "Database"
+            "file": "src\\exif_utils.js",
+            "line": 11,
+            "description": "This is a wrapper for the ExifImage object by the third party library exif",
+            "itemtype": "method",
+            "name": "get_exif_from_image",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "Path to the file",
+                    "type": "String"
+                },
+                {
+                    "name": "cb",
+                    "description": "the callback",
+                    "type": "Function"
+                }
+            ],
+            "class": "Exif"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 57,
+            "description": "The target folder where the exports are stored",
+            "itemtype": "property",
+            "name": "to_folder",
+            "type": "{string}",
+            "default": "path.join(__dirname, '..', 'media', 'export')",
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 66,
+            "description": "Get the current time as POSIX time as a string",
+            "itemtype": "method",
+            "name": "_get_time",
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 78,
+            "description": "Writes sql code into the given write_stream\n\nStarts with the SQL Table creation and then adds all nodes",
+            "itemtype": "method",
+            "name": "_nodes_to_sql",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 125,
+            "description": "Writes sql code into the given write_stream\n\nStarts with the SQL Table creation for relations and then adds all relations",
+            "itemtype": "method",
+            "name": "_relations_to_sql",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 172,
+            "description": "Writes sql code into the given write_stream\n\nStarts with the SQL Table creation for relation properties and then adds all properties",
+            "itemtype": "method",
+            "name": "_relation_properties_to_sql",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 222,
+            "description": "Writes sql code into the given write_stream\n\nStarts with the SQL Table creation for node properties and then adds all properties",
+            "itemtype": "method",
+            "name": "_node_properties_to_sql",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 272,
+            "description": "Writes csv into the given write_stream\n\nStarts with the CSV Table header and then adds all nodes line by line",
+            "itemtype": "method",
+            "name": "_nodes_to_csv",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 311,
+            "description": "Writes csv into the given write_stream\n\nStarts with the CSV Table header and then adds all relations line by line",
+            "itemtype": "method",
+            "name": "_relations_to_csv",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 350,
+            "description": "Writes csv into the given write_stream\n\nStarts with the CSV Table header and then adds all relation_properties line by line",
+            "itemtype": "method",
+            "name": "_relation_properties_to_csv",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 392,
+            "description": "Writes csv into the given write_stream\n\nStarts with the CSV Table header and then adds all _node_properties_to_csv line by line",
+            "itemtype": "method",
+            "name": "_node_properties_to_csv",
+            "params": [
+                {
+                    "name": "write_stream",
+                    "description": "",
+                    "type": "WriteStream"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 434,
+            "description": "Creates a zipped SQL file containing all of the SQL creation and insertion statements for the DB\nThe file is stored in the to_folder of Export",
+            "itemtype": "method",
+            "name": "to_sql",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\export.js",
+            "line": 504,
+            "description": "Creates a zipped dir containing four files necessary to reassemble the GraphDB's storage\nThe file is stored in the to_folder of Export",
+            "itemtype": "method",
+            "name": "to_csv",
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Export"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 13,
+            "description": "Suits as a in memory cache for the images, fragments and tokens\nMotivation: We don't want to query the database twice for a single object.\nkey for the sub categories (images, fragments and tokens) is the <ID>\nvalue is the object itself",
+            "itemtype": "property",
+            "name": "IMAGE_FRAGMENT_CACHE",
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 33,
+            "description": "The bounding box cache for every fragment.\nkey is fragment_id and value is the bounding box",
+            "itemtype": "property",
+            "name": "BOUNDING_BOX_CACHE",
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 43,
+            "description": "Reset the object cache",
+            "itemtype": "method",
+            "name": "clean_caches",
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 68,
+            "description": "Counts the number of entities given a Neo4j Label",
+            "itemtype": "method",
+            "name": "count_entities_by_label",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "label",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 86,
+            "description": "Counts the number of entities given the Neo4j Label 'Image'",
+            "itemtype": "method",
+            "name": "count_images_in_result",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 97,
+            "description": "Counts the number of entities given the Neo4j Label 'Fragment'",
+            "itemtype": "method",
+            "name": "count_fragments_in_result",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 108,
+            "description": "Counts the number of entities given the Neo4j Label 'Token'",
+            "itemtype": "method",
+            "name": "count_tokens_in_result",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 119,
+            "description": "Check whether the {node} has the property {property_name}",
+            "itemtype": "method",
+            "name": "assure_node_has_property",
+            "params": [
+                {
+                    "name": "node",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "property_name",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 131,
+            "description": "Check whether the {node} has the properties {property_name}",
+            "itemtype": "method",
+            "name": "assure_node_has_properties",
+            "params": [
+                {
+                    "name": "node",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "property_names",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 148,
+            "description": "Check whether every record has the x, y, width and height property",
+            "itemtype": "method",
+            "name": "check_all_tokens_are_spatial",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 167,
+            "description": "Check whether every image has the width and height property",
+            "itemtype": "method",
+            "name": "check_all_images_have_dimension",
+            "params": [
+                {
+                    "name": "records",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 187,
+            "description": "Check the cache for the token's fragment",
+            "itemtype": "method",
+            "name": "get_cached_fragment_of_token",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 198,
+            "description": "Set the cache for the token's fragment",
+            "itemtype": "method",
+            "name": "set_cached_fragment_of_token",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 210,
+            "description": "Set the cache for the token's image",
+            "itemtype": "method",
+            "name": "set_cached_image",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "image_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "image",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 257,
+            "description": "Check the cache for the fragment's bounding box",
+            "itemtype": "method",
+            "name": "get_cached_fragment_bounding_box",
+            "params": [
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 268,
+            "description": "Check the cached fragment's bounding box for the given token",
+            "itemtype": "method",
+            "name": "get_cached_fragment_bounding_box_for_token",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 283,
+            "description": "Set the cache for the token's bounding box",
+            "itemtype": "method",
+            "name": "set_fragment_bounding_box",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "bb",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 298,
+            "description": "Check the cache for the image",
+            "itemtype": "method",
+            "name": "get_cached_image",
+            "params": [
+                {
+                    "name": "image_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 310,
+            "description": "Check the cache for the image of the fragment",
+            "itemtype": "method",
+            "name": "get_cached_image_of_fragment",
+            "params": [
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 326,
+            "description": "Check the cache for the image of the token",
+            "itemtype": "method",
+            "name": "get_cached_image_of_token",
+            "params": [
+                {
+                    "name": "token_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 342,
+            "description": "Check the cache for the bounding box of the token",
+            "itemtype": "method",
+            "name": "get_bounding_box_of_fragment",
+            "params": [
+                {
+                    "name": "token",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 368,
+            "description": "The normalization techniques are documented in Readthedocs",
+            "itemtype": "method",
+            "name": "normalization_on_whole_image",
+            "params": [
+                {
+                    "name": "token",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "normalization",
+                    "description": "",
+                    "type": "Null"
+                },
+                {
+                    "name": "target_width",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "target_height",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "normalized coordinates",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 413,
+            "description": "The normalization techniques are documented in Readthedocs",
+            "itemtype": "method",
+            "name": "normalization_on_bounding_box",
+            "params": [
+                {
+                    "name": "token",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "normalization",
+                    "description": "",
+                    "type": "Null"
+                },
+                {
+                    "name": "target_width",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "target_height",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "normalized coordinates",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 476,
+            "description": "The normalization techniques are documented in Readthedocs",
+            "itemtype": "method",
+            "name": "normalization_on_bounding_box_centered",
+            "params": [
+                {
+                    "name": "token",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "normalization",
+                    "description": "",
+                    "type": "Null"
+                },
+                {
+                    "name": "target_width",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "target_height",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "normalized coordinates",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 574,
+            "description": "Wrapper for the three different normalization techniques",
+            "itemtype": "method",
+            "name": "normalize_token_spatials",
+            "params": [
+                {
+                    "name": "token",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "normalization",
+                    "description": "1,2,3",
+                    "type": "Number"
+                },
+                {
+                    "name": "target_width",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "target_height",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "normalized coordinates",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 594,
+            "description": "Reformats the heat map to d3js readable data",
+            "itemtype": "method",
+            "name": "format_heat_map_to_d3js",
+            "params": [
+                {
+                    "name": "heat_map",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "d3js data",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\heatmap.js",
+            "line": 627,
+            "description": "Entry point for the heat map calculations",
+            "itemtype": "method",
+            "name": "process_heatmap_query",
+            "params": [
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "normalization",
+                    "description": "1,2,3 [1, SUPPORTED_NORMALIZATIONS]",
+                    "type": "Number"
+                },
+                {
+                    "name": "width",
+                    "description": "]0; MAX_SIZE_HEATMAP[",
+                    "type": "Number"
+                },
+                {
+                    "name": "height",
+                    "description": "]0; MAX_SIZE_HEATMAP[",
+                    "type": "Number"
+                },
+                {
+                    "name": "pixel_size",
+                    "description": "]0; MAX_PIXEL_SIZE[",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "d3js data",
+                "type": "Object"
+            },
+            "class": "Heatmap"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 17,
+            "description": "In memory store",
+            "itemtype": "property",
+            "name": "_store",
+            "type": "{object}",
+            "default": "{}",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 26,
+            "description": "Whether the in-memory-store was already populated",
+            "itemtype": "property",
+            "name": "_loaded",
+            "type": "{boolean}",
+            "default": "false",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 35,
+            "description": "The path of the settings file",
+            "itemtype": "property",
+            "name": "_file_path",
+            "type": "{string}",
+            "default": "path.join(__dirname, '../media/settings/settings.json')",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 44,
+            "description": "Loads the file",
+            "itemtype": "method",
+            "name": "load",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 62,
+            "description": "Saves the file",
+            "itemtype": "method",
+            "name": "save",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 73,
+            "description": "If the storage is not loaded -> load it.",
+            "itemtype": "method",
+            "name": "check_loaded",
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 84,
+            "description": "Set the key to the value",
+            "itemtype": "method",
+            "name": "set",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "value",
+                    "description": "",
+                    "type": "*"
+                }
+            ],
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 96,
+            "description": "Get the value of the key",
+            "itemtype": "method",
+            "name": "get",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "fallback",
+                    "description": "",
+                    "type": "*"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 112,
+            "description": "Check whether the key carries data in the storage",
+            "itemtype": "method",
+            "name": "has",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 124,
+            "description": "Returns the whole storage",
+            "itemtype": "method",
+            "name": "get_settings_for_frontend",
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 135,
+            "description": "Check the values of the new settings and store them if they are okay",
+            "itemtype": "method",
+            "name": "set_settings_from_frontend",
+            "params": [
+                {
+                    "name": "new_settings",
+                    "description": "",
+                    "type": "*"
+                }
+            ],
+            "class": "Settings"
+        },
+        {
+            "file": "src\\settings.js",
+            "line": 163,
+            "description": "Get the constraint settings Settings._store.constraints",
+            "itemtype": "method",
+            "name": "get_settings_for_constraints",
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Settings"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 32,
+            "description": "SHA1 of the file",
+            "itemtype": "method",
+            "name": "hash_of_file_content",
+            "params": [
+                {
+                    "name": "file_path",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String|null"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 48,
+            "description": "SHA1 of the xml file",
+            "itemtype": "method",
+            "name": "hash_xml_fragment",
+            "params": [
+                {
+                    "name": "fragment_id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String|null"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 59,
+            "description": "Delete image from disk",
+            "itemtype": "method",
+            "name": "remove_image",
+            "params": [
+                {
+                    "name": "file_path",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "return_code",
+                "type": "Number"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 70,
+            "description": "Differentiates between Token and Group",
+            "itemtype": "method",
+            "name": "token_type_mapping",
+            "params": [
+                {
+                    "name": "token_type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 88,
+            "description": "chains a list of functions (that return promises) and executes them in the right order\n[function() {return Promise.resolve();}, function() {return Promise.resolve();}]",
+            "itemtype": "method",
+            "name": "chain_promises",
+            "params": [
+                {
+                    "name": "funcs",
+                    "description": "is an array of functions returning promises"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "src\\utils.js",
+            "line": 104,
+            "description": "Recursive help method for chain_promises\n1) executes a function that returns a promise (no params allowed)\n2) chains itself to the success resolve of the promise",
+            "itemtype": "method",
+            "name": "chain_executor",
+            "params": [
+                {
+                    "name": "funcs",
+                    "description": "is an array of functions returning promises"
+                },
+                {
+                    "name": "i",
+                    "description": "is the current working index"
+                }
+            ],
+            "class": "Utils"
         }
     ],
-    "warnings": [
-        {
-            "message": "replacing incorrect tag: returns with return",
-            "line": " src/codec.js:190"
-        },
-        {
-            "message": "replacing incorrect tag: returns with return",
-            "line": " src/codec.js:208"
-        },
-        {
-            "message": "replacing incorrect tag: returns with return",
-            "line": " src/database.js:290"
-        },
-        {
-            "message": "replacing incorrect tag: returns with return",
-            "line": " src/database.js:629"
-        },
-        {
-            "message": "Missing item type",
-            "line": " src/database.js:290"
-        },
-        {
-            "message": "Missing item type\nCreated by daniel on 19.05.17.",
-            "line": " src/utils.js:1"
-        }
-    ]
+    "warnings": []
 }

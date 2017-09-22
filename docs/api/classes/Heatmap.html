@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Heatmap - TransliterationApplication API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
+                                <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
+                                <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1>Heatmap Class</h1>
+<div class="box meta">
+
+
+        <div class="foundat">
+            Defined in: <a href="../files/src_heatmap.js.html#l1"><code>src\heatmap.js:1</code></a>
+        </div>
+
+
+</div>
+
+
+<div class="box intro">
+    <p>The collection of methods in order to generate the heat maps.
+The final output is always a web D3.JS rendering!</p>
+
+</div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method">
+                                <a href="#method_assure_node_has_properties">assure_node_has_properties</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_assure_node_has_property">assure_node_has_property</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_check_all_images_have_dimension">check_all_images_have_dimension</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_check_all_tokens_are_spatial">check_all_tokens_are_spatial</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_clean_caches">clean_caches</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_count_entities_by_label">count_entities_by_label</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_count_fragments_in_result">count_fragments_in_result</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_count_images_in_result">count_images_in_result</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_count_tokens_in_result">count_tokens_in_result</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_format_heat_map_to_d3js">format_heat_map_to_d3js</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_bounding_box_of_fragment">get_bounding_box_of_fragment</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_fragment_bounding_box">get_cached_fragment_bounding_box</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_fragment_bounding_box_for_token">get_cached_fragment_bounding_box_for_token</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_fragment_of_token">get_cached_fragment_of_token</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_image">get_cached_image</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_image_of_fragment">get_cached_image_of_fragment</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_cached_image_of_token">get_cached_image_of_token</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_normalization_on_bounding_box">normalization_on_bounding_box</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_normalization_on_bounding_box_centered">normalization_on_bounding_box_centered</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_normalization_on_whole_image">normalization_on_whole_image</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_normalize_token_spatials">normalize_token_spatials</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_process_heatmap_query">process_heatmap_query</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_set_cached_fragment_of_token">set_cached_fragment_of_token</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_set_cached_image">set_cached_image</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_set_fragment_bounding_box">set_fragment_bounding_box</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_BOUNDING_BOX_CACHE">BOUNDING_BOX_CACHE</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_IMAGE_FRAGMENT_CACHE">IMAGE_FRAGMENT_CACHE</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_assure_node_has_properties" class="method item">
+    <h3 class="name"><code>assure_node_has_properties</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>node</code>
+                </li>
+                <li class="arg">
+                        <code>property_names</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l131"><code>src\heatmap.js:131</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check whether the {node} has the properties {property_name}</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">node</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">property_names</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_assure_node_has_property" class="method item">
+    <h3 class="name"><code>assure_node_has_property</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>node</code>
+                </li>
+                <li class="arg">
+                        <code>property_name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l119"><code>src\heatmap.js:119</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check whether the {node} has the property {property_name}</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">node</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">property_name</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_check_all_images_have_dimension" class="method item">
+    <h3 class="name"><code>check_all_images_have_dimension</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l167"><code>src\heatmap.js:167</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check whether every image has the width and height property</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_check_all_tokens_are_spatial" class="method item">
+    <h3 class="name"><code>check_all_tokens_are_spatial</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l148"><code>src\heatmap.js:148</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check whether every record has the x, y, width and height property</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_clean_caches" class="method item">
+    <h3 class="name"><code>clean_caches</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l43"><code>src\heatmap.js:43</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Reset the object cache</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_count_entities_by_label" class="method item">
+    <h3 class="name"><code>count_entities_by_label</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+                <li class="arg">
+                        <code>label</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Number</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l68"><code>src\heatmap.js:68</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Counts the number of entities given a Neo4j Label</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">label</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Number</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_count_fragments_in_result" class="method item">
+    <h3 class="name"><code>count_fragments_in_result</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Number</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l97"><code>src\heatmap.js:97</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Counts the number of entities given the Neo4j Label 'Fragment'</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Number</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_count_images_in_result" class="method item">
+    <h3 class="name"><code>count_images_in_result</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Number</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l86"><code>src\heatmap.js:86</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Counts the number of entities given the Neo4j Label 'Image'</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Number</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_count_tokens_in_result" class="method item">
+    <h3 class="name"><code>count_tokens_in_result</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>records</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Number</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l108"><code>src\heatmap.js:108</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Counts the number of entities given the Neo4j Label 'Token'</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">records</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Number</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_format_heat_map_to_d3js" class="method item">
+    <h3 class="name"><code>format_heat_map_to_d3js</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>heat_map</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l594"><code>src\heatmap.js:594</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Reformats the heat map to d3js readable data</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">heat_map</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>d3js data</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_bounding_box_of_fragment" class="method item">
+    <h3 class="name"><code>get_bounding_box_of_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l342"><code>src\heatmap.js:342</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the bounding box of the token</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_fragment_bounding_box" class="method item">
+    <h3 class="name"><code>get_cached_fragment_bounding_box</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l257"><code>src\heatmap.js:257</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the fragment's bounding box</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_fragment_bounding_box_for_token" class="method item">
+    <h3 class="name"><code>get_cached_fragment_bounding_box_for_token</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l268"><code>src\heatmap.js:268</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cached fragment's bounding box for the given token</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_fragment_of_token" class="method item">
+    <h3 class="name"><code>get_cached_fragment_of_token</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l187"><code>src\heatmap.js:187</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the token's fragment</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_image" class="method item">
+    <h3 class="name"><code>get_cached_image</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l298"><code>src\heatmap.js:298</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the image</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_image_of_fragment" class="method item">
+    <h3 class="name"><code>get_cached_image_of_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l310"><code>src\heatmap.js:310</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the image of the fragment</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_cached_image_of_token" class="method item">
+    <h3 class="name"><code>get_cached_image_of_token</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l326"><code>src\heatmap.js:326</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check the cache for the image of the token</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_normalization_on_bounding_box" class="method item">
+    <h3 class="name"><code>normalization_on_bounding_box</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token</code>
+                </li>
+                <li class="arg">
+                        <code>normalization</code>
+                </li>
+                <li class="arg">
+                        <code>target_width</code>
+                </li>
+                <li class="arg">
+                        <code>target_height</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l413"><code>src\heatmap.js:413</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>The normalization techniques are documented in Readthedocs</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">normalization</code>
+                        <span class="type">Null</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_width</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_height</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>normalized coordinates</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_normalization_on_bounding_box_centered" class="method item">
+    <h3 class="name"><code>normalization_on_bounding_box_centered</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token</code>
+                </li>
+                <li class="arg">
+                        <code>normalization</code>
+                </li>
+                <li class="arg">
+                        <code>target_width</code>
+                </li>
+                <li class="arg">
+                        <code>target_height</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l476"><code>src\heatmap.js:476</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>The normalization techniques are documented in Readthedocs</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">normalization</code>
+                        <span class="type">Null</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_width</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_height</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>normalized coordinates</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_normalization_on_whole_image" class="method item">
+    <h3 class="name"><code>normalization_on_whole_image</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token</code>
+                </li>
+                <li class="arg">
+                        <code>normalization</code>
+                </li>
+                <li class="arg">
+                        <code>target_width</code>
+                </li>
+                <li class="arg">
+                        <code>target_height</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l368"><code>src\heatmap.js:368</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>The normalization techniques are documented in Readthedocs</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">normalization</code>
+                        <span class="type">Null</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_width</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_height</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>normalized coordinates</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_normalize_token_spatials" class="method item">
+    <h3 class="name"><code>normalize_token_spatials</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token</code>
+                </li>
+                <li class="arg">
+                        <code>normalization</code>
+                </li>
+                <li class="arg">
+                        <code>target_width</code>
+                </li>
+                <li class="arg">
+                        <code>target_height</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l574"><code>src\heatmap.js:574</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Wrapper for the three different normalization techniques</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">normalization</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                        <p>1,2,3</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_width</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">target_height</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>normalized coordinates</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_process_heatmap_query" class="method item">
+    <h3 class="name"><code>process_heatmap_query</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>query</code>
+                </li>
+                <li class="arg">
+                        <code>normalization</code>
+                </li>
+                <li class="arg">
+                        <code>width</code>
+                </li>
+                <li class="arg">
+                        <code>height</code>
+                </li>
+                <li class="arg">
+                        <code>pixel_size</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l627"><code>src\heatmap.js:627</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Entry point for the heat map calculations</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">query</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">normalization</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                        <p>1,2,3 [1, SUPPORTED_NORMALIZATIONS]</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">width</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                        <p>]0; MAX_SIZE_HEATMAP[</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">height</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                        <p>]0; MAX_SIZE_HEATMAP[</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">pixel_size</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                        <p>]0; MAX_PIXEL_SIZE[</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>d3js data</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_set_cached_fragment_of_token" class="method item">
+    <h3 class="name"><code>set_cached_fragment_of_token</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l198"><code>src\heatmap.js:198</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set the cache for the token's fragment</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_set_cached_image" class="method item">
+    <h3 class="name"><code>set_cached_image</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>image_id</code>
+                </li>
+                <li class="arg">
+                        <code>image</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l210"><code>src\heatmap.js:210</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set the cache for the token's image</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">image_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">image</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_set_fragment_bounding_box" class="method item">
+    <h3 class="name"><code>set_fragment_bounding_box</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>bb</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l283"><code>src\heatmap.js:283</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set the cache for the token's bounding box</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Number</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">bb</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+            </div>
+
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+<div id="property_BOUNDING_BOX_CACHE" class="property item">
+    <h3 class="name"><code>BOUNDING_BOX_CACHE</code></h3>
+    <span class="type">Unknown</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l33"><code>src\heatmap.js:33</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The bounding box cache for every fragment.
+key is fragment_id and value is the bounding box</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_IMAGE_FRAGMENT_CACHE" class="property item">
+    <h3 class="name"><code>IMAGE_FRAGMENT_CACHE</code></h3>
+    <span class="type">Unknown</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_heatmap.js.html#l13"><code>src\heatmap.js:13</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Suits as a in memory cache for the images, fragments and tokens
+Motivation: We don't want to query the database twice for a single object.
+key for the sub categories (images, fragments and tokens) is the <ID>
+value is the object itself</p>
+
+    </div>
+
+
+
+</div>
+            </div>
+
+
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

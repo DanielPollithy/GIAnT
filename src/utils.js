@@ -1,6 +1,14 @@
+/**
+* A collection of utility functions
+*
+* @class Utils
+*/
+
+
 var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
+
 
 var javascript_demo_constraint = "// session = a neo4j session\n" +
 "// session.run(cypher_string) returns a promise (see the docs)\n" +
@@ -21,6 +29,13 @@ var javascript_demo_constraint = "// session = a neo4j session\n" +
 "    });\n" +
 "});\n";
 
+/**
+* SHA1 of the file
+ *
+* @method hash_of_file_content
+* @param file_path {string}
+* @return {string|null}
+*/
 function hash_of_file_content(file_path) {
     try {
         var data = fs.readFileSync(__dirname + '/' + file_path);
@@ -30,14 +45,35 @@ function hash_of_file_content(file_path) {
     }
 }
 
+/**
+* SHA1 of the xml file
+ *
+* @method hash_xml_fragment
+* @param fragment_id {Number}
+* @return {string|null}
+*/
 function hash_xml_fragment (fragment_id) {
     return hash_of_file_content('../media/uploaded_xmls/' + fragment_id + '.xml');
 }
 
+/**
+* Delete image from disk
+ *
+* @method remove_image
+* @param file_path {string}
+* @return return_code {Number}
+*/
 function remove_image(file_path) {
     return fs.unlinkSync(path.join(__dirname, '..', 'media', 'uploaded_images', file_path));
 }
 
+/**
+* Differentiates between Token and Group
+ *
+* @method token_type_mapping
+* @param token_type {string}
+* @return {string}
+*/
 function token_type_mapping(token_type) {
     if (['token', 'modification', 'symbol'].includes(token_type)) {
         return 'Token';
@@ -47,12 +83,15 @@ function token_type_mapping(token_type) {
     }
     return null;
 }
+
+
 /**
  * chains a list of functions (that return promises) and executes them in the right order
  * [function() {return Promise.resolve();}, function() {return Promise.resolve();}]
  *
+ * @method chain_promises
  * @param funcs is an array of functions returning promises
- * @returns {Promise}
+ * @return {Promise}
  */
 function chain_promises(funcs) {
     if (funcs.length < 1) {
@@ -67,6 +106,7 @@ function chain_promises(funcs) {
  * 1) executes a function that returns a promise (no params allowed)
  * 2) chains itself to the success resolve of the promise
  *
+ * @method chain_executor
  * @param funcs is an array of functions returning promises
  * @param i is the current working index
  */

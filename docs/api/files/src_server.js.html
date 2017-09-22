@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\server.js - TransliterationApplication API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
+                                <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
+                                <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src\server.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+* 1) This file controls the interface between the frontend and the backend&lt;br&gt;
+* 2) And renders the frontend with PUG templates
+* &lt;br&gt;
+*
+* Reason for this setup is, that one day this application should be able to be a website.&lt;br&gt;
+* NO LOGIC HAPPENS HERE! M-V are separated. This is a collection of GET and POST views and Middlewares.&lt;br&gt;
+* The server runs on PORT 4000. This should become a setting in the future.&lt;br&gt;
+*
+* @class Server
+*/
+
+
+var express = require(&#x27;express&#x27;);
+var bodyParser = require(&#x27;body-parser&#x27;);
+const fileUpload = require(&#x27;express-fileupload&#x27;);
+var fs = require(&#x27;fs&#x27;);
+var database = require(&#x27;./database&#x27;);
+var constraints = require(&#x27;./constraints&#x27;);
+var exp = require(&#x27;./export&#x27;);
+var path = require(&#x27;path&#x27;);
+var codec = require(&#x27;./codec&#x27;);
+var utils = require(&#x27;./utils&#x27;);
+var heatmap = require(&#x27;./heatmap&#x27;);
+var exif_utils = require(&#x27;./exif_utils&#x27;);
+var Settings = require(&#x27;./settings&#x27;);
+var sizeOf = require(&#x27;image-size&#x27;);
+
+var log = require(&#x27;electron-log&#x27;);
+log.transports.file.level = &#x27;debug&#x27;;
+
+var app = module.exports = express();
+
+log.info(&#x27;dirname&#x27;, __dirname);
+app.use(express.static(path.join(__dirname, &#x27;..&#x27;)));
+
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: &#x27;10mb&#x27;
+}));
+app.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+}));
+
+// database logged in middleware
+app.use(function (req, res, next) {
+    if (!database.logged_in) {
+        req.url = &#x27;/db&#x27;;
+    }
+    next();
+});
+
+
+app.set(&#x27;views&#x27;, path.join(__dirname, &#x27;views&#x27;));
+app.set(&#x27;view engine&#x27;, &#x27;pug&#x27;);
+
+
+app.get(&#x27;/db&#x27;, function (req, res) {
+    if (database.logged_in) {
+        res.render(&#x27;db_logout&#x27;, {message: &#x27;&#x27;});
+    } else {
+        res.render(&#x27;db_settings&#x27;, {message: &#x27;You have to be logged in!&#x27;});
+    }
+
+});
+
+app.post(&#x27;/db-drop&#x27;, function (req, res) {
+    database.logout();
+    res.redirect(&#x27;/db&#x27;);
+});
+
+app.post(&#x27;/db&#x27;, function (req, res) {
+    if (req.body.url &amp;&amp; req.body.user &amp;&amp; req.body.password) {
+        var url = req.body.url;
+        var user = req.body.user;
+        var password = req.body.password;
+        log.info(&#x27;connecting to &#x27; + url + &#x27; as &#x27; + user);
+        database.login(url, user, password).then(
+            function(){
+                var s = Math.round(new Date().getTime());
+                log.info(s);
+                res.redirect(&#x27;/?i=&#x27; + s);
+            }).catch(
+            function(error){
+                log.warn(&#x27;connection failed &#x27; + url + &#x27; as &#x27; + user);
+                log.warn(error);
+                return res.render(&#x27;db_settings&#x27;, {message: &#x27;Login failed with &#x27; + error});
+            }
+        );
+    } else {
+        log.info(&#x27;missing params for POST to /db&#x27;);
+        return res.render(&#x27;db_settings&#x27;, {message: &#x27;Missing data&#x27;});
+    }
+});
+
+app.post(&#x27;/save_xml&#x27;, function (req, res) {
+    if (req.body.filename &amp;&amp; req.body.xml) {
+        var filename = req.body.filename;
+        log.info(&#x27;/save_xml &#x27; + filename);
+        var xml = req.body.xml;
+
+        if (filename.length === 0) {
+            log.warn(&#x27;Filename in /save_xml is empty -&gt; fallback: draft.xml&#x27;);
+            filename = &#x27;draft.xml&#x27;;
+        }
+
+        xml = decodeURIComponent(xml);
+        filename = decodeURIComponent(filename);
+
+        // check for path escapes (http://localhost/../../../../../etc/passwd)
+        // -&gt; only save to files in the uploaded_xmls folder
+        var target_file = path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_xmls&#x27;, filename);
+        if (target_file.indexOf(path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_xmls&#x27;)) == 0) {
+            log.info(&#x27;XML has valid path: &#x27; + target_file);
+        } else {
+            log.error(&#x27;XML path tried to escape: &#x27; + target_file);
+            return res.status(400).send(&#x27;Error&#x27;);
+        }
+        // write file to uploaded_xmls
+        fs.writeFile(target_file, xml, function (err) {
+            if (err) {
+                log.error(&#x27;There was an error saving the xml: &#x27; + target_file);
+                return res.status(500).send(&quot;Error saving the file&quot;);
+            }
+            log.info(&#x27;XML saved: &#x27; + target_file);
+            return res.status(200).send(&quot;File saved&quot;);
+        });
+    } else {
+        log.info(&#x27;missing param&#x27;);
+        return res.status(400).send(&quot;Missing parameter&quot;);
+    }
+});
+
+app.post(&#x27;/&#x27;, function (req, res) {
+    if (!req.files || !req.files.image) {
+        log.warn(&#x27;Image upload without image&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing file&#x27;))
+    }
+
+    // The name of the input field (i.e. &quot;sampleFile&quot;) is used to retrieve the uploaded file
+    var image_file = req.files.image;
+
+    // Use the mv() method to place the file somewhere on your server
+    var new_file_name = path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_images&#x27;, image_file.name);
+
+    if (new_file_name.indexOf(path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_images&#x27;)) == 0) {
+        log.info(&#x27;Image has valid path: &#x27; + new_file_name);
+    } else {
+        log.error(&#x27;Image path tried to escape: &#x27; + new_file_name);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Image path error&#x27;))
+    }
+
+    // write file to uploaded_images
+    image_file.mv(new_file_name, function (err) {
+        if (!err) {
+            var splitted = new_file_name.split(&#x27;.&#x27;);
+            var last_part = splitted[splitted.length - 1];
+            if (![&#x27;JPEG&#x27;, &#x27;jpeg&#x27;, &#x27;JPG&#x27;, &#x27;jpg&#x27;].includes(last_part)) {
+                err = &#x27;Image has to be JPEG&#x27;;
+            }
+        }
+        if (err) {
+            log.error(&#x27;There was an error saving the image: &#x27; + new_file_name);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+        }
+        exif_utils.get_exif_from_image(new_file_name, function (exif_err, exif_data) {
+            if (exif_err) {
+                log.warn(&#x27;There was an error reading exif from image: &#x27; + new_file_name);
+                exif_data = null;
+            }
+            if (!exif_data) {
+                sizeOf(new_file_name, function (err, dimensions) {
+                    if (err) throw err;
+
+                    var alternative_meta = {
+                        &#x27;exif&#x27;: {
+                            &#x27;ExifImageWidth&#x27;: dimensions.width,
+                            &#x27;ExifImageHeight&#x27;: dimensions.height
+                        }
+                    };
+                    database.add_image(image_file.name, alternative_meta).then(function () {
+                        log.info(&#x27;Added image: &#x27; + new_file_name);
+                        res.status(200).redirect(&#x27;/&#x27;);
+                    }, function (err) {
+                        log.error(&#x27;Error on adding an image to the database: &#x27; + new_file_name);
+                        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+                    });
+                })
+            } else {
+                database.add_image(image_file.name, exif_data).then(function () {
+                    log.info(&#x27;Added image: &#x27; + new_file_name);
+                    res.status(200).redirect(&#x27;/&#x27;);
+                }, function (err) {
+                    log.error(&#x27;Error on adding an image to the database: &#x27; + new_file_name);
+                    return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+                });
+            }
+        });
+    });
+});
+
+app.get(&#x27;/autocomplete/:token_type/values&#x27;, function (req, res) {
+    var token_type = utils.token_type_mapping(req.params.token_type);
+    if (!token_type) {
+        res.jsonp([]);
+    }
+    var search_string = req.query.term || &#x27;&#x27;;
+    var key = req.query.field;
+    if (!key)
+        return res.status(400).jsonp([]);
+    var values = database.get_all_property_values_for_token(key, search_string, token_type).then(function (values) {
+        res.jsonp(values);
+    });
+});
+
+
+app.get(&#x27;/autocomplete/:token_type/keys&#x27;, function (req, res) {
+    var label = utils.token_type_mapping(req.params.token_type);
+    if ([&#x27;modification&#x27;, &#x27;token&#x27;, &#x27;symbol&#x27;, &#x27;comment&#x27;, &#x27;frame&#x27;, &#x27;blanco&#x27;].includes(req.params.token_type)) {
+        var token_type = req.params.token_type;
+    }
+    if (!label) {
+        return res.jsonp([]);
+    }
+    var search_string = req.query.term || &#x27;&#x27;;
+    var keys = database.get_all_property_keys_for_token(search_string, label, token_type).then(function (keys) {
+        var blacklist = [&#x27;value&#x27;, &#x27;whiteSpace&#x27;, &#x27;width&#x27;, &#x27;height&#x27;, &#x27;opacity&#x27;, &#x27;hand&#x27;, &#x27;as&#x27;, &#x27;parent&#x27;,
+        &#x27;enumerator&#x27;, &#x27;fillColor&#x27;, &#x27;id&#x27;, &#x27;html&#x27;, &#x27;rounded&#x27;, &#x27;x&#x27;, &#x27;y&#x27;, &#x27;vertex&#x27;, &#x27;tokenType&#x27;,
+        &#x27;fontSize&#x27;, &#x27;groupType&#x27;];
+        return res.jsonp(keys.filter(function (key) {
+                return !blacklist.includes(key);
+        })
+        );
+    });
+});
+
+
+app.get(&#x27;/&#x27;, function (req, res) {
+    var msg = req.query.e || &#x27;&#x27;;
+    var info = req.query.m || &#x27;&#x27;;
+    msg = decodeURIComponent(msg);
+    info = decodeURIComponent(info);
+    if (msg.length &gt; 0) {
+        msg = &#x27;Error: &#x27; + msg;
+    }
+    database.get_all_images().then(function (results) {
+            var row_data = [];
+            results.forEach(function (r) {
+                row_data.push(
+                    [
+                        r.get(&#x27;ident&#x27;),
+                        r.get(&#x27;file_path&#x27;),
+                        r.get(&#x27;upload_date&#x27;),
+                        Number(r.get(&#x27;num_uncompleted_fragments&#x27;)),
+                        Number(r.get(&#x27;num_completed_fragments&#x27;))
+                    ]
+                );
+            });
+            res.render(&#x27;image_table&#x27;,
+                {
+                    message: msg,
+                    info: info,
+                    rows: row_data
+                });
+        }
+    );
+});
+
+app.get(&#x27;/image/:id(\\d+)/delete&#x27;, function (req, res) {
+    if (req.params.id) {
+        var id_ = req.params.id;
+        database.remove_image_by_id(id_).then(function (result) {
+            res.redirect(&#x27;/&#x27;);
+        }, function (err) {
+            log.error(err);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+        });
+    } else {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+});
+
+app.get(&#x27;/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/delete&#x27;, function (req, res) {
+    if (req.params.image_id &amp;&amp; req.params.fragment_id) {
+        database.remove_fragment(req.params.image_id, req.params.fragment_id, false)
+            .then(function (result) {
+                res.redirect(&#x27;/image/&#x27; + req.params.image_id + &#x27;/fragments&#x27;);
+            }, function (err) {
+                log.error(err);
+                return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+            });
+    } else {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+});
+
+
+app.get(&#x27;/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/toggle-complete&#x27;, function (req, res) {
+    if (req.params.image_id &amp;&amp; req.params.fragment_id) {
+        database.toggle_fragment_completed(req.params.image_id, req.params.fragment_id)
+            .then(function (result) {
+                res.redirect(&#x27;/image/&#x27; + req.params.image_id + &#x27;/fragments&#x27;);
+            }, function (err) {
+                log.error(err);
+                return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err))
+            });
+    } else {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+});
+
+app.get(&#x27;/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/to-db&#x27;, function (req, res) {
+    if (req.params.image_id &amp;&amp; req.params.fragment_id) {
+        database.remove_fragment(req.params.image_id, req.params.fragment_id, true).then(function (success) {
+            codec.mxgraph_to_neo4j(req.params.image_id, req.params.fragment_id).then(function (data) {
+                res.redirect(&#x27;/image/&#x27; + req.params.image_id + &#x27;/fragments&#x27;);
+            }).catch(function(err){
+                log.error(err);
+                return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err));
+            });
+        }, function (err) {
+            log.error(err);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err));
+        });
+    } else {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+});
+
+app.get(&#x27;/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/comment&#x27;, function (req, res) {
+    if (req.params.image_id &amp;&amp; req.params.fragment_id) {
+        var image_id = Number(req.params.image_id);
+        var fragment_id = Number(req.params.fragment_id);
+        database.get_fragment_by_id(image_id, fragment_id).then(
+            function(row) {
+                var fragment_name = row.get(&#x27;fragment_name&#x27;);
+                var comment = row.get(&#x27;comment&#x27;);
+                res.render(&#x27;comment&#x27;,
+                {
+                    message: &#x27;&#x27;,
+                    comment: comment,
+                    fragment_name: fragment_name,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            },
+            function(err) {
+                return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Error fetching fragment&#x27;));
+            }
+        );
+
+    } else {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+});
+
+app.post(&#x27;/image/:image_id(\\d+)/fragment/:fragment_id(\\d+)/comment&#x27;, function (req, res) {
+    if (req.body.comment &amp;&amp; req.params.image_id &amp;&amp; req.params.fragment_id) {
+        var image_id = Number(req.params.image_id);
+        var fragment_id = Number(req.params.fragment_id);
+        var comment = req.body.comment;
+        database.add_comment_to_fragment(fragment_id, comment).then(
+            function (result) {
+                res.render(&#x27;comment&#x27;,
+                {
+                    message: &#x27;&#x27;,
+                    comment: comment,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            }, function (err) {
+                log.error(err);
+                res.render(&#x27;comment&#x27;,
+                {
+                    message: err,
+                    comment: comment,
+                    image_id: image_id,
+                    fragment_id: fragment_id
+                });
+            });
+    } else {
+        log.warn(&#x27;Missing params for /comment&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing POST parameter comment or ids&#x27;));
+    }
+});
+
+app.post(&#x27;/image/:id(\\d+)/create-fragment&#x27;, function (req, res) {
+    if (req.body.name &amp;&amp; req.params.id) {
+        var name = req.body.name;
+        database.add_fragment(req.params.id, name).then(
+            function (result) {
+                res.redirect(&#x27;/image/&#x27; + req.params.id + &#x27;/fragments&#x27;);
+            }, function (err) {
+                log.error(err);
+                return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(err));
+            });
+    } else {
+        log.warn(&#x27;Missing params for /create-fragment&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing POST parameter name or image_id&#x27;));
+    }
+});
+
+app.get(&#x27;/image/:id(\\d+)/fragments&#x27;, function (req, res) {
+    if (!req.params.id) {
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing parameter&#x27;));
+    }
+    database.get_fragments_by_image_id(req.params.id).then(function (results) {
+            var row_data = [];
+            results.forEach(function (r) {
+                row_data.push(
+                    [
+                        r.get(&#x27;image_id&#x27;),
+                        r.get(&#x27;file_path&#x27;),
+                        r.get(&#x27;fragment_id&#x27;),
+                        r.get(&#x27;fragment_name&#x27;),
+                        r.get(&#x27;comment&#x27;) || &#x27;&#x27;,
+                        r.get(&#x27;upload_date&#x27;),
+                        r.get(&#x27;completed&#x27;)
+                    ]
+                );
+            });
+            res.render(&#x27;fragment_table&#x27;,
+                {
+                    message: &#x27;&#x27;,
+                    rows: row_data,
+                    image_id: req.params.id
+                });
+        }
+    );
+});
+
+// heatmap needs to execute cypher -&gt; only on local installation available -&gt; setting activation!!
+app.get(&#x27;/heatmap&#x27;, function (req, res) {
+    res.render(&#x27;heatmap_config&#x27;, {message: &#x27;&#x27;});
+});
+
+app.post(&#x27;/heatmap-generate&#x27;, function (req, res) {
+    res.setTimeout(1000000, function(){
+    log.error(&#x27;Heatmap Request has timed out.&#x27;);
+        res.send(408);
+    });
+    if (req.body.query &amp;&amp; req.body.normalization &amp;&amp; req.body.width &amp;&amp; req.body.height &amp;&amp; req.body.pixel_size) {
+        var query = req.body.query;
+        var normalization = req.body.normalization;
+        var width = req.body.width;
+        var height = req.body.height;
+        var pixel_size = req.body.pixel_size;
+        var before = new Date();
+        heatmap.process_heatmap_query(query, Number(normalization), Number(width), Number(height), pixel_size)
+            .then(
+                function (data) {
+                    log.info(&quot;The heatmap generation took [seconds]:&quot;);
+                    log.info(parseInt((new Date() - before)/1000.0));
+                    res.render(&#x27;heatmap&#x27;,
+                        {
+                            message: &#x27;&#x27;,
+                            query: query,
+                            num_tokens: data.num_tokens,
+                            num_errors: data.num_errors,
+                            normalization: normalization,
+                            width: width,
+                            height: height,
+                            json: JSON.stringify(data.heat_map),
+                            ratio: width/height,
+                            pixel_size: pixel_size
+                        }
+                        );
+                },
+                function (err) {
+                    res.render(&#x27;heatmap_config&#x27;, {message: err});
+                }
+            );
+    } else {
+        log.warn(&#x27;Missing params for /heatmap-generate&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing POST parameter&#x27;));
+    }
+});
+
+app.get(&#x27;/export&#x27;, function (req, res) {
+    res.render(&#x27;export&#x27;,
+    {
+        message: &#x27;&#x27;
+    });
+});
+
+app.get(&#x27;/export/csv&#x27;, function (req, res) {
+    res.setTimeout(1000*60*5, function(){
+        log.error(&#x27;export/csv request timeout&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Timeout&#x27;));
+    });
+    exp.to_csv()
+        .then(function(file_path){
+            log.info(file_path)
+            res.setHeader(&#x27;Content-disposition&#x27;, &#x27;attachment; filename=&#x27;+path.basename(file_path));
+            var file_stream = fs.createReadStream(file_path);
+            file_stream.pipe(res);
+        })
+        .catch(function(err){
+            log.error(err);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Error in CSV dump&#x27;));
+        });
+});
+
+app.get(&#x27;/export/sql&#x27;, function (req, res) {
+    res.setTimeout(1000*60*5, function(){
+        log.error(&#x27;export/sql request timeout&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Timeout&#x27;));
+    });
+    exp.to_sql()
+        .then(function(file_path){
+            log.info(file_path)
+            res.setHeader(&#x27;Content-disposition&#x27;, &#x27;attachment; filename=&#x27;+path.basename(file_path));
+            var file_stream = fs.createReadStream(file_path);
+            file_stream.pipe(res);
+        })
+        .catch(function(err){
+            log.error(err);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Error in SQL dump&#x27;));
+        });
+});
+
+app.get(&#x27;/settings&#x27;, function (req, res) {
+    var sets = Settings.get_settings_for_frontend();
+    var settings = {
+        &quot;fontSize&quot;: sets.styles.defaultVertex.fontSize,
+        &quot;curved&quot;: sets.defaultEdgeStyle.curved,
+        &quot;strokeWidth&quot;: sets.defaultEdgeStyle.strokeWidth,
+        &quot;js_config&quot;: fs.readFileSync(path.join(__dirname, &#x27;../media/settings/js_editor_settings.js&#x27;))
+    };
+    res.render(&#x27;settings&#x27;,
+    {
+        settings: settings,
+        message: &#x27;&#x27;,
+        &quot;javascript_demo_constraint&quot;: utils.javascript_demo_constraint
+    });
+});
+
+app.get(&#x27;/constraints&#x27;, function (req, res) {
+    var sets = Settings.get_settings_for_frontend();
+    var settings = {
+        &quot;constraints&quot;: sets.constraints
+    };
+    res.render(&#x27;constraints&#x27;,
+    {
+        settings: settings,
+        message: &#x27;&#x27;,
+        &quot;javascript_demo_constraint&quot;: utils.javascript_demo_constraint
+    });
+});
+
+app.post(&#x27;/constraints&#x27;, function (req, res) {
+    var num_unchanged = 0, num_changed = 0, num_new = 0;
+    var all_constraints = Settings.get_settings_for_frontend().constraints;
+    var new_constraints_storage = {
+        &quot;count_constraints&quot;: [],
+        &quot;free_constraints&quot;: [],
+        &quot;bool_constraints&quot;: []
+    };
+    var changed_constraints = [];
+
+    Object.keys(req.body).forEach(function(key){
+        var value = req.body[key];
+        var constraint = null, id = null, constraint_type = null, new_ = false;
+        if (key.indexOf(&#x27;bool_constraint_&#x27;) === 0) {
+            constraint_type = &#x27;bool_constraints&#x27;;
+            if (key.indexOf(&#x27;bool_constraint_new&#x27;) === 0 ) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+            } else {
+                id = Number(key.replace(&#x27;bool_constraint_&#x27;, &#x27;&#x27;))
+            }
+            constraint = {
+                &#x27;id&#x27;: id,
+                &#x27;query&#x27;: value
+            }
+        } else if (key.indexOf(&#x27;count_constraint_&#x27;) === 0) {
+            constraint_type = &#x27;count_constraints&#x27;;
+            var min, max;
+            if (key.indexOf(&#x27;count_constraint_new&#x27;) === 0) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+                min = req.body[&#x27;count_min_constraint_new&#x27;];
+                max = req.body[&#x27;count_max_constraint_new&#x27;];
+            } else {
+                id = Number(key.replace(&#x27;count_constraint_&#x27;, &#x27;&#x27;))
+                min = req.body[&#x27;count_min_constraint_&#x27; + id];
+                max = req.body[&#x27;count_max_constraint_&#x27; + id];
+            }
+            constraint = {
+                &#x27;id&#x27;: id,
+                &#x27;min&#x27;: min,
+                &#x27;max&#x27;: max,
+                &#x27;query&#x27;: value
+            }
+        } else if (key.indexOf(&#x27;free_constraint_&#x27;) === 0) {
+            constraint_type = &#x27;free_constraints&#x27;;
+            if (key.indexOf(&#x27;free_constraint_new&#x27;) === 0) {
+                id = Math.round(new Date().getTime());
+                new_ = true;
+            } else {
+                id = Number(key.replace(&#x27;free_constraint_&#x27;, &#x27;&#x27;))
+            }
+            constraint = {
+                &#x27;id&#x27;: id,
+                &#x27;query&#x27;: value
+            }
+        }
+
+        if (constraint_type) {
+            if (new_) {
+                if (constraint.query.length &gt; 0) {
+                    changed_constraints.push(constraint);
+                    num_new++;
+                    new_constraints_storage[constraint_type].push(constraint);
+                }
+            } else if (constraints.constraint_has_changes(constraint, constraint_type, all_constraints)) {
+                changed_constraints.push(constraint);
+                num_changed++;
+                new_constraints_storage[constraint_type].push(constraint);
+            } else {
+                num_unchanged++;
+                new_constraints_storage[constraint_type].push(constraint);
+            }
+        }
+    });
+
+    Settings.set(&#x27;constraints&#x27;, new_constraints_storage);
+    Settings.save();
+
+    constraints.check_all_fragments(new_constraints_storage.bool_constraints,
+        new_constraints_storage.count_constraints, new_constraints_storage.free_constraints)
+        .then(function(success){
+            return res.render(&#x27;constraints&#x27;,
+            {
+                settings: {&#x27;constraints&#x27;: new_constraints_storage},
+                info: &#x27;All constraints were successfully executed&#x27;,
+                message: &#x27;&#x27;,
+                &quot;javascript_demo_constraint&quot;: utils.javascript_demo_constraint
+            });
+        }).catch(function(rejected_constraint){
+            log.error(rejected_constraint);
+            return res.render(&#x27;constraints&#x27;,
+            {
+                settings: {&#x27;constraints&#x27;: new_constraints_storage},
+                info: &#x27;&#x27;,
+                message: &#x27;Constraint #&#x27; + rejected_constraint.id + &#x27; failed on &#x27; + rejected_constraint.error_fragment + &#x27; with &#x27; + rejected_constraint.error,
+                &quot;javascript_demo_constraint&quot;: utils.javascript_demo_constraint
+            });
+    });
+});
+
+app.post(&#x27;/settings&#x27;, function (req, res) {
+    if (req.body.fontSize &amp;&amp; req.body.strokeWidth &amp;&amp; req.body.js_config) {
+        var curved = req.body.curved || &quot;0&quot;;
+        var fontSize = req.body.fontSize;
+        var strokeWidth = req.body.strokeWidth;
+        var js_config = req.body.js_config;
+
+        var settings = {
+            &#x27;fontSize&#x27;: fontSize,
+            &#x27;curved&#x27;: curved,
+            &#x27;strokeWidth&#x27;: strokeWidth
+        };
+        Settings.set_settings_from_frontend(settings);
+        fs.writeFile(path.join(__dirname, &#x27;../media/settings/js_editor_settings.js&#x27;), js_config);
+        return res.redirect(&#x27;/settings&#x27;)
+    } else {
+        log.warn(&#x27;Missing params for /settings&#x27;);
+        return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Missing POST parameter for settings&#x27;));
+    }
+});
+
+app.get(&#x27;/batch-add-to-neo4j&#x27;, function (req, res) {
+    codec.add_all_completed_fragments_to_neo4j().then(
+        function(params) {
+            res.redirect(&#x27;/?m=&#x27; + encodeURIComponent(&#x27;Success! Number of changed fragments: &#x27; + params.num_changed));
+        },
+        function(err) {
+            log.error(err);
+            return res.redirect(&#x27;/?e=&#x27; + encodeURIComponent(&#x27;Error in batch add&#x27;));
+        }
+    );
+});
+
+function run() {
+    app.listen(4000, &#x27;localhost&#x27;);
+    log.info(&#x27;TransliterationApplication Server started on http://localhost:4000/&#x27;);
+    // console.log(&#x27;READY&#x27;);
+}
+
+if (!module.parent) {
+    run()
+}
+
+module.exports = {&#x27;run&#x27;: run};
+
+
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

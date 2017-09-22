@@ -1,3 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\export.js - TransliterationApplication API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
+                                <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
+                                <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src\export.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
 /**
  * Export the neo4j data to sql or csv
  *
@@ -44,12 +135,12 @@
 var Export = Export || {};
 
 
-var log = require('electron-log');
-var fs = require('fs');
-var path = require('path');
-var zlib = require('zlib');
-var archiver = require('archiver');
-var database = require('./database');
+var log = require(&#x27;electron-log&#x27;);
+var fs = require(&#x27;fs&#x27;);
+var path = require(&#x27;path&#x27;);
+var zlib = require(&#x27;zlib&#x27;);
+var archiver = require(&#x27;archiver&#x27;);
+var database = require(&#x27;./database&#x27;);
 
 
 
@@ -59,9 +150,9 @@ var database = require('./database');
  *
  * @property to_folder
  * @type {string}
- * @default path.join(__dirname, '..', 'media', 'export')
+ * @default path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;export&#x27;)
  */
-Export.to_folder = path.join(__dirname, '..', 'media', 'export');
+Export.to_folder = path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;export&#x27;);
 
 /**
 * Get the current time as POSIX time as a string
@@ -72,7 +163,7 @@ Export.to_folder = path.join(__dirname, '..', 'media', 'export');
 Export._get_time = function () {
     var d = new Date();
     var upload_date = Math.round(d.getTime());
-    return upload_date + '';
+    return upload_date + &#x27;&#x27;;
 };
 
 /**
@@ -89,25 +180,25 @@ Export._nodes_to_sql = function (write_stream) {
         try {
             var session = database._get_session();
             write_stream.write(
-                'CREATE TABLE IF NOT EXISTS Nodes ( \n' +
-                'Node_ID INTEGER PRIMARY KEY, \n' +
-                'value TEXT, \n' +
-                'tokenType TEXT, \n' +
-                'groupType TEXT \n' +
-                '); \n\n'
+                &#x27;CREATE TABLE IF NOT EXISTS Nodes ( \n&#x27; +
+                &#x27;Node_ID INTEGER PRIMARY KEY, \n&#x27; +
+                &#x27;value TEXT, \n&#x27; +
+                &#x27;tokenType TEXT, \n&#x27; +
+                &#x27;groupType TEXT \n&#x27; +
+                &#x27;); \n\n&#x27;
             );
         } catch (e) {
             return reject(e);
         }
 
-        session.run("MATCH (n) RETURN ID(n) as ident, n.value as value, n.tokenType as tokenType, n.groupType as groupType;")
+        session.run(&quot;MATCH (n) RETURN ID(n) as ident, n.value as value, n.tokenType as tokenType, n.groupType as groupType;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        write_stream.write('INSERT INTO Nodes (Node_ID, value, tokenType, groupType) VALUES (');
-                        write_stream.write(record.get('ident').toString() + ', ');
-                        write_stream.write((record.get('value') ? '"' + encodeURIComponent(record.get('value')) + '"' : 'NULL') + ', ');
-                        write_stream.write((record.get('tokenType') ? '"' + encodeURIComponent(record.get('tokenType')) + '"' : 'NULL') + ', ');
-                        write_stream.write((record.get('groupType') ? '"' + encodeURIComponent(record.get('groupType')) + '"' : 'NULL') + ');\n  ');
+                        write_stream.write(&#x27;INSERT INTO Nodes (Node_ID, value, tokenType, groupType) VALUES (&#x27;);
+                        write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;, &#x27;);
+                        write_stream.write((record.get(&#x27;value&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;value&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;, &#x27;);
+                        write_stream.write((record.get(&#x27;tokenType&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;tokenType&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;, &#x27;);
+                        write_stream.write((record.get(&#x27;groupType&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;groupType&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;);\n  &#x27;);
                     },
                     onCompleted: function () {
                         session.close();
@@ -136,25 +227,25 @@ Export._relations_to_sql = function (write_stream) {
         try {
             var session = database._get_session();
             write_stream.write(
-                '\nCREATE TABLE IF NOT EXISTS Relations ( \n' +
-                'Relation_ID INTEGER PRIMARY KEY, \n' +
-                'relationType TEXT, \n' +
-                'SourceNode_ID INTEGER REFERENCES Nodes (Node_ID), \n' +
-                'TargetNode_ID INTEGER REFERENCES Nodes (Node_ID)\n' +
-                '); \n\n'
+                &#x27;\nCREATE TABLE IF NOT EXISTS Relations ( \n&#x27; +
+                &#x27;Relation_ID INTEGER PRIMARY KEY, \n&#x27; +
+                &#x27;relationType TEXT, \n&#x27; +
+                &#x27;SourceNode_ID INTEGER REFERENCES Nodes (Node_ID), \n&#x27; +
+                &#x27;TargetNode_ID INTEGER REFERENCES Nodes (Node_ID)\n&#x27; +
+                &#x27;); \n\n&#x27;
             );
         } catch (e) {
             return reject(e);
         }
 
-        session.run("MATCH ()-[r]-() RETURN DISTINCT ID(r) as ident, TYPE(r) as type, ID(STARTNODE(r)) as origin, ID(ENDNODE(r)) as target;")
+        session.run(&quot;MATCH ()-[r]-() RETURN DISTINCT ID(r) as ident, TYPE(r) as type, ID(STARTNODE(r)) as origin, ID(ENDNODE(r)) as target;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        write_stream.write('INSERT INTO Relations (Relation_ID, relationType, SourceNode_ID, TargetNode_ID) VALUES (');
-                        write_stream.write(record.get('ident').toString() + ', ');
-                        write_stream.write((record.get('type') ? '"' + encodeURIComponent(record.get('type')) + '"' : 'NULL') + ', ');
-                        write_stream.write(record.get('origin').toString() + ', ');
-                        write_stream.write(record.get('target').toString() + '); \n');
+                        write_stream.write(&#x27;INSERT INTO Relations (Relation_ID, relationType, SourceNode_ID, TargetNode_ID) VALUES (&#x27;);
+                        write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;, &#x27;);
+                        write_stream.write((record.get(&#x27;type&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;type&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;, &#x27;);
+                        write_stream.write(record.get(&#x27;origin&#x27;).toString() + &#x27;, &#x27;);
+                        write_stream.write(record.get(&#x27;target&#x27;).toString() + &#x27;); \n&#x27;);
                     },
                     onCompleted: function () {
                         session.close();
@@ -183,27 +274,27 @@ Export._relation_properties_to_sql = function (write_stream) {
         try {
             var session = database._get_session();
             write_stream.write(
-                '\nCREATE TABLE IF NOT EXISTS RelationProperties ( \n' +
-                'RelationProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
-                'Relation_ID INTEGER REFERENCES Relations, \n' +
-                'key TEXT, \n' +
-                'value TEXT \n' +
-                '); \n\n'
+                &#x27;\nCREATE TABLE IF NOT EXISTS RelationProperties ( \n&#x27; +
+                &#x27;RelationProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n&#x27; +
+                &#x27;Relation_ID INTEGER REFERENCES Relations, \n&#x27; +
+                &#x27;key TEXT, \n&#x27; +
+                &#x27;value TEXT \n&#x27; +
+                &#x27;); \n\n&#x27;
             );
         } catch (e) {
             return reject(e);
         }
 
-        session.run("Match ()-[n]-() return DISTINCT ID(n) as ident, properties(n) as props;")
+        session.run(&quot;Match ()-[n]-() return DISTINCT ID(n) as ident, properties(n) as props;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        var props = record.get('props');
+                        var props = record.get(&#x27;props&#x27;);
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                            write_stream.write('INSERT INTO RelationProperties (Relation_ID, key, value) VALUES (');
-                             write_stream.write(record.get('ident').toString() + ', ');
-                             write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ', ');
-                             write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '); \n');
+                            write_stream.write(&#x27;INSERT INTO RelationProperties (Relation_ID, key, value) VALUES (&#x27;);
+                             write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;, &#x27;);
+                             write_stream.write((key ? &#x27;&quot;&#x27; + encodeURIComponent(key) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;, &#x27;);
+                             write_stream.write((value ? &#x27;&quot;&#x27; + encodeURIComponent(value) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;); \n&#x27;);
                         });
                     },
                     onCompleted: function () {
@@ -233,27 +324,27 @@ Export._node_properties_to_sql = function (write_stream) {
         try {
             var session = database._get_session();
             write_stream.write(
-                '\nCREATE TABLE IF NOT EXISTS NodeProperties ( \n' +
-                'NodeProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
-                'Node_ID INTEGER REFERENCES Nodes, \n' +
-                'key TEXT, \n' +
-                'value TEXT \n' +
-                '); \n\n'
+                &#x27;\nCREATE TABLE IF NOT EXISTS NodeProperties ( \n&#x27; +
+                &#x27;NodeProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n&#x27; +
+                &#x27;Node_ID INTEGER REFERENCES Nodes, \n&#x27; +
+                &#x27;key TEXT, \n&#x27; +
+                &#x27;value TEXT \n&#x27; +
+                &#x27;); \n\n&#x27;
             );
         } catch (e) {
             return reject(e);
         }
 
-        session.run("Match (n) return DISTINCT ID(n) as ident, properties(n) as props;")
+        session.run(&quot;Match (n) return DISTINCT ID(n) as ident, properties(n) as props;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        var props = record.get('props');
+                        var props = record.get(&#x27;props&#x27;);
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                            write_stream.write('INSERT INTO NodeProperties (Node_ID, key, value) VALUES (');
-                             write_stream.write(record.get('ident').toString() + ', ');
-                             write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ', ');
-                             write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '); \n');
+                            write_stream.write(&#x27;INSERT INTO NodeProperties (Node_ID, key, value) VALUES (&#x27;);
+                             write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;, &#x27;);
+                             write_stream.write((key ? &#x27;&quot;&#x27; + encodeURIComponent(key) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;, &#x27;);
+                             write_stream.write((value ? &#x27;&quot;&#x27; + encodeURIComponent(value) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;); \n&#x27;);
                         });
                     },
                     onCompleted: function () {
@@ -282,18 +373,18 @@ Export._nodes_to_csv = function (write_stream) {
     return new Promise(function (resolve, reject) {
         try {
             var session = database._get_session();
-            write_stream.write('Node_ID,value,tokenType,groupType\n');
+            write_stream.write(&#x27;Node_ID,value,tokenType,groupType\n&#x27;);
         } catch (e) {
             return reject(e);
         }
 
-        session.run("MATCH (n) RETURN ID(n) as ident, n.value as value, n.tokenType as tokenType, n.groupType as groupType;")
+        session.run(&quot;MATCH (n) RETURN ID(n) as ident, n.value as value, n.tokenType as tokenType, n.groupType as groupType;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        write_stream.write(record.get('ident').toString() + ',');
-                        write_stream.write((record.get('value') ? '"' + encodeURIComponent(record.get('value')) + '"' : 'NULL') + ',');
-                        write_stream.write((record.get('tokenType') ? '"' + encodeURIComponent(record.get('tokenType')) + '"' : 'NULL') + ',');
-                        write_stream.write((record.get('groupType') ? '"' + encodeURIComponent(record.get('groupType')) + '"' : 'NULL') + '\n');
+                        write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;,&#x27;);
+                        write_stream.write((record.get(&#x27;value&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;value&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;,&#x27;);
+                        write_stream.write((record.get(&#x27;tokenType&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;tokenType&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;,&#x27;);
+                        write_stream.write((record.get(&#x27;groupType&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;groupType&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;\n&#x27;);
                     },
                     onCompleted: function () {
                         session.close();
@@ -321,18 +412,18 @@ Export._relations_to_csv = function (write_stream) {
     return new Promise(function (resolve, reject) {
         try {
             var session = database._get_session();
-            write_stream.write('Relation_ID,relationType,SourceNode_ID,TargetNode_ID\n');
+            write_stream.write(&#x27;Relation_ID,relationType,SourceNode_ID,TargetNode_ID\n&#x27;);
         } catch (e) {
             return reject(e);
         }
 
-        session.run("MATCH ()-[r]-() RETURN DISTINCT ID(r) as ident, TYPE(r) as type, ID(STARTNODE(r)) as origin, ID(ENDNODE(r)) as target;")
+        session.run(&quot;MATCH ()-[r]-() RETURN DISTINCT ID(r) as ident, TYPE(r) as type, ID(STARTNODE(r)) as origin, ID(ENDNODE(r)) as target;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        write_stream.write(record.get('ident').toString() + ',');
-                        write_stream.write((record.get('type') ? '"' + encodeURIComponent(record.get('type')) + '"' : 'NULL') + ',');
-                        write_stream.write(record.get('origin').toString() + ',');
-                        write_stream.write(record.get('target').toString() + '\n');
+                        write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;,&#x27;);
+                        write_stream.write((record.get(&#x27;type&#x27;) ? &#x27;&quot;&#x27; + encodeURIComponent(record.get(&#x27;type&#x27;)) + &#x27;&quot;&#x27; : &#x27;NULL&#x27;) + &#x27;,&#x27;);
+                        write_stream.write(record.get(&#x27;origin&#x27;).toString() + &#x27;,&#x27;);
+                        write_stream.write(record.get(&#x27;target&#x27;).toString() + &#x27;\n&#x27;);
                     },
                     onCompleted: function () {
                         session.close();
@@ -360,20 +451,20 @@ Export._relation_properties_to_csv = function (write_stream) {
     return new Promise(function (resolve, reject) {
         try {
             var session = database._get_session();
-            write_stream.write('Relation_ID,key,value\n');
+            write_stream.write(&#x27;Relation_ID,key,value\n&#x27;);
         } catch (e) {
             return reject(e);
         }
 
-        session.run("Match ()-[n]-() return DISTINCT ID(n) as ident, properties(n) as props;")
+        session.run(&quot;Match ()-[n]-() return DISTINCT ID(n) as ident, properties(n) as props;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        var props = record.get('props');
+                        var props = record.get(&#x27;props&#x27;);
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                             write_stream.write(record.get('ident').toString() + ',');
-                             write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ',');
-                             write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '\n');
+                             write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;,&#x27;);
+                             write_stream.write((key ? &#x27;&quot;&#x27; + encodeURIComponent(key) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;,&#x27;);
+                             write_stream.write((value ? &#x27;&quot;&#x27; + encodeURIComponent(value) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;\n&#x27;);
                         });
                     },
                     onCompleted: function () {
@@ -402,20 +493,20 @@ Export._node_properties_to_csv = function (write_stream) {
     return new Promise(function (resolve, reject) {
         try {
             var session = database._get_session();
-            write_stream.write('Node_ID,key,value\n');
+            write_stream.write(&#x27;Node_ID,key,value\n&#x27;);
         } catch (e) {
             return reject(e);
         }
 
-        session.run("Match (n) return DISTINCT ID(n) as ident, properties(n) as props;")
+        session.run(&quot;Match (n) return DISTINCT ID(n) as ident, properties(n) as props;&quot;)
             .subscribe({
                     onNext: function (record) {
-                        var props = record.get('props');
+                        var props = record.get(&#x27;props&#x27;);
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                             write_stream.write(record.get('ident').toString() + ',');
-                             write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ',');
-                             write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '\n');
+                             write_stream.write(record.get(&#x27;ident&#x27;).toString() + &#x27;,&#x27;);
+                             write_stream.write((key ? &#x27;&quot;&#x27; + encodeURIComponent(key) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;,&#x27;);
+                             write_stream.write((value ? &#x27;&quot;&#x27; + encodeURIComponent(value) + &#x27;&quot;&#x27; :  &#x27;NULL&#x27;) + &#x27;\n&#x27;);
                         });
                     },
                     onCompleted: function () {
@@ -443,7 +534,7 @@ Export.to_sql = function () {
     return new Promise(function (resolve, reject) {
         try {
             var time_stamp = Export._get_time();
-            var file_name = 'sql-' + time_stamp + '.sql';
+            var file_name = &#x27;sql-&#x27; + time_stamp + &#x27;.sql&#x27;;
             var file_path = path.join(Export.to_folder, file_name);
             var wstream = fs.createWriteStream(file_path);
             return Export._nodes_to_sql(wstream).then(function (data) {
@@ -451,15 +542,15 @@ Export.to_sql = function () {
                     return Export._relation_properties_to_sql(wstream).then(function (data) {
                         return Export._node_properties_to_sql(wstream).then(function(data){
                             wstream.end();
-                            var output_path = path.join(Export.to_folder, 'sql-' + time_stamp + '.zip');
+                            var output_path = path.join(Export.to_folder, &#x27;sql-&#x27; + time_stamp + &#x27;.zip&#x27;);
 
                             var output = fs.createWriteStream(output_path);
-                            var archive = archiver('zip', {
+                            var archive = archiver(&#x27;zip&#x27;, {
                                 gzip: true,
                                 zlib: { level: 9 }
                             });
 
-                            archive.on('error', function(err) {
+                            archive.on(&#x27;error&#x27;, function(err) {
                               return reject(err);
                             });
 
@@ -473,7 +564,7 @@ Export.to_sql = function () {
                             // finalize
                             archive.finalize();
 
-                            output.on("close", function(){
+                            output.on(&quot;close&quot;, function(){
                                 fs.unlinkSync(file_path);
                                 resolve(output_path);
                             });
@@ -502,7 +593,7 @@ Export.to_sql = function () {
 };
 
 /**
- * Creates a zipped dir containing four files necessary to reassemble the GraphDB's storage
+ * Creates a zipped dir containing four files necessary to reassemble the GraphDB&#x27;s storage
  * The file is stored in the to_folder of Export
  *
  *
@@ -514,22 +605,22 @@ Export.to_csv = function () {
     return new Promise(function (resolve, reject) {
         try {
             // nodes file
-            var file_name_nodes = 'csv-nodes-' + time_stamp + '.csv';
+            var file_name_nodes = &#x27;csv-nodes-&#x27; + time_stamp + &#x27;.csv&#x27;;
             var file_path_nodes = path.join(Export.to_folder, file_name_nodes);
             var wstream_nodes = fs.createWriteStream(file_path_nodes);
 
             // relations file
-            var file_name_relations = 'csv-relations-' + time_stamp + '.csv';
+            var file_name_relations = &#x27;csv-relations-&#x27; + time_stamp + &#x27;.csv&#x27;;
             var file_path_relations = path.join(Export.to_folder, file_name_relations);
             var wstream_relations = fs.createWriteStream(file_path_relations);
 
             // relationprops file
-            var file_name_relationprops = 'csv-relationprops-' + time_stamp + '.csv';
+            var file_name_relationprops = &#x27;csv-relationprops-&#x27; + time_stamp + &#x27;.csv&#x27;;
             var file_path_relationprops = path.join(Export.to_folder, file_name_relationprops);
             var wstream_relationprops = fs.createWriteStream(file_path_relationprops);
 
             // nodeprops file
-            var file_name_nodeprops = 'csv-nodeprops-' + time_stamp + '.csv';
+            var file_name_nodeprops = &#x27;csv-nodeprops-&#x27; + time_stamp + &#x27;.csv&#x27;;
             var file_path_nodeprops = path.join(Export.to_folder, file_name_nodeprops);
             var wstream_nodeprops = fs.createWriteStream(file_path_nodeprops);
 
@@ -542,15 +633,15 @@ Export.to_csv = function () {
                         return Export._node_properties_to_csv(wstream_nodeprops).then(function(data){
                             wstream_nodeprops.end();
 
-                            var output_path = path.join(Export.to_folder, time_stamp+'.zip')
+                            var output_path = path.join(Export.to_folder, time_stamp+&#x27;.zip&#x27;)
 
                             var output = fs.createWriteStream(output_path);
-                            var archive = archiver('zip', {
+                            var archive = archiver(&#x27;zip&#x27;, {
                                 gzip: true,
                                 zlib: { level: 9 }
                             });
 
-                            archive.on('error', function(err) {
+                            archive.on(&#x27;error&#x27;, function(err) {
                               return reject(err);
                             });
 
@@ -564,7 +655,7 @@ Export.to_csv = function () {
                             // finalize
                             archive.finalize();
 
-                            output.on("close", function(){
+                            output.on(&quot;close&quot;, function(){
                                 [file_path_nodes, file_path_relations, file_path_relationprops, file_path_nodeprops].forEach(function(file_path){
                                     fs.unlinkSync(file_path);
                                 });
@@ -595,3 +686,21 @@ Export.to_csv = function () {
 };
 
 module.exports = Export;
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

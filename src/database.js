@@ -13,21 +13,12 @@ function log_error_and_close_session(session) {
     }
 }
 
-/**
-* Database wrapper functions for Neo4J
-*
-* @module Database
-* @requires neo4j-driver
-*/
 
 /**
  *
  * Database
  * --------
- * Contains all the database access methods
- * <br>
- * <b>Caution: The responses are promises</b>
- * <p>Singleton because...</p>
+ * Contains all the database access methods.
 *
  * @class Database
 */
@@ -67,6 +58,9 @@ Database.logged_in = false;
  * It also set the Database.logged_in to true
  *
 * @method login
+* @param url {string} the endpoint of neo4j
+* @param user {string}
+* @param password {string}
 * @return {boolean|error}
 */
 Database.login = function (url, user, password){
@@ -90,6 +84,7 @@ Database.login = function (url, user, password){
                 };
 
                 var session = Database._get_session();
+                // Execute a small query to see whether the connection works
                 return session.run('return 1').then(
                     function() {
                         Database.logged_in = true;
@@ -234,7 +229,13 @@ Database.init = function(callback) {
     });
 };
 
-
+/**
+ * Toggle the completed status of a fragment
+ * The status is used for the batch-add functionality
+ *
+ * @method toggle_fragment_completed
+ * @return {Promise}
+ */
 Database.toggle_fragment_completed = function(image_id, fragment_id) {
     var session = Database._get_session();
     var prom = session.run("MATCH (a:Fragment)-[r:image]->(i:Image) " +
@@ -256,7 +257,17 @@ Database.toggle_fragment_completed = function(image_id, fragment_id) {
 
 /**
  * Adds an image to the database
- * Sets the upload_date to now in seconds (Math.round(d.getTime() / 1000))
+ * Sets attributes according to the exif_data
+ * Fallback for upload_date is now in seconds (Math.round(d.getTime()))
+ *
+ * The exif_data shall be an objects with the attributes
+ *    'exif: {
+ *         'ExifImageWidth': ...,
+ *         'ExifImageHeight': ...,
+ *         'CreateDate': ...
+ *     }, 'gps: {...}
+ *
+ * CreateDate is handled by the parse(...) function
  *
  * @method add_image
  * @param file_path {string} The unique identifier for an image
@@ -266,6 +277,7 @@ Database.toggle_fragment_completed = function(image_id, fragment_id) {
 Database.add_image = function(file_path, exif_data) {
     var session = this._get_session();
     var d = new Date();
+    // This is the fallback for the upload_date
     var upload_date = Math.round(d.getTime());
     var cql = "CREATE (a:Image {file_path: {file_path}, upload_date: {upload_date}}) RETURN ID(a) as ident;";
     var meta_data = null;
@@ -345,6 +357,13 @@ Database.get_image = function(file_path){
     return prom;
 };
 
+/**
+ * Get the image of a token
+ *
+ * @method get_image_of_token
+ * @param token_id {int} The unique identifier for a token
+ * @return {Promise}
+ */
 Database.get_image_of_token = function(token_id){
     var session = this._get_session();
     var prom = session
@@ -362,9 +381,16 @@ Database.get_image_of_token = function(token_id){
 };
 
 /**
+ * Get the bounding box of a fragment
  *
- * @param token_id
- * @returns {*|Promise}
+ * This method looks for the lowest x and y coordinates of all sibling tokens
+ * and for the highest x and y coordinates of all siblings
+ *
+ * Used for heat map generation
+ *
+ * @method get_fragment_bounding_box
+ * @param token_id {int} The unique identifier for a token
+ * @return {Promise}
  */
 Database.get_fragment_bounding_box = function(token_id){
     var session = this._get_session();
@@ -469,6 +495,14 @@ Database.add_fragment = function(image_id, fragment_name) {
         }, log_error_and_close_session(session))
 };
 
+/**
+ * Sets the comment attribute of a fragment
+ *
+ * @method add_comment_to_fragment
+ * @param fragment_id
+ * @param comment string
+ * @return {Promise}
+ */
 Database.add_comment_to_fragment = function(fragment_id, comment) {
     var session = this._get_session();
     return session.run(
@@ -492,12 +526,14 @@ Database.add_comment_to_fragment = function(fragment_id, comment) {
 };
 
 /**
- * Removes all fragments of an image with a given name
+ * Removes a fragment of an image or makes it empty
+ *
+ * This method not only deletes the fragment but also its children
  *
  * @method remove_fragment
  * @param image_id
  * @param fragment_id
- * @param dont_delete_fragment
+ * @param dont_delete_fragment Activate this option to delete only the children
  * @return {Promise}
  */
 Database.remove_fragment = function(image_id, fragment_id, dont_delete_fragment) {
@@ -769,7 +805,7 @@ Database.get_all_images = function() {
  *
  * @method get_fragments_by_image_id
  * @param image_id
- * @returns {*|Promise}
+ * @return {*|Promise}
  */
 Database.get_fragments_by_image_id = function(image_id) {
     var session = this._get_session();
@@ -802,7 +838,8 @@ Database.get_fragments_by_image_id = function(image_id) {
 /**
  * Get all completed fragments
  *
- * @returns {*|Promise}
+ * @method get_all_completed_fragments
+ * @return {*|Promise}
  */
 Database.get_all_completed_fragments = function() {
     var session = this._get_session();

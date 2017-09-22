@@ -1,3 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\heatmap.js - TransliterationApplication API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
+                                <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
+                                <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src\heatmap.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
 /**
 * The collection of methods in order to generate the heat maps.
 * The final output is always a web D3.JS rendering!
@@ -5,28 +96,28 @@
 * @class Heatmap
 */
 
-var log = require('electron-log');
-var database = require('./database');
-var path = require('path');
-var fs = require('fs');
+var log = require(&#x27;electron-log&#x27;);
+var database = require(&#x27;./database&#x27;);
+var path = require(&#x27;path&#x27;);
+var fs = require(&#x27;fs&#x27;);
 
 /**
 * Suits as a in memory cache for the images, fragments and tokens
-* Motivation: We don't want to query the database twice for a single object.
-* key for the sub categories (images, fragments and tokens) is the <ID>
+* Motivation: We don&#x27;t want to query the database twice for a single object.
+* key for the sub categories (images, fragments and tokens) is the &lt;ID&gt;
 * value is the object itself
 *
 * @property IMAGE_FRAGMENT_CACHE
 */
 var IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || {
         images: {
-            // image_id -> image
+            // image_id -&gt; image
         },
         fragments: {
-            // fragment_id -> image_id
+            // fragment_id -&gt; image_id
         },
         tokens: {
-            // token_id -> fragment_id
+            // token_id -&gt; fragment_id
         }
     };
 
@@ -37,7 +128,7 @@ var IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || {
 * @property BOUNDING_BOX_CACHE
 */
 var BOUNDING_BOX_CACHE = BOUNDING_BOX_CACHE || {
-        // fragment_id -> bb
+        // fragment_id -&gt; bb
     };
 
 /**
@@ -49,19 +140,19 @@ function clean_caches() {
     // cache all images with their tokens
     IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || {
         images: {
-            // image_id -> image
+            // image_id -&gt; image
         },
         fragments: {
-            // fragment_id -> image_id
+            // fragment_id -&gt; image_id
         },
         tokens: {
-            // token_id -> fragment_id
+            // token_id -&gt; fragment_id
         }
     };
 
     // cache the bounding box for every fragment
     BOUNDING_BOX_CACHE = BOUNDING_BOX_CACHE || {
-        // fragment_id -> bb
+        // fragment_id -&gt; bb
     };
 }
 
@@ -84,36 +175,36 @@ function count_entities_by_label(records, label) {
 }
 
 /**
-* Counts the number of entities given the Neo4j Label 'Image'
+* Counts the number of entities given the Neo4j Label &#x27;Image&#x27;
 *
 * @method count_images_in_result
 * @param records {array}
 * @return {Number}
 */
 function count_images_in_result(result) {
-    return count_entities_by_label(result, "Image");
+    return count_entities_by_label(result, &quot;Image&quot;);
 }
 
 /**
-* Counts the number of entities given the Neo4j Label 'Fragment'
+* Counts the number of entities given the Neo4j Label &#x27;Fragment&#x27;
 *
 * @method count_fragments_in_result
 * @param records {array}
 * @return {Number}
 */
 function count_fragments_in_result(result) {
-    return count_entities_by_label(result, "Fragment");
+    return count_entities_by_label(result, &quot;Fragment&quot;);
 }
 
 /**
-* Counts the number of entities given the Neo4j Label 'Token'
+* Counts the number of entities given the Neo4j Label &#x27;Token&#x27;
 *
 * @method count_tokens_in_result
 * @param records {array}
 * @return {Number}
 */
 function count_tokens_in_result(result) {
-    return count_entities_by_label(result, "Token");
+    return count_entities_by_label(result, &quot;Token&quot;);
 }
 
 /**
@@ -153,9 +244,9 @@ function assure_node_has_properties(node, property_names) {
 * @return {boolean}
 */
 function check_all_tokens_are_spatial(records) {
-    var mandatory = ['x', 'y', 'width', 'height'];
+    var mandatory = [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;width&#x27;, &#x27;height&#x27;];
     records.forEach(function (record) {
-        if (record._fields[0].labels.includes('Token')) {
+        if (record._fields[0].labels.includes(&#x27;Token&#x27;)) {
             if (!assure_node_has_properties(record, mandatory)) {
                 return false;
             }
@@ -172,9 +263,9 @@ function check_all_tokens_are_spatial(records) {
 * @return {boolean}
 */
 function check_all_images_have_dimension(records) {
-    var mandatory = ['width', 'height'];
+    var mandatory = [&#x27;width&#x27;, &#x27;height&#x27;];
     records.forEach(function (record) {
-        if (record._fields[0].labels.includes('Image')) {
+        if (record._fields[0].labels.includes(&#x27;Image&#x27;)) {
             if (!assure_node_has_properties(record, mandatory)) {
                 return false;
             }
@@ -185,7 +276,7 @@ function check_all_images_have_dimension(records) {
 
 
 /**
-* Check the cache for the token's fragment
+* Check the cache for the token&#x27;s fragment
 *
 * @method get_cached_fragment_of_token
 * @param token_id {Number}
@@ -196,7 +287,7 @@ function get_cached_fragment_of_token(token_id) {
 }
 
 /**
-* Set the cache for the token's fragment
+* Set the cache for the token&#x27;s fragment
 *
 * @method set_cached_fragment_of_token
 * @param token_id {Number}
@@ -208,7 +299,7 @@ function set_cached_fragment_of_token(token_id, fragment_id) {
 }
 
 /**
-* Set the cache for the token's image
+* Set the cache for the token&#x27;s image
 *
 * @method set_cached_image
 * @param token_id {Number}
@@ -231,31 +322,31 @@ function set_cached_image(token_id, fragment_id, image_id, image) {
         IMAGE_FRAGMENT_CACHE,
         BOUNDING_BOX_CACHE
     ];
-    var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
+    var cache_path = path.join(__dirname, &#x27;../media/settings/heatmap_cache.json&#x27;);
     fs.writeFileSync(cache_path, JSON.stringify(bundle));
 }*/
 
 /*
 function load_cache() {
-    var cache_path = path.join(__dirname, '../media/settings/heatmap_cache.json');
+    var cache_path = path.join(__dirname, &#x27;../media/settings/heatmap_cache.json&#x27;);
     var bundle;
     try {
-        bundle = JSON.parse(fs.readFileSync(cache_path, 'utf8'));
+        bundle = JSON.parse(fs.readFileSync(cache_path, &#x27;utf8&#x27;));
     } catch (e) {
-        log.error('Could not load cache');
+        log.error(&#x27;Could not load cache&#x27;);
         log.error(e);
     }
     if (bundle) {
         IMAGE_FRAGMENT_CACHE = bundle[0];
         BOUNDING_BOX_CACHE = bundle[1];
-        log.info('Cache loaded from file successfully');
+        log.info(&#x27;Cache loaded from file successfully&#x27;);
     } else {
         clean_caches();
     }
 }*/
 
 /**
-* Check the cache for the fragment's bounding box
+* Check the cache for the fragment&#x27;s bounding box
 *
 * @method get_cached_fragment_bounding_box
 * @param fragment_id {Number}
@@ -266,7 +357,7 @@ function get_cached_fragment_bounding_box(fragment_id) {
 }
 
 /**
-* Check the cached fragment's bounding box for the given token
+* Check the cached fragment&#x27;s bounding box for the given token
 *
 * @method get_cached_fragment_bounding_box_for_token
 * @param token_id {Number}
@@ -281,7 +372,7 @@ function get_cached_fragment_bounding_box_for_token(token_id) {
 }
 
 /**
-* Set the cache for the token's bounding box
+* Set the cache for the token&#x27;s bounding box
 *
 * @method set_fragment_bounding_box
 * @param token_id {Number}
@@ -356,7 +447,7 @@ function get_bounding_box_of_fragment(token) {
     }
     return database.get_fragment_bounding_box(token_id).then(
         function (bb) {
-            set_fragment_bounding_box(token_id, bb.get("fragment_id"), bb);
+            set_fragment_bounding_box(token_id, bb.get(&quot;fragment_id&quot;), bb);
             return bb;
         },
         function (err) {
@@ -384,7 +475,7 @@ function normalization_on_whole_image(token, normalization, target_width, target
         });
     }
     return database.get_image_of_token(token_id).then(function (img) {
-        set_cached_image(token_id, img.get('fragment_id'), img.get('image_id'), img);
+        set_cached_image(token_id, img.get(&#x27;fragment_id&#x27;), img.get(&#x27;image_id&#x27;), img);
         var image_width = img._fields[0].properties.width;
         var image_height = img._fields[0].properties.height;
         // Check if image has width and height
@@ -399,14 +490,14 @@ function normalization_on_whole_image(token, normalization, target_width, target
         var height = Number(token._fields[0].properties.height);
         // console.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
         var normalized = {
-            'x': Math.round(x / width_ratio),
-            'y': Math.round(y / height_ratio),
-            'width': Math.round(width / width_ratio),
-            'height': Math.round(height / height_ratio)
+            &#x27;x&#x27;: Math.round(x / width_ratio),
+            &#x27;y&#x27;: Math.round(y / height_ratio),
+            &#x27;width&#x27;: Math.round(width / width_ratio),
+            &#x27;height&#x27;: Math.round(height / height_ratio)
         };
         return normalized;
     }, function (err) {
-        return 'No image found for the given token';
+        return &#x27;No image found for the given token&#x27;;
     });
 }
 
@@ -423,31 +514,31 @@ function normalization_on_whole_image(token, normalization, target_width, target
 function normalization_on_bounding_box(token, normalization, target_width, target_height) {
     return get_bounding_box_of_fragment(token).then(function (bb) {
         if (!bb) {
-            log.error("no bb");
+            log.error(&quot;no bb&quot;);
             return null;
         }
         var bounding_box = {
-            'x': Number(bb._fields[0]),
-            'y': Number(bb._fields[1]),
-            'x2': Number(bb._fields[2]),
-            'y2': Number(bb._fields[3])
+            &#x27;x&#x27;: Number(bb._fields[0]),
+            &#x27;y&#x27;: Number(bb._fields[1]),
+            &#x27;x2&#x27;: Number(bb._fields[2]),
+            &#x27;y2&#x27;: Number(bb._fields[3])
         };
 
         // this happens if the bounding box could not be calculated
         if (!bounding_box.x || !bounding_box.y || !bounding_box.x2 || !bounding_box.y2) {
-            log.error("bb could not be calculated");
+            log.error(&quot;bb could not be calculated&quot;);
             return null;
         }
 
         var normalized_bb = {
-            'x': 0,
-            'y': 0,
-            'width': bounding_box.x2 - bounding_box.x,
-            'height': bounding_box.y2 - bounding_box.y,
+            &#x27;x&#x27;: 0,
+            &#x27;y&#x27;: 0,
+            &#x27;width&#x27;: bounding_box.x2 - bounding_box.x,
+            &#x27;height&#x27;: bounding_box.y2 - bounding_box.y,
         };
 
-        //log.log('bb', bounding_box)
-        //log.log('n_bb', normalized_bb)
+        //log.log(&#x27;bb&#x27;, bounding_box)
+        //log.log(&#x27;n_bb&#x27;, normalized_bb)
 
         var width_ratio = normalized_bb.width / target_width;
         var height_ratio = normalized_bb.height / target_height;
@@ -456,20 +547,20 @@ function normalization_on_bounding_box(token, normalization, target_width, targe
         var width = Number(token._fields[0].properties.width);
         var height = Number(token._fields[0].properties.height);
 
-        //log.log('token', x,y,width, height)
+        //log.log(&#x27;token&#x27;, x,y,width, height)
         //log.log(width_ratio)
         //log.log(height_ratio)
 
         var normalized = {
-            'x': Math.round(x / width_ratio),
-            'y': Math.round(y / height_ratio),
-            'width': Math.round(width / width_ratio),
-            'height': Math.round(height / height_ratio)
+            &#x27;x&#x27;: Math.round(x / width_ratio),
+            &#x27;y&#x27;: Math.round(y / height_ratio),
+            &#x27;width&#x27;: Math.round(width / width_ratio),
+            &#x27;height&#x27;: Math.round(height / height_ratio)
         };
         //log.log(normalized)
         return normalized;
     }, function (err) {
-        return 'No bounding box found for the given token';
+        return &#x27;No bounding box found for the given token&#x27;;
     });
 }
 
@@ -500,10 +591,10 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
         var height = Number(token._fields[0].properties.height);
         //log.log(image_width, image_height, width_ratio, height_ratio, x,y, width, height);
         var normalized = {
-            'x': Math.round(x / width_ratio),
-            'y': Math.round(y / height_ratio),
-            'width': Math.round(width / width_ratio),
-            'height': Math.round(height / height_ratio)
+            &#x27;x&#x27;: Math.round(x / width_ratio),
+            &#x27;y&#x27;: Math.round(y / height_ratio),
+            &#x27;width&#x27;: Math.round(width / width_ratio),
+            &#x27;height&#x27;: Math.round(height / height_ratio)
         };
 
         return get_bounding_box_of_fragment(token).then(function (bb) {
@@ -511,10 +602,10 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
                 return null;
             }
             var bounding_box = {
-                'x': Number(bb._fields[0]),
-                'y': Number(bb._fields[1]),
-                'x2': Number(bb._fields[2]),
-                'y2': Number(bb._fields[3])
+                &#x27;x&#x27;: Number(bb._fields[0]),
+                &#x27;y&#x27;: Number(bb._fields[1]),
+                &#x27;x2&#x27;: Number(bb._fields[2]),
+                &#x27;y2&#x27;: Number(bb._fields[3])
             };
 
             // this happens if the bounding box could not be calculated
@@ -523,51 +614,51 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
             }
 
             var normalized_bb = {
-                'x': bounding_box.x,
-                'y': bounding_box.y,
-                'width': bounding_box.x2 - bounding_box.x,
-                'height': bounding_box.y2 - bounding_box.y,
+                &#x27;x&#x27;: bounding_box.x,
+                &#x27;y&#x27;: bounding_box.y,
+                &#x27;width&#x27;: bounding_box.x2 - bounding_box.x,
+                &#x27;height&#x27;: bounding_box.y2 - bounding_box.y,
             };
 
             var bounding_box_center = {
-                'x': normalized_bb.x + normalized_bb.width / 2,
-                'y': normalized_bb.y + normalized_bb.height / 2,
+                &#x27;x&#x27;: normalized_bb.x + normalized_bb.width / 2,
+                &#x27;y&#x27;: normalized_bb.y + normalized_bb.height / 2,
             };
 
             var image_center = {
-                'x': image_width / 2,
-                'y': image_height / 2,
+                &#x27;x&#x27;: image_width / 2,
+                &#x27;y&#x27;: image_height / 2,
             };
 
             var movement_vector = {
-                'x': bounding_box_center.x - image_center.x,
-                'y': bounding_box_center.y - image_center.y
+                &#x27;x&#x27;: bounding_box_center.x - image_center.x,
+                &#x27;y&#x27;: bounding_box_center.y - image_center.y
             };
 
             var normalized_movement_vector = {
-                'x': Math.round(movement_vector.x / width_ratio),
-                'y': Math.round(movement_vector.y / height_ratio)
+                &#x27;x&#x27;: Math.round(movement_vector.x / width_ratio),
+                &#x27;y&#x27;: Math.round(movement_vector.y / height_ratio)
             };
 
 
             var new_normalized = {
-                'x': normalized.x - normalized_movement_vector.x,
-                'y': normalized.y - normalized_movement_vector.y,
-                'width': normalized.width,
-                'height': normalized.height
+                &#x27;x&#x27;: normalized.x - normalized_movement_vector.x,
+                &#x27;y&#x27;: normalized.y - normalized_movement_vector.y,
+                &#x27;width&#x27;: normalized.width,
+                &#x27;height&#x27;: normalized.height
             };
 
 
             return new_normalized;
         }, function (err) {
             log.error(err)
-            return 'No bounding box found for the given token';
+            return &#x27;No bounding box found for the given token&#x27;;
         });
 
         return normalized;
     }, function (err) {
         log.error(err)
-        return 'No image found for the given token';
+        return &#x27;No image found for the given token&#x27;;
     });
 }
 
@@ -606,13 +697,13 @@ function format_heat_map_to_d3js(heat_map) {
      {score: 0.4, row: 1, col: 1}
      ];*/
     var data = [];
-    for (var x = 0; x < heat_map.length; x++) {
-        for (var y = 0; y < heat_map[0].length; y++) {
+    for (var x = 0; x &lt; heat_map.length; x++) {
+        for (var y = 0; y &lt; heat_map[0].length; y++) {
             data.push(
                 {
-                    'score': heat_map[x][y],
-                    'row': x,
-                    'col': y
+                    &#x27;score&#x27;: heat_map[x][y],
+                    &#x27;row&#x27;: x,
+                    &#x27;col&#x27;: y
                 }
             );
         }
@@ -639,14 +730,14 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
     // load_cache();
     clean_caches();
     var p = new Promise(function (resolve, reject) {
-        if (width < 1 || width > MAX_SIZE_HEATMAP || height < 1 || height > MAX_SIZE_HEATMAP) {
-            return reject('Dimension of heat map are not in between 1 and ' + MAX_SIZE_HEATMAP);
+        if (width &lt; 1 || width &gt; MAX_SIZE_HEATMAP || height &lt; 1 || height &gt; MAX_SIZE_HEATMAP) {
+            return reject(&#x27;Dimension of heat map are not in between 1 and &#x27; + MAX_SIZE_HEATMAP);
         }
-        if (normalization > SUPPORTED_NORMALIZATIONS || normalization < 1) {
-            return reject('Unsupported normalization');
+        if (normalization &gt; SUPPORTED_NORMALIZATIONS || normalization &lt; 1) {
+            return reject(&#x27;Unsupported normalization&#x27;);
         }
-        if (pixel_size < 1 || pixel_size > MAX_PIXEL_SIZE) {
-            return reject('Wrong pixel_size');
+        if (pixel_size &lt; 1 || pixel_size &gt; MAX_PIXEL_SIZE) {
+            return reject(&#x27;Wrong pixel_size&#x27;);
         }
 
         var all_promises = [];
@@ -657,9 +748,9 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
         var num_errors = 0;
 
         var heat_map = new Array(width);
-        for (var i = 0; i < width; i++) {
+        for (var i = 0; i &lt; width; i++) {
             heat_map[i] = new Array(height);
-            for (var z = heat_map[i].length - 1; z >= 0; --z) {
+            for (var z = heat_map[i].length - 1; z &gt;= 0; --z) {
                 heat_map[i][z] = 0;
             }
         }
@@ -679,12 +770,12 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                     // x,y,width,height
                     var all_tokens_are_spatial = check_all_tokens_are_spatial([record]);
                     if (!all_tokens_are_spatial) {
-                        return reject('not all tokens are spatial (have x, y, width and height property)');
+                        return reject(&#x27;not all tokens are spatial (have x, y, width and height property)&#x27;);
                     }
                     // check if all images have a width and height attribute
                     var all_images_have_dimensions = check_all_images_have_dimension([record]);
                     if (!all_images_have_dimensions) {
-                        return reject('not all images have dimensions (have width and height property)');
+                        return reject(&#x27;not all images have dimensions (have width and height property)&#x27;);
                     }
                     prom = prom.then(function(){
                         var p = normalize_token_spatials(record, normalization, width, height)
@@ -694,8 +785,8 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                                     num_errors++;
                                 } else {
                                     // calcalute all point spanned by the rects x,y,width,height
-                                    for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
-                                        for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
+                                    for (var x_ = normalized.x; x_ &lt; normalized.x + normalized.width; x_++) {
+                                        for (var y_ = normalized.y; y_ &lt; normalized.y + normalized.height; y_++) {
                                             // log.log(x_, y_);
                                             heat_map[x_][y_]++;
                                         }
@@ -710,19 +801,19 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                 },
                 onCompleted: function () {
                     session.close();
-                    log.info("Data finished streaming from db");
+                    log.info(&quot;Data finished streaming from db&quot;);
                     prom.then(function () {
                         //save_cache();
                         if (num_tokens === 0) {
-                            return reject('Zero tokens found by query');
+                            return reject(&#x27;Zero tokens found by query&#x27;);
                         }
-                        log.info("Normalize the output matrix...");
+                        log.info(&quot;Normalize the output matrix...&quot;);
 
                         // calculate the maximum entry of the matrix
                         var max = 0;
-                        for (var x = 0; x < heat_map.length; x++) {
-                            for (var y = 0; y < heat_map[0].length; y++) {
-                                if (heat_map[x][y] > max) {
+                        for (var x = 0; x &lt; heat_map.length; x++) {
+                            for (var y = 0; y &lt; heat_map[0].length; y++) {
+                                if (heat_map[x][y] &gt; max) {
                                     max = heat_map[x][y];
                                 }
                             }
@@ -730,18 +821,18 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
 
                         // transform the values of the matrix into the interval [0;1]
                         // by dividing every entry by max
-                        for (var x = 0; x < heat_map.length; x++) {
-                            for (var y = 0; y < heat_map[0].length; y++) {
+                        for (var x = 0; x &lt; heat_map.length; x++) {
+                            for (var y = 0; y &lt; heat_map[0].length; y++) {
                                 heat_map[x][y] = heat_map[x][y] / max;
                             }
                         }
                         var d3js_heat_map = format_heat_map_to_d3js(heat_map);
                         return resolve({
-                            'num_images': num_images,
-                            'num_fragments': num_fragments,
-                            'num_tokens': num_tokens,
-                            'num_errors': num_errors,
-                            'heat_map': d3js_heat_map
+                            &#x27;num_images&#x27;: num_images,
+                            &#x27;num_fragments&#x27;: num_fragments,
+                            &#x27;num_tokens&#x27;: num_tokens,
+                            &#x27;num_errors&#x27;: num_errors,
+                            &#x27;heat_map&#x27;: d3js_heat_map
                         });
                     });
                 },
@@ -758,11 +849,29 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
 
 
 module.exports = {
-    'process_heatmap_query': process_heatmap_query,
-    'count_images_in_result': count_images_in_result,
-    'count_fragments_in_result': count_fragments_in_result,
-    'count_tokens_in_result': count_tokens_in_result,
-    'IMAGE_FRAGMENT_CACHE': IMAGE_FRAGMENT_CACHE,
-    'BOUNDING_BOX_CACHE': BOUNDING_BOX_CACHE
+    &#x27;process_heatmap_query&#x27;: process_heatmap_query,
+    &#x27;count_images_in_result&#x27;: count_images_in_result,
+    &#x27;count_fragments_in_result&#x27;: count_fragments_in_result,
+    &#x27;count_tokens_in_result&#x27;: count_tokens_in_result,
+    &#x27;IMAGE_FRAGMENT_CACHE&#x27;: IMAGE_FRAGMENT_CACHE,
+    &#x27;BOUNDING_BOX_CACHE&#x27;: BOUNDING_BOX_CACHE
 
 };
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

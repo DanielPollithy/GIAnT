@@ -1,25 +1,19 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "Atom",
         "Codec",
-        "Database"
+        "Constraints",
+        "Database",
+        "Exif",
+        "Export",
+        "Heatmap",
+        "Server",
+        "Settings",
+        "Utils"
     ],
-    "modules": [
-        "Codec",
-        "Database"
-    ],
-    "allModules": [
-        {
-            "displayName": "Codec",
-            "name": "Codec",
-            "description": "XML Handling\n\nmxGraph xml"
-        },
-        {
-            "displayName": "Database",
-            "name": "Database",
-            "description": "Database wrapper functions for Neo4J"
-        }
-    ],
+    "modules": [],
+    "allModules": [],
     "elements": []
 } };
 });

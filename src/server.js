@@ -1,3 +1,16 @@
+/**
+* 1) This file controls the interface between the frontend and the backend<br>
+* 2) And renders the frontend with PUG templates
+* <br>
+*
+* Reason for this setup is, that one day this application should be able to be a website.<br>
+* NO LOGIC HAPPENS HERE! M-V are separated. This is a collection of GET and POST views and Middlewares.<br>
+* The server runs on PORT 4000. This should become a setting in the future.<br>
+*
+* @class Server
+*/
+
+
 var express = require('express');
 var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');

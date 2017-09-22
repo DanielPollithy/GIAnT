@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Codec - TransliterationApplication API</title>
+    <title>Settings - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -85,12 +85,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Codec Class</h1>
+<h1>Settings Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_codec.js.html#l1"><code>src\codec.js:1</code></a>
+            Defined in: <a href="../files/src_settings.js.html#l5"><code>src\settings.js:5</code></a>
         </div>
 
 
@@ -98,64 +98,9 @@
 
 
 <div class="box intro">
-    <p>This class converts the Editor's XML format into a flat javascript format
-which is inserted into the Neo4j database.</p>
-<pre class="code prettyprint"><code> 1. Load XML
- 2. Add all nodes as children to the layers (unpack the &lt;mxCell&gt; from the &lt;object&gt; tag)
-     the &lt;object&gt; tag is used to wrap an mxCell with its attributes
- 3. Remove groups
- 4. Edges (There will be no edge without token -&gt; drop layer information)
-     - edges don't work inter groups, but they can be intra groups
-         -&gt; they have to be unwrapped as well
- 5. Flatten the hierarchical tree
-     - merge mxCells with their layers to obtain the layer-attributes
- 6. Collect all possible attributes
-
- (1) Drop following attributes
-
- - Graph
-     - grid
-     - gridSize
-     - guides
-     - toolTips
-     - connect
-     - arrows
-     - fold
-     - page
-     - pageScale
-
-
- (2) Parse the style attribute in order to retrieve the following attributes
-
-  - MxCell
-     - tokenType
-
-
-  -&gt; first: read the saved mxgraph with xml2js into a javscript object
-  -&gt; then make the validity checks
-     - is the structure of the xml correct
-         - mxGraph
-             - root
-                 - cell
-                     - geometry
-                 - object
-                     - cell
-                         - geometry
-
-     - are all necessary attributes at hand
-         - mxGraphModel
-             - dx
-             - dy
-             - pageWidth
-             - pageHeight
-         - mxCell
-             - id
-             - parent
-  -&gt; then drop unnecessary attributes
-  -&gt; export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
-
-
- This class was developed by Test Driven Development.</code></pre>
+    <h2>Settings</h2>
+<p>Gives easy access to a key value storage persisted in a single file. <br>
+<b>Takes care of the validation of editor settings and constraint settings.</b></p>
 
 </div>
 
@@ -177,35 +122,39 @@ which is inserted into the Neo4j database.</p>
 
                     <ul class="index-list methods">
                             <li class="index-item method">
-                                <a href="#method_add_all_completed_fragments_to_neo4j">add_all_completed_fragments_to_neo4j</a>
+                                <a href="#method_check_loaded">check_loaded</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_get_node_by_id">get_node_by_id</a>
+                                <a href="#method_get">get</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_get_nodes_by_parent_id">get_nodes_by_parent_id</a>
+                                <a href="#method_get_settings_for_constraints">get_settings_for_constraints</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_flattened_object">mxgraph_to_flattened_object</a>
+                                <a href="#method_get_settings_for_frontend">get_settings_for_frontend</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_graphml">mxgraph_to_graphml</a>
+                                <a href="#method_has">has</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_layered_object">mxgraph_to_layered_object</a>
+                                <a href="#method_load">load</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_neo4j">mxgraph_to_neo4j</a>
+                                <a href="#method_save">save</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_object">mxgraph_to_object</a>
+                                <a href="#method_set">set</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_set_settings_from_frontend">set_settings_from_frontend</a>
 
                             </li>
                     </ul>
@@ -216,11 +165,15 @@ which is inserted into the Neo4j database.</p>
 
                     <ul class="index-list properties">
                             <li class="index-item property">
-                                <a href="#property_builder">builder</a>
+                                <a href="#property__file_path">_file_path</a>
 
                             </li>
                             <li class="index-item property">
-                                <a href="#property_parser">parser</a>
+                                <a href="#property__loaded">_loaded</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property__store">_store</a>
 
                             </li>
                     </ul>
@@ -232,13 +185,120 @@ which is inserted into the Neo4j database.</p>
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method_add_all_completed_fragments_to_neo4j" class="method item">
-    <h3 class="name"><code>add_all_completed_fragments_to_neo4j</code></h3>
+<div id="method_check_loaded" class="method item">
+    <h3 class="name"><code>check_loaded</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_settings.js.html#l73"><code>src\settings.js:73</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>If the storage is not loaded -&gt; load it.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_get" class="method item">
+    <h3 class="name"><code>get</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>key</code>
+                </li>
+                <li class="arg">
+                        <code>fallback</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_settings.js.html#l96"><code>src\settings.js:96</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the value of the key</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">key</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">fallback</code>
+                        <span class="type"></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"></span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_settings_for_constraints" class="method item">
+    <h3 class="name"><code>get_settings_for_constraints</code></h3>
 
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type">Promise</span>
+            <span class="type"></span>
         </span>
 
 
@@ -250,7 +310,7 @@ which is inserted into the Neo4j database.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l451"><code>src\codec.js:451</code></a>
+        <a href="../files/src_settings.js.html#l163"><code>src\settings.js:163</code></a>
         </p>
 
 
@@ -258,8 +318,7 @@ which is inserted into the Neo4j database.</p>
     </div>
 
     <div class="description">
-        <p>Adds all fragments that have the flag completed set to true to the database
-There is SHA1 hash comparing done here in order to eliminate unnecessary computations.</p>
+        <p>Get the constraint settings Settings._store.constraints</p>
 
     </div>
 
@@ -268,28 +327,66 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type">Promise</span>:
+                        <span class="type"></span>:
             </div>
         </div>
 
 
 </div>
-<div id="method_get_node_by_id" class="method item">
-    <h3 class="name"><code>get_node_by_id</code></h3>
+<div id="method_get_settings_for_frontend" class="method item">
+    <h3 class="name"><code>get_settings_for_frontend</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_settings.js.html#l124"><code>src\settings.js:124</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Returns the whole storage</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"></span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_has" class="method item">
+    <h3 class="name"><code>has</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>root</code>
-                </li>
-                <li class="arg">
-                        <code>id</code>
+                        <code>key</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
         <span class="returns-inline">
-            <span class="type">Node</span>
+            <span class="type">Boolean</span>
         </span>
 
 
@@ -301,7 +398,7 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l186"><code>src\codec.js:186</code></a>
+        <a href="../files/src_settings.js.html#l112"><code>src\settings.js:112</code></a>
         </p>
 
 
@@ -309,8 +406,7 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
     </div>
 
     <div class="description">
-        <p>Works on a mxGraph xml2js-object
-Finds a node given an id</p>
+        <p>Check whether the key carries data in the storage</p>
 
     </div>
 
@@ -319,19 +415,8 @@ Finds a node given an id</p>
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">root</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>mxGraph tree</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">id</code>
-                        <span class="type">Object</span>
+                        <code class="param-name">key</code>
+                        <span class="type">String</span>
 
 
                     <div class="param-description">
@@ -346,29 +431,17 @@ Finds a node given an id</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type">Node</span>:
+                        <span class="type">Boolean</span>:
             </div>
         </div>
 
 
 </div>
-<div id="method_get_nodes_by_parent_id" class="method item">
-    <h3 class="name"><code>get_nodes_by_parent_id</code></h3>
+<div id="method_load" class="method item">
+    <h3 class="name"><code>load</code></h3>
 
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>root</code>
-                </li>
-                <li class="arg">
-                        <code>parent_id</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
 
-        <span class="returns-inline">
-            <span class="type">Array</span>
-        </span>
 
 
 
@@ -379,7 +452,7 @@ Finds a node given an id</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l204"><code>src\codec.js:204</code></a>
+        <a href="../files/src_settings.js.html#l44"><code>src\settings.js:44</code></a>
         </p>
 
 
@@ -387,55 +460,55 @@ Finds a node given an id</p>
     </div>
 
     <div class="description">
-        <p>Works on a mxGraph xml2js-object
-Gets all nodes with a given parent</p>
+        <p>Loads the file</p>
 
     </div>
 
-        <div class="params">
-            <h4>Parameters:</h4>
 
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">root</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">parent_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Array</span>:
-            </div>
-        </div>
 
 
 </div>
-<div id="method_mxgraph_to_flattened_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_flattened_object</code></h3>
+<div id="method_save" class="method item">
+    <h3 class="name"><code>save</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_settings.js.html#l62"><code>src\settings.js:62</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Saves the file</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_set" class="method item">
+    <h3 class="name"><code>set</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>filename</code>
+                        <code>key</code>
+                </li>
+                <li class="arg">
+                        <code>value</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -450,7 +523,7 @@ Gets all nodes with a given parent</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l258"><code>src\codec.js:258</code></a>
+        <a href="../files/src_settings.js.html#l84"><code>src\settings.js:84</code></a>
         </p>
 
 
@@ -458,10 +531,7 @@ Gets all nodes with a given parent</p>
     </div>
 
     <div class="description">
-        <p>Converts an mxGraph to a flat object structured as follows</p>
-<p>graph.mxGraphModel.data.token1
-graph.mxGraphModel.data.token2
-graph.mxGraphModel.data.edge1</p>
+        <p>Set the key to the value</p>
 
     </div>
 
@@ -470,8 +540,18 @@ graph.mxGraphModel.data.edge1</p>
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
+                        <code class="param-name">key</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">value</code>
+                        <span class="type"></span>
 
 
                     <div class="param-description">
@@ -485,13 +565,13 @@ graph.mxGraphModel.data.edge1</p>
 
 
 </div>
-<div id="method_mxgraph_to_graphml" class="method item">
-    <h3 class="name"><code>mxgraph_to_graphml</code></h3>
+<div id="method_set_settings_from_frontend" class="method item">
+    <h3 class="name"><code>set_settings_from_frontend</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>filename</code>
+                        <code>new_settings</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -506,7 +586,7 @@ graph.mxGraphModel.data.edge1</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l303"><code>src\codec.js:303</code></a>
+        <a href="../files/src_settings.js.html#l135"><code>src\settings.js:135</code></a>
         </p>
 
 
@@ -514,9 +594,7 @@ graph.mxGraphModel.data.edge1</p>
     </div>
 
     <div class="description">
-        <p>Converts a mxGraph into the GraphML format</p>
-<p>It removes groups and is not necessary for the code
-Only nice to have</p>
+        <p>Check the values of the new settings and store them if they are okay</p>
 
     </div>
 
@@ -525,202 +603,12 @@ Only nice to have</p>
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
+                        <code class="param-name">new_settings</code>
+                        <span class="type"></span>
 
 
                     <div class="param-description">
                          
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_layered_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_layered_object</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l225"><code>src\codec.js:225</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Converts the mxGraph to an object structured ad follows</p>
-<p>obj.mxGraphModel.layer1.node1</p>
-<p>It removes groups</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_neo4j" class="method item">
-    <h3 class="name"><code>mxgraph_to_neo4j</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>image_id</code>
-                </li>
-                <li class="arg">
-                        <code>fragment_id</code>
-                </li>
-                <li class="arg">
-                        <code>overwrite_xml_path</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l497"><code>src\codec.js:497</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Loads an mxGraph over the flat xml2js-object into the neo4j database</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">image_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">fragment_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">overwrite_xml_path</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>if you don't want to load the standard xml file_path for the fragment use this</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_object</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l94"><code>src\codec.js:94</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Parses the mxGraph XML file into a javascript object</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Promise</span>
-
-
-                    <div class="param-description">
-                        <p>the resource to load
-return</p>
-
                     </div>
 
                 </li>
@@ -735,9 +623,9 @@ return</p>
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
-<div id="property_builder" class="property item">
-    <h3 class="name"><code>builder</code></h3>
-    <span class="type">Object</span>
+<div id="property__file_path" class="property item">
+    <h3 class="name"><code>_file_path</code></h3>
+    <span class="type">String</span>
 
 
 
@@ -746,23 +634,49 @@ return</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l82"><code>src\codec.js:82</code></a>
+        <a href="../files/src_settings.js.html#l35"><code>src\settings.js:35</code></a>
         </p>
 
 
     </div>
 
     <div class="description">
-        <p>The xml2js builder</p>
-<p>This object can create xml files</p>
+        <p>The path of the settings file</p>
 
     </div>
 
+        <p><strong>Default:</strong> path.join(__dirname, &#x27;../media/settings/settings.json&#x27;)</p>
 
 
 </div>
-<div id="property_parser" class="property item">
-    <h3 class="name"><code>parser</code></h3>
+<div id="property__loaded" class="property item">
+    <h3 class="name"><code>_loaded</code></h3>
+    <span class="type">Boolean</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_settings.js.html#l26"><code>src\settings.js:26</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Whether the in-memory-store was already populated</p>
+
+    </div>
+
+        <p><strong>Default:</strong> false</p>
+
+
+</div>
+<div id="property__store" class="property item">
+    <h3 class="name"><code>_store</code></h3>
     <span class="type">Object</span>
 
 
@@ -772,17 +686,18 @@ return</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l74"><code>src\codec.js:74</code></a>
+        <a href="../files/src_settings.js.html#l17"><code>src\settings.js:17</code></a>
         </p>
 
 
     </div>
 
     <div class="description">
-        <p>The xml2js parser</p>
+        <p>In memory store</p>
 
     </div>
 
+        <p><strong>Default:</strong> {}</p>
 
 
 </div>

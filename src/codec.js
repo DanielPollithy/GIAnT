@@ -1,73 +1,68 @@
-/* convert a mxgraph xml to a graphml xml file
-
-1. Load XML
-2. Add all nodes as children to the layers (unpack the <mxCell> from the <object> tag)
-    the <object> tag is used to wrap an mxCell with its attributes
-3. Remove groups
-4. Edges (There will be no edge without token -> drop layer information)
-    - edges don't work inter groups, but they can be intra groups
-        -> they have to be unwrapped as well
-5. Flatten the hierarchical tree
-    - merge mxCells with their layers to obtain the layer-attributes
-6. Collect all possible attributes
-
-(1) Drop following attributes
-
-- Graph
-    - grid
-    - gridSize
-    - guides
-    - toolTips
-    - connect
-    - arrows
-    - fold
-    - page
-    - pageScale
-
-
-(2) Parse the style attribute in order to retrieve the following attributes
-
- - MxCell
-    - tokenType
-
-
- -> first: read the saved mxgraph with xml2js into a javscript object
- -> then make the validity checks
-    - is the structure of the xml correct
-        - mxGraph
-            - root
-                - cell
-                    - geometry
-                - object
-                    - cell
-                        - geometry
-
-    - are all necessary attributes at hand
-        - mxGraphModel
-            - dx
-            - dy
-            - pageWidth
-            - pageHeight
-        - mxCell
-            - id
-            - parent
- -> then drop unnecessary attributes
- -> export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
-
-
-MAKE SOME TDD Test Driven Development here.
-
-
- */
-
 /**
-* XML Handling
-*
-* mxGraph xml
-*
-* @module Codec
-* @requires xml2js
-*/
+ * This class converts the Editor's XML format into a flat javascript format
+ * which is inserted into the Neo4j database.
+ *
+ *      1. Load XML
+ *      2. Add all nodes as children to the layers (unpack the <mxCell> from the <object> tag)
+ *          the <object> tag is used to wrap an mxCell with its attributes
+ *      3. Remove groups
+ *      4. Edges (There will be no edge without token -> drop layer information)
+ *          - edges don't work inter groups, but they can be intra groups
+ *              -> they have to be unwrapped as well
+ *      5. Flatten the hierarchical tree
+ *          - merge mxCells with their layers to obtain the layer-attributes
+ *      6. Collect all possible attributes
+ *
+ *      (1) Drop following attributes
+ *
+ *      - Graph
+ *          - grid
+ *          - gridSize
+ *          - guides
+ *          - toolTips
+ *          - connect
+ *          - arrows
+ *          - fold
+ *          - page
+ *          - pageScale
+ *
+ *
+ *      (2) Parse the style attribute in order to retrieve the following attributes
+ *
+ *       - MxCell
+ *          - tokenType
+ *
+ *
+ *       -> first: read the saved mxgraph with xml2js into a javscript object
+ *       -> then make the validity checks
+ *          - is the structure of the xml correct
+ *              - mxGraph
+ *                  - root
+ *                      - cell
+ *                          - geometry
+ *                      - object
+ *                          - cell
+ *                              - geometry
+ *
+ *          - are all necessary attributes at hand
+ *              - mxGraphModel
+ *                  - dx
+ *                  - dy
+ *                  - pageWidth
+ *                  - pageHeight
+ *              - mxCell
+ *                  - id
+ *                  - parent
+ *       -> then drop unnecessary attributes
+ *       -> export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
+ *
+ *
+ *      This class was developed by Test Driven Development.
+ * @class Codec
+ * @requires xml2js
+ */
+var Codec = Codec || {};
+
 
 var log = require('electron-log');
 var fs = require('fs');
@@ -75,18 +70,6 @@ var xml2js = require('xml2js');
 var database = require('./database');
 var utils = require('./utils');
 
-
-
-/**
- *
- * Codec
- * --------
- * Contains all the methods to convert a mxGraph into a GraphML or to neo4j
- * <br>
-*
- * @class Codec
-*/
-var Codec = Codec || {};
 
 /**
  * The xml2js parser
@@ -109,10 +92,11 @@ Codec.builder = new xml2js.Builder({'attrkey':'@', 'charkey': '#'});
 
 
 /**
-* Get the database driver
+* Parses the mxGraph XML file into a javascript object
  *
  * @method mxgraph_to_object
  * @param filename the resource to load
+ * return {Promise}
 */
 Codec.mxgraph_to_object = function(filename) {
     var promise = new Promise(function(resolve, reject){
@@ -206,7 +190,7 @@ Codec.mxgraph_to_object = function(filename) {
  * @method get_node_by_id
  * @param root mxGraph tree
  * @param id
- * @returns {node}
+ * @return {node}
  */
 Codec.get_node_by_id = function(root, id) {
     for (var i = 0; i<root.mxCell.length; i++) {
@@ -224,7 +208,7 @@ Codec.get_node_by_id = function(root, id) {
  * @method get_nodes_by_parent_id
  * @param root
  * @param parent_id
- * @returns {Array}
+ * @return {Array}
  */
 Codec.get_nodes_by_parent_id = function(root, parent_id) {
     var nodes = [];
@@ -464,6 +448,13 @@ Codec.mxgraph_to_graphml = function(filename) {
         })
 };
 
+/**
+* Adds all fragments that have the flag completed set to true to the database
+* There is SHA1 hash comparing done here in order to eliminate unnecessary computations.
+ *
+ * @method add_all_completed_fragments_to_neo4j
+ * @return {Promise}
+*/
 Codec.add_all_completed_fragments_to_neo4j = function() {
     var all_promises = [];
     var num_changed = 0;

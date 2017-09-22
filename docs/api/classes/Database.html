@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.0.1</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -38,14 +38,20 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
                                 <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
                                 <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
                             </ul>
                 
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/Codec.html">Codec</a></li>
-                                <li><a href="../modules/Database.html">Database</a></li>
                             </ul>
                         </div>
                     </div>
@@ -84,20 +90,17 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_database.js.html#l11"><code>src&#x2F;database.js:11</code></a>
+            Defined in: <a href="../files/src_database.js.html#l17"><code>src\database.js:17</code></a>
         </div>
 
-            Module: <a href="../modules/Database.html">Database</a>
 
 </div>
 
 
 <div class="box intro">
     <h2>Database</h2>
-<p>Contains all the database access methods
-<br>
-<b>Caution: The responses are promises</b></p>
- <p>Singleton because...</p>
+<p>Contains all the database access methods.</p>
+
 </div>
 
 
@@ -125,12 +128,24 @@
                                 <a href="#method__get_session">_get_session</a>
 
                             </li>
+                            <li class="index-item method">
+                                <a href="#method__hygiene">_hygiene</a>
+
+                            </li>
                             <li class="index-item method private">
                                 <a href="#method__remove_constraints">_remove_constraints</a>
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_add_comment_to_fragment">add_comment_to_fragment</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_add_constraints">add_constraints</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_add_edge">add_edge</a>
 
                             </li>
                             <li class="index-item method">
@@ -150,6 +165,14 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_get_all_completed_fragments">get_all_completed_fragments</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_get_all_fragments">get_all_fragments</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_get_all_images">get_all_images</a>
 
                             </li>
@@ -166,6 +189,10 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_get_fragment_bounding_box">get_fragment_bounding_box</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_get_fragment_by_id">get_fragment_by_id</a>
 
                             </li>
@@ -178,7 +205,15 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_get_image_of_token">get_image_of_token</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_init">init</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_log_error_and_close_session">log_error_and_close_session</a>
 
                             </li>
                             <li class="index-item method">
@@ -195,6 +230,10 @@
                             </li>
                             <li class="index-item method">
                                 <a href="#method_remove_image_by_id">remove_image_by_id</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_toggle_fragment_completed">toggle_fragment_completed</a>
 
                             </li>
                     </ul>
@@ -244,7 +283,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l113"><code>src&#x2F;database.js:113</code></a>
+        <a href="../files/src_database.js.html#l145"><code>src\database.js:145</code></a>
         </p>
 
 
@@ -290,7 +329,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l129"><code>src&#x2F;database.js:129</code></a>
+        <a href="../files/src_database.js.html#l161"><code>src\database.js:161</code></a>
         </p>
 
 
@@ -308,6 +347,50 @@ makes use of the development flag in order to use or not use basic auth</p>
 
             <div class="returns-description">
                         <span class="type">Session</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__hygiene" class="method item">
+    <h3 class="name"><code>_hygiene</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l191"><code>src\database.js:191</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Clean up the database on login</p>
+<ol>
+<li>remove nodes without edges (-&gt; MetaGroups that are not referenced)</li>
+</ol>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
             </div>
         </div>
 
@@ -332,7 +415,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l152"><code>src&#x2F;database.js:152</code></a>
+        <a href="../files/src_database.js.html#l205"><code>src\database.js:205</code></a>
         </p>
 
 
@@ -344,6 +427,83 @@ makes use of the development flag in order to use or not use basic auth</p>
 
     </div>
 
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_add_comment_to_fragment" class="method item">
+    <h3 class="name"><code>add_comment_to_fragment</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>fragment_id</code>
+                </li>
+                <li class="arg">
+                        <code>comment</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l498"><code>src\database.js:498</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Sets the comment attribute of a fragment</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">fragment_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">comment</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>string</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
 
         <div class="returns">
             <h4>Returns:</h4>
@@ -373,7 +533,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l140"><code>src&#x2F;database.js:140</code></a>
+        <a href="../files/src_database.js.html#l179"><code>src\database.js:179</code></a>
         </p>
 
 
@@ -435,7 +595,7 @@ makes use of the development flag in order to use or not use basic auth</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l548"><code>src&#x2F;database.js:548</code></a>
+        <a href="../files/src_database.js.html#l720"><code>src\database.js:720</code></a>
         </p>
 
 
@@ -516,6 +676,97 @@ in a fragment of an image</p>
 
 
 </div>
+<div id="method_add_edge" class="method item">
+    <h3 class="name"><code>add_edge</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>node_id</code>
+                </li>
+                <li class="arg">
+                        <code>frame_name</code>
+                </li>
+                <li class="arg">
+                        <code>groupType</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l691"><code>src\database.js:691</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds an edge between a frame from a group and a global frame
+so called 'meta frame'</p>
+<p>Also creates the 'meta frame' if it does not exist *</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">node_id</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">frame_name</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">groupType</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
 <div id="method_add_fragment" class="method item">
     <h3 class="name"><code>add_fragment</code></h3>
 
@@ -543,7 +794,7 @@ in a fragment of an image</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l364"><code>src&#x2F;database.js:364</code></a>
+        <a href="../files/src_database.js.html#l468"><code>src\database.js:468</code></a>
         </p>
 
 
@@ -622,7 +873,7 @@ the name of the fragment is unique</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l183"><code>src&#x2F;database.js:183</code></a>
+        <a href="../files/src_database.js.html#l258"><code>src\database.js:258</code></a>
         </p>
 
 
@@ -631,8 +882,15 @@ the name of the fragment is unique</p>
 
     <div class="description">
         <p>Adds an image to the database
-Sets the upload_date to now in seconds (Math.round(d.getTime() / 1000))
-Sets completed to false</p>
+Sets attributes according to the exif_data
+Fallback for upload_date is now in seconds (Math.round(d.getTime()))</p>
+<p>The exif_data shall be an objects with the attributes
+'exif: {
+'ExifImageWidth': ...,
+'ExifImageHeight': ...,
+'CreateDate': ...
+}, 'gps: {...}</p>
+<p>CreateDate is handled by the parse(...) function</p>
 
     </div>
 
@@ -686,6 +944,9 @@ Sets completed to false</p>
                         <code>fragment_id</code>
                 </li>
                 <li class="arg">
+                        <code>node_label</code>
+                </li>
+                <li class="arg">
                         <code>node_attributes</code>
                 </li>
             </ul><span class="paren">)</span>
@@ -704,7 +965,7 @@ Sets completed to false</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l513"><code>src&#x2F;database.js:513</code></a>
+        <a href="../files/src_database.js.html#l650"><code>src\database.js:650</code></a>
         </p>
 
 
@@ -742,6 +1003,16 @@ Sets completed to false</p>
 
                 </li>
                 <li class="param">
+                        <code class="param-name">node_label</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
                         <code class="param-name">node_attributes</code>
                         <span class="type">Object</span>
 
@@ -753,6 +1024,88 @@ Sets completed to false</p>
                 </li>
             </ul>
         </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_all_completed_fragments" class="method item">
+    <h3 class="name"><code>get_all_completed_fragments</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"> | Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l838"><code>src\database.js:838</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get all completed fragments</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"> | Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_get_all_fragments" class="method item">
+    <h3 class="name"><code>get_all_fragments</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l630"><code>src\database.js:630</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the fragment of an image by name</p>
+
+    </div>
+
 
         <div class="returns">
             <h4>Returns:</h4>
@@ -782,7 +1135,7 @@ Sets completed to false</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l585"><code>src&#x2F;database.js:585</code></a>
+        <a href="../files/src_database.js.html#l755"><code>src\database.js:755</code></a>
         </p>
 
 
@@ -834,6 +1187,12 @@ ordered by last_edit_date, upload_date</p>
                 <li class="arg">
                         <code>search_string</code>
                 </li>
+                <li class="arg">
+                        <code>label</code>
+                </li>
+                <li class="arg">
+                        <code>token_type</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
@@ -850,7 +1209,7 @@ ordered by last_edit_date, upload_date</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l664"><code>src&#x2F;database.js:664</code></a>
+        <a href="../files/src_database.js.html#l864"><code>src\database.js:864</code></a>
         </p>
 
 
@@ -876,6 +1235,26 @@ Is used for the autocomplete function of the add-property-input</p>
                     <div class="param-description">
                         <p>Empty string gives all possible values</p>
 
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">label</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">token_type</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                         
                     </div>
 
                 </li>
@@ -919,7 +1298,7 @@ Is used for the autocomplete function of the add-property-input</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l692"><code>src&#x2F;database.js:692</code></a>
+        <a href="../files/src_database.js.html#l908"><code>src\database.js:908</code></a>
         </p>
 
 
@@ -999,7 +1378,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l460"><code>src&#x2F;database.js:460</code></a>
+        <a href="../files/src_database.js.html#l578"><code>src\database.js:578</code></a>
         </p>
 
 
@@ -1050,6 +1429,73 @@ Is used for the autocomplete function of the property values</p>
 
 
 </div>
+<div id="method_get_fragment_bounding_box" class="method item">
+    <h3 class="name"><code>get_fragment_bounding_box</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l383"><code>src\database.js:383</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the bounding box of a fragment</p>
+<p>This method looks for the lowest x and y coordinates of all sibling tokens
+and for the highest x and y coordinates of all siblings</p>
+<p>Used for heat map generation</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Int</span>
+
+
+                    <div class="param-description">
+                        <p>The unique identifier for a token</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
 <div id="method_get_fragment_by_id" class="method item">
     <h3 class="name"><code>get_fragment_by_id</code></h3>
 
@@ -1077,7 +1523,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l485"><code>src&#x2F;database.js:485</code></a>
+        <a href="../files/src_database.js.html#l605"><code>src\database.js:605</code></a>
         </p>
 
 
@@ -1150,7 +1596,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l629"><code>src&#x2F;database.js:629</code></a>
+        <a href="../files/src_database.js.html#l803"><code>src\database.js:803</code></a>
         </p>
 
 
@@ -1213,7 +1659,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l243"><code>src&#x2F;database.js:243</code></a>
+        <a href="../files/src_database.js.html#l335"><code>src\database.js:335</code></a>
         </p>
 
 
@@ -1254,6 +1700,70 @@ Is used for the autocomplete function of the property values</p>
 
 
 </div>
+<div id="method_get_image_of_token" class="method item">
+    <h3 class="name"><code>get_image_of_token</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>token_id</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l360"><code>src\database.js:360</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the image of a token</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">token_id</code>
+                        <span class="type">Int</span>
+
+
+                    <div class="param-description">
+                        <p>The unique identifier for a token</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
 <div id="method_init" class="method item">
     <h3 class="name"><code>init</code></h3>
 
@@ -1272,7 +1782,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l164"><code>src&#x2F;database.js:164</code></a>
+        <a href="../files/src_database.js.html#l217"><code>src\database.js:217</code></a>
         </p>
 
 
@@ -1298,10 +1808,64 @@ Is used for the autocomplete function of the property values</p>
 
 
 </div>
+<div id="method_log_error_and_close_session" class="method item">
+    <h3 class="name"><code>log_error_and_close_session</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Error</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l136"><code>src\database.js:136</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Generic catch error function for database promises
+Logs the error and closes the db session</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Error</span>:
+            </div>
+        </div>
+
+
+</div>
 <div id="method_login" class="method item">
     <h3 class="name"><code>login</code></h3>
 
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>url</code>
+                </li>
+                <li class="arg">
+                        <code>user</code>
+                </li>
+                <li class="arg">
+                        <code>password</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
 
         <span class="returns-inline">
             <span class="type">Boolean | Error</span>
@@ -1316,7 +1880,7 @@ Is used for the autocomplete function of the property values</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l52"><code>src&#x2F;database.js:52</code></a>
+        <a href="../files/src_database.js.html#l55"><code>src\database.js:55</code></a>
         </p>
 
 
@@ -1330,6 +1894,43 @@ It also set the Database.logged_in to true</p>
 
     </div>
 
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">url</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>the endpoint of neo4j</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">user</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">password</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
 
         <div class="returns">
             <h4>Returns:</h4>
@@ -1359,7 +1960,7 @@ It also set the Database.logged_in to true</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l101"><code>src&#x2F;database.js:101</code></a>
+        <a href="../files/src_database.js.html#l119"><code>src\database.js:119</code></a>
         </p>
 
 
@@ -1413,7 +2014,7 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l419"><code>src&#x2F;database.js:419</code></a>
+        <a href="../files/src_database.js.html#l528"><code>src\database.js:528</code></a>
         </p>
 
 
@@ -1421,7 +2022,8 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     </div>
 
     <div class="description">
-        <p>Removes all fragments of an image with a given name</p>
+        <p>Removes a fragment of an image or makes it empty</p>
+<p>This method not only deletes the fragment but also its children</p>
 
     </div>
 
@@ -1455,7 +2057,8 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
 
 
                     <div class="param-description">
-                         
+                        <p>Activate this option to delete only the children</p>
+
                     </div>
 
                 </li>
@@ -1496,7 +2099,7 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l323"><code>src&#x2F;database.js:323</code></a>
+        <a href="../files/src_database.js.html#l420"><code>src\database.js:420</code></a>
         </p>
 
 
@@ -1535,6 +2138,48 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
 
 
 </div>
+<div id="method_toggle_fragment_completed" class="method item">
+    <h3 class="name"><code>toggle_fragment_completed</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l232"><code>src\database.js:232</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Toggle the completed status of a fragment
+The status is used for the batch-add functionality</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
             </div>
 
             <div id="properties" class="api-class-tabpanel">
@@ -1552,7 +2197,7 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l33"><code>src&#x2F;database.js:33</code></a>
+        <a href="../files/src_database.js.html#l36"><code>src\database.js:36</code></a>
         </p>
 
 
@@ -1578,7 +2223,7 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l43"><code>src&#x2F;database.js:43</code></a>
+        <a href="../files/src_database.js.html#l46"><code>src\database.js:46</code></a>
         </p>
 
 
@@ -1604,7 +2249,7 @@ Delete the saved neo4j session and set the Database.logged_in flag to false.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_database.js.html#l24"><code>src&#x2F;database.js:24</code></a>
+        <a href="../files/src_database.js.html#l27"><code>src\database.js:27</code></a>
         </p>
 
 

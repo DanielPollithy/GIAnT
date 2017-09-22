@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\constraints.js - TransliterationApplication API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
+                                <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
+                                <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src\constraints.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+* The constraints are used to check the data integrity in the Neo4J database.
+* &lt;br&gt;
+* There are: &lt;br&gt;
+*  1) Count constraints
+*  2) Bool constraints
+*  3) Free javascript constraints
+*
+* @class Constraints
+*/
+var database = require(&#x27;./database&#x27;);
+
+
+/**
+ * Checks bool, count and free constraints
+ * If one fails, the promise is rejected and contains the rejected_constraint
+ *
+ * A constraint is an object with different attributes
+ * example attributes: query, min, max, code
+ * but also: error, error_code
+ *
+ * @method check_all_fragments
+ * @param bool_constraints {array}
+ * @param count_constraints {array}
+ * @param free_constraints {array}
+ * @return {Promise}
+ */
+function check_all_fragments(bool_constraints, count_constraints, free_constraints){
+    return new Promise(function(resolve, reject) {
+        database.get_all_fragments().then(function(fragment_ids){
+            var all_promises = [];
+            fragment_ids.forEach(function(fragment_id){
+                bool_constraints.forEach(function(bool_constraint){
+                    all_promises.push(run_bool_constraint(bool_constraint, fragment_id));
+                });
+                count_constraints.forEach(function(count_constraint){
+                    all_promises.push(run_count_constraint(count_constraint, fragment_id));
+                });
+                free_constraints.forEach(function(free_constraint){
+                    all_promises.push(run_free_constraint(free_constraint, fragment_id));
+                });
+            });
+            return Promise.all(all_promises).then(function(all){
+                return resolve();
+            }, function(rejected_constraint){
+                return reject(rejected_constraint);
+            });
+        });
+    });
+}
+
+
+/**
+ * Counts the number of results retrieved from the database and compares it to given boundaries
+ *
+ * Necessary attributes of the constraint: query, min, max
+ *
+ * Example query: &lt;pre&gt;MATCH(f:Fragment)-[]-(t:Token) WHERE ID(f) = {fragment_id} RETURN t&lt;/pre&gt;
+ *
+ * @method run_count_constraint
+ * @param constraint
+ * @param fragment_id {Number}
+ * @return {Promise}
+ */
+function run_count_constraint(constraint, fragment_id) {
+    var session = database._get_session();
+    return new Promise(function(resolve, reject){
+        session.run(constraint.query, {&#x27;fragment_id&#x27;:fragment_id}).then(function(res){
+            try {
+                var num_records = res.records.length;
+                if (constraint.min &amp;&amp; num_records &lt; constraint.min) {
+                    constraint.error = &#x27;Minimum deceeded.&#x27;;
+                    constraint.error_fragment = fragment_id;
+                    return reject(constraint);
+                }
+                if (constraint.max &amp;&amp; num_records &gt;= constraint.max) {
+                    constraint.error = &#x27;Maximum exceeded.&#x27;;
+                    constraint.error_fragment = fragment_id;
+                    return reject(constraint);
+                }
+                return resolve();
+            } catch(err) {
+                constraint.error = &#x27;Could not access result set.&#x27;;
+                constraint.error_fragment = fragment_id;
+                reject(constraint);
+            }
+        }).catch(function() {
+            constraint.error = &#x27;Cypher query execution failed.&#x27;;
+            constraint.error_fragment = fragment_id;
+            reject(constraint);
+        });
+    });
+
+}
+
+
+/**
+ * Compares the output of the constraint&#x27;s cypher query to the boolean &#x27;true&#x27;
+ *
+ * Necessary attribute of the constraint: query
+ *
+ * Example query: &lt;pre&gt;MATCH(f:Fragment)-[]-(t:Token {value: &#x27;Token&#x27;}) WHERE ID(f) = {fragment_id} RETURN COUNT(t) &gt; 0;&lt;/pre&gt;
+ *
+ * @method run_bool_constraint
+ * @param constraint
+ * @param fragment_id {Number}
+ * @return {Promise}
+ */
+function run_bool_constraint(constraint, fragment_id) {
+    var session = database._get_session();
+    return new Promise(function(resolve, reject){
+        session.run(constraint.query, {&#x27;fragment_id&#x27;:fragment_id}).then(function(res){
+            try {
+                if (res.records[0][&#x27;_fields&#x27;][0] === true) {
+                    resolve();
+                } else {
+                    constraint.error = &#x27;Evaluated to false.&#x27;;
+                    constraint.error_fragment = fragment_id;
+                    reject(constraint);
+                }
+            } catch(err) {
+                constraint.error = &#x27;Could not access first result.&#x27;;
+                constraint.error_fragment = fragment_id;
+                reject(constraint);
+            }
+        }).catch(function() {
+            constraint.error = &#x27;Cypher query execution failed.&#x27;;
+            constraint.error_fragment = fragment_id;
+            reject(constraint);
+        });
+    });
+
+}
+
+
+/**
+ * Runs javascript code that has to return a new Promise(...)
+ * If it resolves then the constraint is fulfilled
+ *
+ * Necessary attribute of the constraint: query
+ *
+ * Example query: &lt;pre&gt;// session = a neo4j session\r\n// session.run(cypher_string) returns a promise (see the docs)\r\nnew Promise(function(resolve, reject){\r\n    var variables = {\&quot;fragment_id\&quot;: fragment_id};\r\n    session.run(\&quot;MATCH(f:Fragment)-[]-(t:Token {value: &#x27;Token&#x27;}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\&quot;, variables)\r\n        .then(function(result){ \r\n            var value;\r\n            result.records.forEach(function(res){\r\n                value = res.get(&#x27;value&#x27;);\r\n                if (value === \&quot;Token2\&quot;) {\r\n                    reject(\&quot;There was a token called Token.\&quot;);\r\n                }\r\n            });\r\n            resolve();\r\n    }).catch(function(err){\r\n        reject(err);\r\n    });\r\n});&lt;/pre&gt;
+ *
+ * @method run_bool_constraint
+ * @param constraint
+ * @param fragment_id {Number}
+ * @return {Promise}
+ */
+function run_free_constraint(constraint, fragment_id) {
+    var session = database._get_session();
+    return new Promise(function(resolve, reject) {
+        try {
+            var promise = eval(constraint.query);
+        } catch (e) {
+            constraint.error = &#x27;Code error: &#x27; + e;
+            constraint.error_fragment = fragment_id;
+            return reject(constraint);
+        }
+        var isPromise = typeof promise.then == &#x27;function&#x27;;
+        if (!isPromise) {
+            constraint.error = &#x27;Code does not return a new Promise.&#x27;
+            constraint.error_fragment = fragment_id;
+            return reject(constraint);
+        }
+        promise.then(resolve).catch(function(err){
+            constraint.error = &#x27;Promise failed: &#x27; + err;
+            constraint.error_fragment = fragment_id;
+            return reject(constraint);
+        });
+    });
+}
+
+/**
+ * Compares a new constraint to a saved constraint in order to detect whether changes were made
+ *
+ * Example query: &lt;pre&gt;// session = a neo4j session\r\n// session.run(cypher_string) returns a promise (see the docs)\r\nnew Promise(function(resolve, reject){\r\n    var variables = {\&quot;fragment_id\&quot;: fragment_id};\r\n    session.run(\&quot;MATCH(f:Fragment)-[]-(t:Token {value: &#x27;Token&#x27;}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\&quot;, variables)\r\n        .then(function(result){ \r\n            var value;\r\n            result.records.forEach(function(res){\r\n                value = res.get(&#x27;value&#x27;);\r\n                if (value === \&quot;Token2\&quot;) {\r\n                    reject(\&quot;There was a token called Token.\&quot;);\r\n                }\r\n            });\r\n            resolve();\r\n    }).catch(function(err){\r\n        reject(err);\r\n    });\r\n});&lt;/pre&gt;
+ *
+ * @method constraint_has_changes
+ * @param constraint
+ * @param constraint_type {string} either count_constraint, bool_constraint or free_constraint
+ * @param fragment_id {Number}
+ * @return {Promise}
+ */
+function constraint_has_changes(constraint, constraint_type, all_constraints) {
+    var found = false;
+    all_constraints[constraint_type].forEach(function(old_constraint){
+        if (Number(old_constraint.id) === Number(constraint.id)) {
+            if (old_constraint.query !== constraint.query) {
+                found = true;
+                return;
+            }
+            if (constraint_type === &#x27;count_constraint&#x27;) {
+                if (old_constraint.min !== constraint.min || old_constraint.max !== constraint.max) {
+                    found = true;
+                    return;
+                }
+            }
+        }
+    });
+    return found;
+}
+
+module.exports = {
+    &#x27;constraint_has_changes&#x27;: constraint_has_changes,
+    &#x27;check_all_fragments&#x27;: check_all_fragments
+};
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

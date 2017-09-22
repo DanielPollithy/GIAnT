@@ -1,7 +1,7 @@
 {
     "name": "TransliterationApplication API",
     "description": "TransliterationApplication: A node/express/neo4j/electron application",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "url": "",
     "options": {
         "outdir": "docs/api",

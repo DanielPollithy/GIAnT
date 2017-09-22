@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Database - TransliterationApplication API</title>
+    <title>Server - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.0.1</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -38,14 +38,20 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
                                 <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
                                 <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
                             </ul>
                 
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/Codec.html">Codec</a></li>
-                                <li><a href="../modules/Database.html">Database</a></li>
                             </ul>
                         </div>
                     </div>
@@ -79,44 +85,49 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Database Module</h1>
-<div class="box clearfix meta">
+<h1>Server Class</h1>
+<div class="box meta">
 
-        <div class="uses">
-            Requires
-            <ul class="inline commas">
-                    <li>neo4j-driver</li>
-            </ul>
-        </div>
 
         <div class="foundat">
-            Defined in: <a href="../files/src_database.js.html#l11"><code>src&#x2F;database.js:11</code></a>
+            Defined in: <a href="../files/src_server.js.html#l1"><code>src\server.js:1</code></a>
         </div>
+
 
 </div>
 
 
 <div class="box intro">
-    <p>Database wrapper functions for Neo4J</p>
+    <ol>
+<li>This file controls the interface between the frontend and the backend<br></li>
+<li>And renders the frontend with PUG templates
+<br></li>
+</ol>
+<p>Reason for this setup is, that one day this application should be able to be a website.<br>
+NO LOGIC HAPPENS HERE! M-V are separated. This is a collection of GET and POST views and Middlewares.<br>
+The server runs on PORT 4000. This should become a setting in the future.<br></p>
 
 </div>
 
 
-<div class="yui3-g">
-    <div class="yui3-u-1-2">
-            <p>This module provides the following classes:</p>
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
 
-            <ul class="module-classes">
-                <li class="module-class">
-                    <a href="../classes/Database.html">
-                        Database
-                    </a>
-                </li>
-            </ul>
-    </div>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
 
 
-    <div class="yui3-u-1-2">
+
+
+        </div>
+
+
+
+
     </div>
 </div>
                     </div>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Codec - TransliterationApplication API</title>
+    <title>Export - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -85,12 +85,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Codec Class</h1>
+<h1>Export Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_codec.js.html#l1"><code>src\codec.js:1</code></a>
+            Defined in: <a href="../files/src_export.js.html#l1"><code>src\export.js:1</code></a>
         </div>
 
 
@@ -98,64 +98,44 @@
 
 
 <div class="box intro">
-    <p>This class converts the Editor's XML format into a flat javascript format
-which is inserted into the Neo4j database.</p>
-<pre class="code prettyprint"><code> 1. Load XML
- 2. Add all nodes as children to the layers (unpack the &lt;mxCell&gt; from the &lt;object&gt; tag)
-     the &lt;object&gt; tag is used to wrap an mxCell with its attributes
- 3. Remove groups
- 4. Edges (There will be no edge without token -&gt; drop layer information)
-     - edges don't work inter groups, but they can be intra groups
-         -&gt; they have to be unwrapped as well
- 5. Flatten the hierarchical tree
-     - merge mxCells with their layers to obtain the layer-attributes
- 6. Collect all possible attributes
-
- (1) Drop following attributes
-
- - Graph
-     - grid
-     - gridSize
-     - guides
-     - toolTips
-     - connect
-     - arrows
-     - fold
-     - page
-     - pageScale
+    <p>Export the neo4j data to sql or csv</p>
+<pre class="code prettyprint"><code> Tables
+     - Nodes
+     - Edges
+     - NodeProperties
+     - EdgeProperties
 
 
- (2) Parse the style attribute in order to retrieve the following attributes
-
-  - MxCell
-     - tokenType
-
-
-  -&gt; first: read the saved mxgraph with xml2js into a javscript object
-  -&gt; then make the validity checks
-     - is the structure of the xml correct
-         - mxGraph
-             - root
-                 - cell
-                     - geometry
-                 - object
-                     - cell
-                         - geometry
-
-     - are all necessary attributes at hand
-         - mxGraphModel
-             - dx
-             - dy
-             - pageWidth
-             - pageHeight
-         - mxCell
-             - id
-             - parent
-  -&gt; then drop unnecessary attributes
-  -&gt; export as GraphML (http://graphml.graphdrawing.org/primer/graphml-primer.html)
+ 1) stream the data into temporary files
+ 2) make the files downloadable for the client
+ 3) delete the temporary files
 
 
- This class was developed by Test Driven Development.</code></pre>
+ CREATE TABLE IF NOT EXISTS Node (
+ Node_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ tokenType TEXT,
+ groupType TEXT
+ );
+
+ CREATE TABLE IF NOT EXISTS Relation (
+ Relation_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ SourceNode_ID INTEGER,
+ TargetNode_ID INTEGER,
+ relationType TEXT
+ );
+
+ CREATE TABLE IF NOT EXISTS NodeProperties (
+ NodeProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ key TEXT,
+ value TEXT,
+ Node_ID INTEGER
+ );
+
+ CREATE TABLE IF NOT EXISTS RelationProperties (
+ RelationProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ key TEXT,
+ value TEXT
+ );</code></pre>
 
 </div>
 
@@ -177,35 +157,47 @@ which is inserted into the Neo4j database.</p>
 
                     <ul class="index-list methods">
                             <li class="index-item method">
-                                <a href="#method_add_all_completed_fragments_to_neo4j">add_all_completed_fragments_to_neo4j</a>
+                                <a href="#method__get_time">_get_time</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_get_node_by_id">get_node_by_id</a>
+                                <a href="#method__node_properties_to_csv">_node_properties_to_csv</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_get_nodes_by_parent_id">get_nodes_by_parent_id</a>
+                                <a href="#method__node_properties_to_sql">_node_properties_to_sql</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_flattened_object">mxgraph_to_flattened_object</a>
+                                <a href="#method__nodes_to_csv">_nodes_to_csv</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_graphml">mxgraph_to_graphml</a>
+                                <a href="#method__nodes_to_sql">_nodes_to_sql</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_layered_object">mxgraph_to_layered_object</a>
+                                <a href="#method__relation_properties_to_csv">_relation_properties_to_csv</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_neo4j">mxgraph_to_neo4j</a>
+                                <a href="#method__relation_properties_to_sql">_relation_properties_to_sql</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_mxgraph_to_object">mxgraph_to_object</a>
+                                <a href="#method__relations_to_csv">_relations_to_csv</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method__relations_to_sql">_relations_to_sql</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_to_csv">to_csv</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_to_sql">to_sql</a>
 
                             </li>
                     </ul>
@@ -216,11 +208,7 @@ which is inserted into the Neo4j database.</p>
 
                     <ul class="index-list properties">
                             <li class="index-item property">
-                                <a href="#property_builder">builder</a>
-
-                            </li>
-                            <li class="index-item property">
-                                <a href="#property_parser">parser</a>
+                                <a href="#property_to_folder">to_folder</a>
 
                             </li>
                     </ul>
@@ -232,8 +220,561 @@ which is inserted into the Neo4j database.</p>
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method_add_all_completed_fragments_to_neo4j" class="method item">
-    <h3 class="name"><code>add_all_completed_fragments_to_neo4j</code></h3>
+<div id="method__get_time" class="method item">
+    <h3 class="name"><code>_get_time</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">String</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l66"><code>src\export.js:66</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the current time as POSIX time as a string</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">String</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__node_properties_to_csv" class="method item">
+    <h3 class="name"><code>_node_properties_to_csv</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l392"><code>src\export.js:392</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes csv into the given write_stream</p>
+<p>Starts with the CSV Table header and then adds all _node_properties_to_csv line by line</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__node_properties_to_sql" class="method item">
+    <h3 class="name"><code>_node_properties_to_sql</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l222"><code>src\export.js:222</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes sql code into the given write_stream</p>
+<p>Starts with the SQL Table creation for node properties and then adds all properties</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__nodes_to_csv" class="method item">
+    <h3 class="name"><code>_nodes_to_csv</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l272"><code>src\export.js:272</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes csv into the given write_stream</p>
+<p>Starts with the CSV Table header and then adds all nodes line by line</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__nodes_to_sql" class="method item">
+    <h3 class="name"><code>_nodes_to_sql</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l78"><code>src\export.js:78</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes sql code into the given write_stream</p>
+<p>Starts with the SQL Table creation and then adds all nodes</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__relation_properties_to_csv" class="method item">
+    <h3 class="name"><code>_relation_properties_to_csv</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l350"><code>src\export.js:350</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes csv into the given write_stream</p>
+<p>Starts with the CSV Table header and then adds all relation_properties line by line</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__relation_properties_to_sql" class="method item">
+    <h3 class="name"><code>_relation_properties_to_sql</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l172"><code>src\export.js:172</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes sql code into the given write_stream</p>
+<p>Starts with the SQL Table creation for relation properties and then adds all properties</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__relations_to_csv" class="method item">
+    <h3 class="name"><code>_relations_to_csv</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l311"><code>src\export.js:311</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes csv into the given write_stream</p>
+<p>Starts with the CSV Table header and then adds all relations line by line</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method__relations_to_sql" class="method item">
+    <h3 class="name"><code>_relations_to_sql</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>write_stream</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_export.js.html#l125"><code>src\export.js:125</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Writes sql code into the given write_stream</p>
+<p>Starts with the SQL Table creation for relations and then adds all relations</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">write_stream</code>
+                        <span class="type">WriteStream</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Promise</span>:
+            </div>
+        </div>
+
+
+</div>
+<div id="method_to_csv" class="method item">
+    <h3 class="name"><code>to_csv</code></h3>
 
         <span class="paren">()</span>
 
@@ -250,7 +791,7 @@ which is inserted into the Neo4j database.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l451"><code>src\codec.js:451</code></a>
+        <a href="../files/src_export.js.html#l504"><code>src\export.js:504</code></a>
         </p>
 
 
@@ -258,8 +799,8 @@ which is inserted into the Neo4j database.</p>
     </div>
 
     <div class="description">
-        <p>Adds all fragments that have the flag completed set to true to the database
-There is SHA1 hash comparing done here in order to eliminate unnecessary computations.</p>
+        <p>Creates a zipped dir containing four files necessary to reassemble the GraphDB's storage
+The file is stored in the to_folder of Export</p>
 
     </div>
 
@@ -274,22 +815,13 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
 
 
 </div>
-<div id="method_get_node_by_id" class="method item">
-    <h3 class="name"><code>get_node_by_id</code></h3>
+<div id="method_to_sql" class="method item">
+    <h3 class="name"><code>to_sql</code></h3>
 
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>root</code>
-                </li>
-                <li class="arg">
-                        <code>id</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type">Node</span>
+            <span class="type">Promise</span>
         </span>
 
 
@@ -301,7 +833,7 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l186"><code>src\codec.js:186</code></a>
+        <a href="../files/src_export.js.html#l434"><code>src\export.js:434</code></a>
         </p>
 
 
@@ -309,424 +841,19 @@ There is SHA1 hash comparing done here in order to eliminate unnecessary computa
     </div>
 
     <div class="description">
-        <p>Works on a mxGraph xml2js-object
-Finds a node given an id</p>
+        <p>Creates a zipped SQL file containing all of the SQL creation and insertion statements for the DB
+The file is stored in the to_folder of Export</p>
 
     </div>
 
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">root</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>mxGraph tree</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
 
         <div class="returns">
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type">Node</span>:
+                        <span class="type">Promise</span>:
             </div>
         </div>
-
-
-</div>
-<div id="method_get_nodes_by_parent_id" class="method item">
-    <h3 class="name"><code>get_nodes_by_parent_id</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>root</code>
-                </li>
-                <li class="arg">
-                        <code>parent_id</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-        <span class="returns-inline">
-            <span class="type">Array</span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l204"><code>src\codec.js:204</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Works on a mxGraph xml2js-object
-Gets all nodes with a given parent</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">root</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">parent_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Array</span>:
-            </div>
-        </div>
-
-
-</div>
-<div id="method_mxgraph_to_flattened_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_flattened_object</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l258"><code>src\codec.js:258</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Converts an mxGraph to a flat object structured as follows</p>
-<p>graph.mxGraphModel.data.token1
-graph.mxGraphModel.data.token2
-graph.mxGraphModel.data.edge1</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_graphml" class="method item">
-    <h3 class="name"><code>mxgraph_to_graphml</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l303"><code>src\codec.js:303</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Converts a mxGraph into the GraphML format</p>
-<p>It removes groups and is not necessary for the code
-Only nice to have</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_layered_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_layered_object</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l225"><code>src\codec.js:225</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Converts the mxGraph to an object structured ad follows</p>
-<p>obj.mxGraphModel.layer1.node1</p>
-<p>It removes groups</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_neo4j" class="method item">
-    <h3 class="name"><code>mxgraph_to_neo4j</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>image_id</code>
-                </li>
-                <li class="arg">
-                        <code>fragment_id</code>
-                </li>
-                <li class="arg">
-                        <code>overwrite_xml_path</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l497"><code>src\codec.js:497</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Loads an mxGraph over the flat xml2js-object into the neo4j database</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">image_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">fragment_id</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">overwrite_xml_path</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>if you don't want to load the standard xml file_path for the fragment use this</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_mxgraph_to_object" class="method item">
-    <h3 class="name"><code>mxgraph_to_object</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>filename</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l94"><code>src\codec.js:94</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Parses the mxGraph XML file into a javascript object</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">filename</code>
-                        <span class="type">Promise</span>
-
-
-                    <div class="param-description">
-                        <p>the resource to load
-return</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
 
 
 </div>
@@ -735,9 +862,9 @@ return</p>
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
-<div id="property_builder" class="property item">
-    <h3 class="name"><code>builder</code></h3>
-    <span class="type">Object</span>
+<div id="property_to_folder" class="property item">
+    <h3 class="name"><code>to_folder</code></h3>
+    <span class="type">String</span>
 
 
 
@@ -746,43 +873,18 @@ return</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_codec.js.html#l82"><code>src\codec.js:82</code></a>
+        <a href="../files/src_export.js.html#l57"><code>src\export.js:57</code></a>
         </p>
 
 
     </div>
 
     <div class="description">
-        <p>The xml2js builder</p>
-<p>This object can create xml files</p>
+        <p>The target folder where the exports are stored</p>
 
     </div>
 
-
-
-</div>
-<div id="property_parser" class="property item">
-    <h3 class="name"><code>parser</code></h3>
-    <span class="type">Object</span>
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_codec.js.html#l74"><code>src\codec.js:74</code></a>
-        </p>
-
-
-    </div>
-
-    <div class="description">
-        <p>The xml2js parser</p>
-
-    </div>
-
+        <p><strong>Default:</strong> path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;export&#x27;)</p>
 
 
 </div>

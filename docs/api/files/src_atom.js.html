@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src\utils.js - TransliterationApplication API</title>
+    <title>src\atom.js - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -85,143 +85,102 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src\utils.js</h1>
+<h1 class="file-heading">File: src\atom.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
-* A collection of utility functions
+* The cross platform electron interface: This is the main entry file for the desktop application.
+* &lt;br&gt;
+* It controls: &lt;br&gt;
+* 1) the electron app &lt;br&gt;
+* 2) And the server &lt;br&gt;
 *
-* @class Utils
+* We use electron-log to write logs to the hard drive. Uncaught exceptions are finally caught here.
+* &lt;br&gt;
+* After creating the Electron Window, this file starts the SERVER!
+*
+
+* @class Atom
 */
 
 
-var crypto = require(&#x27;crypto&#x27;);
-var fs = require(&#x27;fs&#x27;);
-var path = require(&#x27;path&#x27;);
+var process = require(&#x27;process&#x27;);
+var log = require(&#x27;electron-log&#x27;);
 
+process.on(&#x27;uncaughtException&#x27;, function(err) {
+  log.error((err &amp;&amp; err.stack) ? err.stack : err);
+});
 
-var javascript_demo_constraint = &quot;// session = a neo4j session\n&quot; +
-&quot;// session.run(cypher_string) returns a promise (see the docs)\n&quot; +
-&quot;new Promise(function(resolve, reject){\n&quot; +
-&quot;    var variables = {\&quot;fragment_id\&quot;: fragment_id};\n&quot; +
-&quot;    session.run(\&quot;MATCH(f:Fragment)-[]-(t:Token {value: &#x27;Token&#x27;}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\&quot;, variables)\n&quot; +
-&quot;        .then(function(result){ \n&quot; +
-&quot;            var value;\n&quot; +
-&quot;            result.records.forEach(function(res){\n&quot; +
-&quot;                value = res.get(&#x27;value&#x27;);\n&quot; +
-&quot;                if (value === \&quot;Token\&quot;) {\n&quot; +
-&quot;                    reject(\&quot;There was a token called Token.\&quot;);\n&quot; +
-&quot;                }\n&quot; +
-&quot;            });\n&quot; +
-&quot;            resolve();\n&quot; +
-&quot;    }).catch(function(err){\n&quot; +
-&quot;        reject(err);\n&quot; +
-&quot;    });\n&quot; +
-&quot;});\n&quot;;
+var server = require(&#x27;./server&#x27;);
+var database = require(&#x27;./database&#x27;);
 
-/**
-* SHA1 of the file
- *
-* @method hash_of_file_content
-* @param file_path {string}
-* @return {string|null}
-*/
-function hash_of_file_content(file_path) {
-    try {
-        var data = fs.readFileSync(__dirname + &#x27;/&#x27; + file_path);
-        return crypto.createHash(&#x27;sha1&#x27;).update(data.toString()).digest(&#x27;hex&#x27;).toString();
-    } catch (e) {
-        return null;
-    }
+const {app, BrowserWindow} = require(&#x27;electron&#x27;);
+const path = require(&#x27;path&#x27;);
+const url = require(&#x27;url&#x27;);
+
+// In this file you can include the rest of your app&#x27;s specific main process
+// code. You can also put them in separate files and require them here.
+log.info(app.getAppPath())
+
+// var server = require(app.getAppPath() + &#x27;/src/server&#x27;);
+
+// Keep a global reference of the window object, if you don&#x27;t, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win;
+
+function createWindow () {
+  // Create the browser window.
+  win = new BrowserWindow({width: 800, height: 600});
+  log.info(&#x27;Electron window opened&#x27;);
+
+  // and load the index.html of the app.
+  win.loadURL(url.format({
+    pathname: path.join(&#x27;localhost:4000&#x27;),
+    protocol: &#x27;http:&#x27;,
+    slashes: true
+  }));
+
+  // Open the DevTools.
+  // win.webContents.openDevTools();
+
+  // Emitted when the window is closed.
+  win.on(&#x27;closed&#x27;, () =&gt; {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+      log.info(&#x27;window closed&#x27;);
+      win = null
+  })
 }
 
-/**
-* SHA1 of the xml file
- *
-* @method hash_xml_fragment
-* @param fragment_id {Number}
-* @return {string|null}
-*/
-function hash_xml_fragment (fragment_id) {
-    return hash_of_file_content(&#x27;../media/uploaded_xmls/&#x27; + fragment_id + &#x27;.xml&#x27;);
-}
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on(&#x27;ready&#x27;, createWindow)
 
-/**
-* Delete image from disk
- *
-* @method remove_image
-* @param file_path {string}
-* @return return_code {Number}
-*/
-function remove_image(file_path) {
-    return fs.unlinkSync(path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_images&#x27;, file_path));
-}
+// Quit when all windows are closed.
+app.on(&#x27;window-all-closed&#x27;, () =&gt; {
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+    log.info(&#x27;Electron windows closed&#x27;);
+    database.logout();
+    app.exit();
+  //if (process.platform !== &#x27;darwin&#x27;) {
+    //server.kill(&#x27;SIGINT&#x27;);
+  //}
+})
 
-/**
-* Differentiates between Token and Group
- *
-* @method token_type_mapping
-* @param token_type {string}
-* @return {string}
-*/
-function token_type_mapping(token_type) {
-    if ([&#x27;token&#x27;, &#x27;modification&#x27;, &#x27;symbol&#x27;].includes(token_type)) {
-        return &#x27;Token&#x27;;
-    }
-    if ([&#x27;frame&#x27;, &#x27;comment&#x27;, &#x27;blanco&#x27;].includes(token_type)) {
-        return &#x27;Group&#x27;;
-    }
-    return null;
-}
+app.on(&#x27;activate&#x27;, () =&gt; {
+  // On macOS it&#x27;s common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (win === null) {
+    createWindow()
+  }
+});
 
-
-/**
- * chains a list of functions (that return promises) and executes them in the right order
- * [function() {return Promise.resolve();}, function() {return Promise.resolve();}]
- *
- * @method chain_promises
- * @param funcs is an array of functions returning promises
- * @return {Promise}
- */
-function chain_promises(funcs) {
-    if (funcs.length &lt; 1) {
-        return Promise.resolve();
-    }
-    var i = 0;
-    return chain_executor(funcs, i);
-}
-
-/**
- * Recursive help method for chain_promises
- * 1) executes a function that returns a promise (no params allowed)
- * 2) chains itself to the success resolve of the promise
- *
- * @method chain_executor
- * @param funcs is an array of functions returning promises
- * @param i is the current working index
- */
-function chain_executor(funcs, i) {
-    var promise = funcs[i]();
-    return promise.then(function(){
-        console.log(i);
-        if (funcs.length &gt; i+1) {
-            return chain_executor(funcs, i+1);
-        } else {
-            return Promise.resolve();
-        }
-    })
-}
-
-module.exports = {
-    &#x27;javascript_demo_constraint&#x27;:javascript_demo_constraint,
-    &#x27;hash_of_file_content&#x27;: hash_of_file_content,
-    &#x27;hash_xml_fragment&#x27;: hash_xml_fragment,
-    &#x27;remove_image&#x27;: remove_image,
-    &#x27;token_type_mapping&#x27;: token_type_mapping,
-    &#x27;chain_promises&#x27;: chain_promises
-};
-
+// Start the server
+server.run();
     </pre>
 </div>
                     </div>

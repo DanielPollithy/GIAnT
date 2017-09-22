@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Codec - TransliterationApplication API</title>
+    <title>src\exif_utils.js - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="TransliterationApplication API" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.0.1</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -38,14 +38,20 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Atom.html">Atom</a></li>
                                 <li><a href="../classes/Codec.html">Codec</a></li>
+                                <li><a href="../classes/Constraints.html">Constraints</a></li>
                                 <li><a href="../classes/Database.html">Database</a></li>
+                                <li><a href="../classes/Exif.html">Exif</a></li>
+                                <li><a href="../classes/Export.html">Export</a></li>
+                                <li><a href="../classes/Heatmap.html">Heatmap</a></li>
+                                <li><a href="../classes/Server.html">Server</a></li>
+                                <li><a href="../classes/Settings.html">Settings</a></li>
+                                <li><a href="../classes/Utils.html">Utils</a></li>
                             </ul>
                 
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/Codec.html">Codec</a></li>
-                                <li><a href="../modules/Database.html">Database</a></li>
                             </ul>
                         </div>
                     </div>
@@ -79,46 +85,47 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Codec Module</h1>
-<div class="box clearfix meta">
+<h1 class="file-heading">File: src\exif_utils.js</h1>
 
-        <div class="uses">
-            Requires
-            <ul class="inline commas">
-                    <li>xml2js</li>
-            </ul>
-        </div>
-
-        <div class="foundat">
-            Defined in: <a href="../files/src_codec.js.html#l76"><code>src&#x2F;codec.js:76</code></a>
-        </div>
-
-</div>
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+* Wrapper for the EXIF methods
+*
+* @class Exif
+*/
 
 
-<div class="box intro">
-    <p>XML Handling</p>
-<p>mxGraph xml</p>
+var log = require(&#x27;electron-log&#x27;);
+var ExifImage = require(&#x27;exif&#x27;).ExifImage;
 
-</div>
+/**
+ * This is a wrapper for the ExifImage object by the third party library exif
+ *
+ * @method get_exif_from_image
+ * @param path {string} Path to the file
+ * @param cb {function} the callback
+ */
+function get_exif_from_image(path, cb) {
+    try {
+        new ExifImage({image: path}, function (error, exifData) {
+            if (error) {
+                cb(error.message);
+            }
+            else {
+                cb(null, exifData);
+            }
+        });
+    } catch (error) {
+        log.error(&#x27;Error: &#x27; + error.message);
+    }
+}
 
 
-<div class="yui3-g">
-    <div class="yui3-u-1-2">
-            <p>This module provides the following classes:</p>
-
-            <ul class="module-classes">
-                <li class="module-class">
-                    <a href="../classes/Codec.html">
-                        Codec
-                    </a>
-                </li>
-            </ul>
-    </div>
-
-
-    <div class="yui3-u-1-2">
-    </div>
+module.exports = {
+    &#x27;get_exif_from_image&#x27;: get_exif_from_image
+};
+    </pre>
 </div>
                     </div>
                 </div>

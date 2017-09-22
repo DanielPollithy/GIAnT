@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src\utils.js - TransliterationApplication API</title>
+    <title>Exif - TransliterationApplication API</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -85,144 +85,126 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src\utils.js</h1>
-
-<div class="file">
-    <pre class="code prettyprint linenums">
-/**
-* A collection of utility functions
-*
-* @class Utils
-*/
+<h1>Exif Class</h1>
+<div class="box meta">
 
 
-var crypto = require(&#x27;crypto&#x27;);
-var fs = require(&#x27;fs&#x27;);
-var path = require(&#x27;path&#x27;);
+        <div class="foundat">
+            Defined in: <a href="../files/src_exif_utils.js.html#l1"><code>src\exif_utils.js:1</code></a>
+        </div>
 
 
-var javascript_demo_constraint = &quot;// session = a neo4j session\n&quot; +
-&quot;// session.run(cypher_string) returns a promise (see the docs)\n&quot; +
-&quot;new Promise(function(resolve, reject){\n&quot; +
-&quot;    var variables = {\&quot;fragment_id\&quot;: fragment_id};\n&quot; +
-&quot;    session.run(\&quot;MATCH(f:Fragment)-[]-(t:Token {value: &#x27;Token&#x27;}) WHERE ID(f) = {fragment_id} RETURN t.value as value;\&quot;, variables)\n&quot; +
-&quot;        .then(function(result){ \n&quot; +
-&quot;            var value;\n&quot; +
-&quot;            result.records.forEach(function(res){\n&quot; +
-&quot;                value = res.get(&#x27;value&#x27;);\n&quot; +
-&quot;                if (value === \&quot;Token\&quot;) {\n&quot; +
-&quot;                    reject(\&quot;There was a token called Token.\&quot;);\n&quot; +
-&quot;                }\n&quot; +
-&quot;            });\n&quot; +
-&quot;            resolve();\n&quot; +
-&quot;    }).catch(function(err){\n&quot; +
-&quot;        reject(err);\n&quot; +
-&quot;    });\n&quot; +
-&quot;});\n&quot;;
-
-/**
-* SHA1 of the file
- *
-* @method hash_of_file_content
-* @param file_path {string}
-* @return {string|null}
-*/
-function hash_of_file_content(file_path) {
-    try {
-        var data = fs.readFileSync(__dirname + &#x27;/&#x27; + file_path);
-        return crypto.createHash(&#x27;sha1&#x27;).update(data.toString()).digest(&#x27;hex&#x27;).toString();
-    } catch (e) {
-        return null;
-    }
-}
-
-/**
-* SHA1 of the xml file
- *
-* @method hash_xml_fragment
-* @param fragment_id {Number}
-* @return {string|null}
-*/
-function hash_xml_fragment (fragment_id) {
-    return hash_of_file_content(&#x27;../media/uploaded_xmls/&#x27; + fragment_id + &#x27;.xml&#x27;);
-}
-
-/**
-* Delete image from disk
- *
-* @method remove_image
-* @param file_path {string}
-* @return return_code {Number}
-*/
-function remove_image(file_path) {
-    return fs.unlinkSync(path.join(__dirname, &#x27;..&#x27;, &#x27;media&#x27;, &#x27;uploaded_images&#x27;, file_path));
-}
-
-/**
-* Differentiates between Token and Group
- *
-* @method token_type_mapping
-* @param token_type {string}
-* @return {string}
-*/
-function token_type_mapping(token_type) {
-    if ([&#x27;token&#x27;, &#x27;modification&#x27;, &#x27;symbol&#x27;].includes(token_type)) {
-        return &#x27;Token&#x27;;
-    }
-    if ([&#x27;frame&#x27;, &#x27;comment&#x27;, &#x27;blanco&#x27;].includes(token_type)) {
-        return &#x27;Group&#x27;;
-    }
-    return null;
-}
+</div>
 
 
-/**
- * chains a list of functions (that return promises) and executes them in the right order
- * [function() {return Promise.resolve();}, function() {return Promise.resolve();}]
- *
- * @method chain_promises
- * @param funcs is an array of functions returning promises
- * @return {Promise}
- */
-function chain_promises(funcs) {
-    if (funcs.length &lt; 1) {
-        return Promise.resolve();
-    }
-    var i = 0;
-    return chain_executor(funcs, i);
-}
+<div class="box intro">
+    <p>Wrapper for the EXIF methods</p>
 
-/**
- * Recursive help method for chain_promises
- * 1) executes a function that returns a promise (no params allowed)
- * 2) chains itself to the success resolve of the promise
- *
- * @method chain_executor
- * @param funcs is an array of functions returning promises
- * @param i is the current working index
- */
-function chain_executor(funcs, i) {
-    var promise = funcs[i]();
-    return promise.then(function(){
-        console.log(i);
-        if (funcs.length &gt; i+1) {
-            return chain_executor(funcs, i+1);
-        } else {
-            return Promise.resolve();
-        }
-    })
-}
+</div>
 
-module.exports = {
-    &#x27;javascript_demo_constraint&#x27;:javascript_demo_constraint,
-    &#x27;hash_of_file_content&#x27;: hash_of_file_content,
-    &#x27;hash_xml_fragment&#x27;: hash_xml_fragment,
-    &#x27;remove_image&#x27;: remove_image,
-    &#x27;token_type_mapping&#x27;: token_type_mapping,
-    &#x27;chain_promises&#x27;: chain_promises
-};
 
-    </pre>
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method">
+                                <a href="#method_get_exif_from_image">get_exif_from_image</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_get_exif_from_image" class="method item">
+    <h3 class="name"><code>get_exif_from_image</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>path</code>
+                </li>
+                <li class="arg">
+                        <code>cb</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_exif_utils.js.html#l11"><code>src\exif_utils.js:11</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>This is a wrapper for the ExifImage object by the third party library exif</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">path</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>Path to the file</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">cb</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+            </div>
+
+
+
+    </div>
 </div>
                     </div>
                 </div>

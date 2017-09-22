@@ -1,5 +1,18 @@
-//const spawn = require('child_process').spawn;
-//const server = spawn('node', [app.getAppPath() + '/src/server.js'], { cwd: app.getAppPath() });
+/**
+* The cross platform electron interface: This is the main entry file for the desktop application.
+* <br>
+* It controls: <br>
+* 1) the electron app <br>
+* 2) And the server <br>
+*
+* We use electron-log to write logs to the hard drive. Uncaught exceptions are finally caught here.
+* <br>
+* After creating the Electron Window, this file starts the SERVER!
+*
+
+* @class Atom
+*/
+
 
 var process = require('process');
 var log = require('electron-log');
@@ -75,29 +88,5 @@ app.on('activate', () => {
   }
 });
 
+// Start the server
 server.run();
-
-/*
-server.stdout.on('data', (data) => {
-  var data = data.toString();
-  if (data.includes('READY')) {
-      log.info('reload window');
-      win.loadURL(url.format({
-        pathname: path.join('localhost:4000'),
-        protocol: 'http:',
-        slashes: true
-      }));
-  }
-  console.log(data.toString());
-})
-
-server.stderr.on('data', (data) => {
-  console.log(data.toString());
-})
-
-server.on('close', (code) => {
-  if (code) {
-    code = code.toString();
-  }
-  log.info('child process exited with code ' + code);
-}) */
