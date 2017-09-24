@@ -1,6 +1,6 @@
 # GIAnT
 [![Build Status](https://travis-ci.org/DanielPollithy/TransliterationApplication.svg?branch=master)](https://travis-ci.org/DanielPollithy/TransliterationApplication)
-[![Build status](https://ci.appveyor.com/api/projects/status/ry2i05ev77omps3h?svg=true)](https://ci.appveyor.com/project/DanielPollithy/GIAnT)
+[![Build status](https://ci.appveyor.com/api/projects/status/yvbe57nt8kvpt2e9?svg=true)](https://ci.appveyor.com/project/DanielPollithy/giant)
 [![Documentation Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](http://transliterationapplication.readthedocs.io/en/latest/?badge=latest)
 [![API Status](https://img.shields.io/badge/API-0.1-brightgreen.svg)](https://danielpollithy.github.io/GIAnT/api/)
 [![API Status](https://img.shields.io/badge/Test_Coverage--brightgreen.svg)](https://danielpollithy.github.io/GIAnT/coverage/lcov-report/index.html)
