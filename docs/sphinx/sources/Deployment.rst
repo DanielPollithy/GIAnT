@@ -188,8 +188,8 @@ and at the moment you are going to have a hard time installing neo4j into their 
     test: off
 
     deploy:
-      release: TransliterationApplication-v$(appveyor_build_version)
-      description: 'TransliterationApplication'
+      release: GIAnT-v$(appveyor_build_version)
+      description: 'GIAnT'
       provider: GitHub
       auth_token:
         secure: QBn6bw8znM2WsrG32eTzA55Iu0iE6oymujVBos6XFUldN/biNahd6Csr6d9Y4u+E

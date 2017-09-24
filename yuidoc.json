@@ -1,6 +1,6 @@
 {
-    "name": "TransliterationApplication API",
-    "description": "TransliterationApplication: A node/express/neo4j/electron application",
+    "name": "GIAnT API",
+    "description": "GIAnT: A node/express/neo4j/electron application",
     "version": "1.0.0",
     "url": "",
     "options": {

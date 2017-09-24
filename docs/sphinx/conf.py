@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# TransliterationApplication documentation build configuration file, created by
+# GIAnT documentation build configuration file, created by
 # sphinx-quickstart on Wed May 31 15:08:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'TransliterationApplication'
+project = u'GIAnT'
 copyright = u'2017, Daniel Pollithy'
 author = u'Daniel Pollithy'
 
@@ -100,7 +100,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TransliterationApplicationdoc'
+htmlhelp_basename = 'GIAnTdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -127,7 +127,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'TransliterationApplication.tex', u'TransliterationApplication Documentation',
+    (master_doc, 'GIAnT.tex', u'GIAnT Documentation',
      u'Daniel Pollithy', 'manual'),
 ]
 
@@ -137,7 +137,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'transliterationapplication', u'TransliterationApplication Documentation',
+    (master_doc, 'giant', u'GIAnT Documentation',
      [author], 1)
 ]
 
@@ -148,8 +148,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'TransliterationApplication', u'TransliterationApplication Documentation',
-     author, 'TransliterationApplication', 'One line description of project.',
+    (master_doc, 'GIAnT', u'GIAnT Documentation',
+     author, 'GIAnT', 'One line description of project.',
      'Miscellaneous'),
 ]
 

@@ -27,7 +27,7 @@ artifacts:
 
 deploy:
   release: $(appveyor_repo_tag_name)
-  description: 'TransliterationApplication'
+  description: 'GIAnT'
   provider: GitHub
   auth_token:
     secure: QBn6bw8znM2WsrG32eTzA55Iu0iE6oymujVBos6XFUldN/biNahd6Csr6d9Y4u+E

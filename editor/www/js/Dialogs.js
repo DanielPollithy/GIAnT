@@ -469,7 +469,7 @@ var AboutDialog = function(editorUi)
 	var div = document.createElement('div');
 	div.setAttribute('align', 'center');
 	var h3 = document.createElement('h3');
-	mxUtils.write(h3, mxResources.get('about') + ' TransliterationApplication');
+	mxUtils.write(h3, mxResources.get('about') + ' GIAnT');
 	div.appendChild(h3);
 	var img = document.createElement('img');
 	img.style.border = '0px';

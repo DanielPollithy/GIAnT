@@ -16,13 +16,13 @@ Developing a Codec: Test driven development
 Neo4j v.s. relational database for graphs
 -----------------------------------------
 
-Future use cases of the TransliterationApplication
+Future use cases of the GIAnT
 --------------------------------------------------
 
 Continuous integration: Testing and deploying code
 --------------------------------------------------
 
-TransliterationApplication as a service
+GIAnT as a service
 ---------------------------------------
 
 

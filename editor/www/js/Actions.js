@@ -720,7 +720,7 @@ Actions.prototype.init = function()
 		
 		window.open(RESOURCES_PATH + '/help' + ext + '.html');
 	});
-	this.put('about', new Action(mxResources.get('about') + ' Transliteration Application', function()
+	this.put('about', new Action(mxResources.get('about') + ' GIAnT', function()
 	{
 		ui.showDialog(new AboutDialog(ui).container, 320, 280, true, true);
 	}, null, null, 'F1'));

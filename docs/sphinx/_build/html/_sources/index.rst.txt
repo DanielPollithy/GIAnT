@@ -1,9 +1,9 @@
-.. TransliterationApplication documentation master file, created by
+.. GIAnT documentation master file, created by
    sphinx-quickstart on Wed May 31 15:08:02 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to TransliterationApplication's documentation!
+Welcome to GIAnT's documentation!
 ======================================================
 
 This is a **technical documentation** of the components and how to use them.
@@ -11,7 +11,7 @@ It powers ~well written "articles" on general questions. See Articles_ section.
 
 There is also an **API description** here:
 
-`<https://danielpollithy.github.io/TransliterationApplication/api/>`_
+`<https://danielpollithy.github.io/GIAnT/api/>`_
 
 Contents
 --------

@@ -684,7 +684,7 @@ app.get('/batch-add-to-neo4j', function (req, res) {
 
 function run() {
     app.listen(4000, 'localhost');
-    log.info('TransliterationApplication Server started on http://localhost:4000/');
+    log.info('GIAnT Server started on http://localhost:4000/');
     // console.log('READY');
 }
 

@@ -59,8 +59,8 @@ Installation
 TraApp needs a database connection to neo4j. This can be local (on your machine) or over the internet.
 
  1. Install Neo4j: `<https://neo4j.com/docs/operations-manual/current/installation/>`_
- 2. Download TraApp for your operating system: `<https://github.com/DanielPollithy/TransliterationApplication/releases>`_
- 3. Unzip the downloaded archive and start the **TransliterationApplication**
+ 2. Download TraApp for your operating system: `<https://github.com/DanielPollithy/GIAnT/releases>`_
+ 3. Unzip the downloaded archive and start the **GIAnT**
 
 Login to neo4j
 --------------
@@ -207,7 +207,7 @@ Relations
 .........
 
 The entities of your image annotations are expressed by tokens.
-TransliterationApplication becomes handy when these tokens interact with each others or the important information lays in "between" them.
+GIAnT becomes handy when these tokens interact with each others or the important information lays in "between" them.
 (This is also the case where graph databases can serve with their graph query languages.)
 
 .. image:: sources/images/screenshots/book.PNG
@@ -250,7 +250,7 @@ Different tokens need distinct properties. You can configure this with the setti
 Data scheme in neo4j
 --------------------
 
-The TransliterationApplication can be seen as a Graphical Image Annotation Tool that stores your data in Neo4j. So you get all of the advantages graph databases have. 
+The GIAnT can be seen as a Graphical Image Annotation Tool that stores your data in Neo4j. So you get all of the advantages graph databases have.
 
 Access to your neo4j database is usually at this local url: http://127.0.0.1:7474
 
@@ -462,7 +462,7 @@ Using Cypher
 
 Now that you know how your data is structured in the graph database you might already have ideas on what kind of information you want to retrieve from your 'corpus'.
 
-**Using the TransliterationApplication but refusing to use Cypher is a waste of time!**
+**Using the GIAnT but refusing to use Cypher is a waste of time!**
 Cypher is the SQL oriented query language for neo4j graph databases. https://neo4j.com/developer/cypher-query-language/
 
 It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.  TODO: Add links to the following resources!
@@ -653,7 +653,7 @@ Exporting your data
 
 It is very likely that you don't only want to analyze your data but also take it with you to another application.
 
-For this purpose TransliterationApplication comes with a **SQL and a CSV export**.
+For this purpose GIAnT comes with a **SQL and a CSV export**.
 
 Both of them are structured into four tables:
  - Nodes table

@@ -1,5 +1,5 @@
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\about.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\about.js
 FN:1,(anonymous_1)
 FNF:1
 FNH:1
@@ -12,7 +12,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\codec.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\codec.js
 FN:117,(anonymous_1)
 FN:118,(anonymous_2)
 FN:120,(anonymous_3)
@@ -414,7 +414,7 @@ BRF:79
 BRH:60
 end_of_record
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\database.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\database.js
 FN:8,log_error_and_close_session
 FN:9,(anonymous_2)
 FN:72,(anonymous_3)
@@ -909,7 +909,7 @@ BRF:58
 BRH:42
 end_of_record
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\utils.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\utils.js
 FN:24,hash_of_file_content
 FN:33,hash_xml_fragment
 FN:37,remove_image
@@ -972,7 +972,7 @@ BRF:8
 BRH:8
 end_of_record
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\heatmap.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\heatmap.js
 FN:24,clean_caches
 FN:44,count_entities_by_label
 FN:46,(anonymous_3)
@@ -1399,7 +1399,7 @@ BRF:84
 BRH:60
 end_of_record
 TN:
-SF:C:\Users\polli\Desktop\build\TransliterationApplication\src\exif_utils.js
+SF:C:\Users\polli\Desktop\build\GIAnT\src\exif_utils.js
 FN:4,get_exif_from_image
 FN:6,(anonymous_2)
 FNF:2

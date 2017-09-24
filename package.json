@@ -1,8 +1,8 @@
 {
-  "name": "transliteration_application",
-  "productName": "Transliteration Application",
+  "name": "giant",
+  "productName": "GIAnT",
   "version": "0.0.3",
-  "description": "A graphical transliteration tool based on mxgraph, Neo4J and electron",
+  "description": "A graphical image annotation tool based on mxgraph, neo4j and electron",
   "main": "src/atom.js",
   "directories": {
     "test": "test"
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DanielPollithy/TransliterationApplication.git"
+    "url": "git+https://github.com/DanielPollithy/GIAnT.git"
   },
   "keywords": [
     "node",
@@ -27,6 +27,8 @@
     "mxgraph",
     "neo4j",
     "transliteration",
+    "image annotation",
+    "digital humanities",
     "travis-ci",
     "yuidocs",
     "appveyor"
@@ -34,9 +36,9 @@
   "author": "Daniel Pollithy",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/DanielPollithy/TransliterationApplication/issues"
+    "url": "https://github.com/DanielPollithy/GIAnT/issues"
   },
-  "homepage": "https://github.com/DanielPollithy/TransliterationApplication#readme",
+  "homepage": "https://github.com/DanielPollithy/GIAnT#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.13.1",

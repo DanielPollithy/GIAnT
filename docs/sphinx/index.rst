@@ -1,14 +1,14 @@
-.. TransliterationApplication documentation master file, created by
+.. GIAnT documentation master file, created by
    sphinx-quickstart on Wed May 31 15:08:02 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-TransliterationApplication
-==========================
+GIAnT - Graphical Image Annotation Tool
+=======================================
 
 .. image:: sources/images/logo.png
 
-TransliterationApplication is an open source cross platform desktop application designed
+GIAnT is an open source cross platform desktop application designed
 to aid scientists with graphical image annotation in the process of creating a corpus.
 
 If you have a set of images, want to make annotations or even analyze how utters interact with each
@@ -26,7 +26,7 @@ This documentation is divided into three sections:
  3. Documentations: A Technical documentation which enables programmers to extend this application
 
 (There is an **API description** available here:
-`<https://danielpollithy.github.io/TransliterationApplication/api/>`_ )
+`<https://danielpollithy.github.io/GIAnT/api/>`_ )
 
 Contents
 --------
