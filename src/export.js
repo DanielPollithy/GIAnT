@@ -14,29 +14,33 @@
  *
  *
  *      CREATE TABLE IF NOT EXISTS Node (
- *      Node_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ *      Node_ID INTEGER AUTO_INCREMENT,
  *      tokenType TEXT,
- *      groupType TEXT
+ *      groupType TEXT,
+ *      PRIMARY KEY (Node_ID)
  *      );
  *
  *      CREATE TABLE IF NOT EXISTS Relation (
- *      Relation_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+ *      Relation_ID INTEGER AUTO_INCREMENT,
  *      SourceNode_ID INTEGER,
  *      TargetNode_ID INTEGER,
- *      relationType TEXT
+ *      relationType TEXT,
+ *      PRIMARY KEY (Relation_ID)
  *      );
  *
  *      CREATE TABLE IF NOT EXISTS NodeProperties (
- *      NodeProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,
- *      key TEXT,
- *      value TEXT,
- *      Node_ID INTEGER
+ *      NodeProperties_ID INTEGER AUTO_INCREMENT,
+ *      key_ TEXT,
+ *      value_ TEXT,
+ *      Node_ID INTEGER,
+ *      PRIMARY KEY (NodeProperties_ID)
  *      );
  *
  *      CREATE TABLE IF NOT EXISTS RelationProperties (
- *      RelationProperties_ID INTEGER PRIMARY KEY AUTOINCREMENT,
- *      key TEXT,
- *      value TEXT
+ *      RelationProperties_ID INTEGER AUTO_INCREMENT,
+ *      key_ TEXT,
+ *      value_ TEXT,
+ *      PRIMARY KEY (RelationProperties_ID)
  *      );
  *
  * @class Export
@@ -90,10 +94,11 @@ Export._nodes_to_sql = function (write_stream) {
             var session = database._get_session();
             write_stream.write(
                 'CREATE TABLE IF NOT EXISTS Nodes ( \n' +
-                'Node_ID INTEGER PRIMARY KEY, \n' +
-                'value TEXT, \n' +
+                'Node_ID INTEGER, \n' +
+                'value_ TEXT, \n' +
                 'tokenType TEXT, \n' +
-                'groupType TEXT \n' +
+                'groupType TEXT, \n' +
+                'PRIMARY KEY (Node_ID) \n' +
                 '); \n\n'
             );
         } catch (e) {
@@ -103,7 +108,7 @@ Export._nodes_to_sql = function (write_stream) {
         session.run("MATCH (n) RETURN ID(n) as ident, n.value as value, n.tokenType as tokenType, n.groupType as groupType;")
             .subscribe({
                     onNext: function (record) {
-                        write_stream.write('INSERT INTO Nodes (Node_ID, value, tokenType, groupType) VALUES (');
+                        write_stream.write('INSERT INTO Nodes (Node_ID, value_, tokenType, groupType) VALUES (');
                         write_stream.write(record.get('ident').toString() + ', ');
                         write_stream.write((record.get('value') ? '"' + encodeURIComponent(record.get('value')) + '"' : 'NULL') + ', ');
                         write_stream.write((record.get('tokenType') ? '"' + encodeURIComponent(record.get('tokenType')) + '"' : 'NULL') + ', ');
@@ -137,10 +142,11 @@ Export._relations_to_sql = function (write_stream) {
             var session = database._get_session();
             write_stream.write(
                 '\nCREATE TABLE IF NOT EXISTS Relations ( \n' +
-                'Relation_ID INTEGER PRIMARY KEY, \n' +
+                'Relation_ID INTEGER, \n' +
                 'relationType TEXT, \n' +
                 'SourceNode_ID INTEGER REFERENCES Nodes (Node_ID), \n' +
-                'TargetNode_ID INTEGER REFERENCES Nodes (Node_ID)\n' +
+                'TargetNode_ID INTEGER REFERENCES Nodes (Node_ID), \n' +
+                'PRIMARY KEY (Relation_ID)\n' +
                 '); \n\n'
             );
         } catch (e) {
@@ -184,10 +190,11 @@ Export._relation_properties_to_sql = function (write_stream) {
             var session = database._get_session();
             write_stream.write(
                 '\nCREATE TABLE IF NOT EXISTS RelationProperties ( \n' +
-                'RelationProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
+                'RelationProperty_ID INTEGER AUTO_INCREMENT, \n' +
                 'Relation_ID INTEGER REFERENCES Relations, \n' +
-                'key TEXT, \n' +
-                'value TEXT \n' +
+                'key_ TEXT, \n' +
+                'value_ TEXT, \n' +
+                'PRIMARY KEY (RelationProperty_ID) \n' +
                 '); \n\n'
             );
         } catch (e) {
@@ -200,7 +207,7 @@ Export._relation_properties_to_sql = function (write_stream) {
                         var props = record.get('props');
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                            write_stream.write('INSERT INTO RelationProperties (Relation_ID, key, value) VALUES (');
+                            write_stream.write('INSERT INTO RelationProperties (Relation_ID, key_, value_) VALUES (');
                              write_stream.write(record.get('ident').toString() + ', ');
                              write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ', ');
                              write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '); \n');
@@ -234,10 +241,11 @@ Export._node_properties_to_sql = function (write_stream) {
             var session = database._get_session();
             write_stream.write(
                 '\nCREATE TABLE IF NOT EXISTS NodeProperties ( \n' +
-                'NodeProperty_ID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
+                'NodeProperty_ID INTEGER AUTO_INCREMENT, \n' +
                 'Node_ID INTEGER REFERENCES Nodes, \n' +
-                'key TEXT, \n' +
-                'value TEXT \n' +
+                'key_ TEXT, \n' +
+                'value_ TEXT, \n' +
+                'PRIMARY KEY (NodeProperty_ID) \n' +
                 '); \n\n'
             );
         } catch (e) {
@@ -250,7 +258,7 @@ Export._node_properties_to_sql = function (write_stream) {
                         var props = record.get('props');
                         Object.keys(props).forEach(function(key) {
                             var value = props[key];
-                            write_stream.write('INSERT INTO NodeProperties (Node_ID, key, value) VALUES (');
+                            write_stream.write('INSERT INTO NodeProperties (Node_ID, key_, value_) VALUES (');
                              write_stream.write(record.get('ident').toString() + ', ');
                              write_stream.write((key ? '"' + encodeURIComponent(key) + '"' :  'NULL') + ', ');
                              write_stream.write((value ? '"' + encodeURIComponent(value) + '"' :  'NULL') + '); \n');
