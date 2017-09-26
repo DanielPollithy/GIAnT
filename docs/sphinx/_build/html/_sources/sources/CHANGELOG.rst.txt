@@ -1,7 +1,8 @@
-CHANGELOG
-=========
+v1.0
+====
 
-make a list of changes connected and linked to by Downloads.rst
+v1.0.1
+------
 
-Keep track of Versions (link to semantic versioning)
+Improved the SQL export (restructured the FOREIGN KEY part of the queries).
 

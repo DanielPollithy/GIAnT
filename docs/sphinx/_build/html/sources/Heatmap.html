@@ -44,9 +44,11 @@
   <div class="section" id="heatmap">
 <h1>Heatmap<a class="headerlink" href="#heatmap" title="Permalink to this headline">¶</a></h1>
 <p>The heatmap tool can be used to analyze the positions of tokens.
-It might be interesting to see the density of tokens in a region or the outline they form.</p>
-<p>The input for this tool has to be a Cypher query. It will then only work with the tokens,
+It might be interesting to see the density of tokens in a region or the outline they form.
+The input for this tool has to be a Cypher query. It will then only work with the tokens,
 therefore it is recommended to build your query to only return tokens.</p>
+<p>Example query:
+<code class="code docutils literal"><span class="pre">MATCH</span> <span class="pre">(s:Token)</span> <span class="pre">RETURN</span> <span class="pre">s;</span></code></p>
 <p>The query is not analyzed or guarded. This means that any code can be executed.
 As a consequence must this feature kept on a local system and not exposed through a webserver!</p>
 <p>The color scheme of the heatmap reaches from 0 (yellow) to 1 (red).</p>
@@ -54,15 +56,105 @@ As a consequence must this feature kept on a local system and not exposed throug
 <h2>Normalization techniques<a class="headerlink" href="#normalization-techniques" title="Permalink to this headline">¶</a></h2>
 <p>In this context the term normalization refers to an algorithm that makes the positions
 of tokens in different images comparable.</p>
-<p>So far there are two types of normalizations present:</p>
+<p>There are three types of normalizations present:</p>
 <div class="section" id="normalization-1-position-in-image">
 <h3>Normalization 1: Position in image<a class="headerlink" href="#normalization-1-position-in-image" title="Permalink to this headline">¶</a></h3>
-<p>Das Bezugssystem ist hier</p>
+<p>All images are normalized to the output size.
+The tokens are scaled accordingly.</p>
+<p>The final result is the distribution of tokens over the images.</p>
+<img alt="../_images/n1_example.jpeg" src="../_images/n1_example.jpeg" />
 </div>
 <div class="section" id="normalization-2-position-in-scritte-bounding-box">
 <h3>Normalization 2: Position in scritte (bounding box)<a class="headerlink" href="#normalization-2-position-in-scritte-bounding-box" title="Permalink to this headline">¶</a></h3>
-<p>...</p>
+<p>This method fetches the Bounding Box(see below) of every image and scales
+the tokens according to it.</p>
+<p>The bounding box is the rectangle spanned by the lowest coordinate
+to the highest one.</p>
+<p>The result shows the distribution of tokens within the bounding box.</p>
+<img alt="../_images/n2_example.jpeg" src="../_images/n2_example.jpeg" />
 </div>
+</div>
+<div class="section" id="normalization-3-bounding-box-centered">
+<h2>Normalization 3: Bounding box centered<a class="headerlink" href="#normalization-3-bounding-box-centered" title="Permalink to this headline">¶</a></h2>
+<p>Here the bounding box is placed into the normalised image.
+But the position is changed: The box&#8217;s center is placed over the normalisation target center.</p>
+<p>As a result, the bounding boxes and by that way the outlines of all scritte are comparable.</p>
+<p>This method could be used to extract the outline of fragments.
+Example: Do they have a horizontal orientation or are they grouped like a
+triangle.</p>
+<img alt="../_images/n3_example.jpeg" src="../_images/n3_example.jpeg" />
+</div>
+<div class="section" id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
+<p>The heatmap creation process happens as a stream.</p>
+<img alt="../_images/flow.jpeg" src="../_images/flow.jpeg" />
+<p>Processing every single token means some computation effort. Especially fetching images/bounding boxes
+from the database costs resources, in particulary time.
+The heatmap tool was never designed to be a big data application but rather a medium data application
+that shall work with up to 3000 images containing 1 fragment containing 100 elements.</p>
+<p>Based on this requirement a ram cache was introduced which is not persistent between heatmap generations
+but could be implemented easily.
+The cache prevents unnecessary database request.</p>
+<p>The performance evaluation has shown that it is possible to generate heatmaps in reasonable time.</p>
+<img alt="../_images/performance.png" src="../_images/performance.png" />
+<p>The most computation intense normalization took 15 minutes with 300.000 elements.
+The data points of this chart are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Total elements</th>
+<th class="head">Normalization #1 [s]</th>
+<th class="head">Norm. #2 [s]</th>
+<th class="head">Norm. #3 [s]</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1.000</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>2.000</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>5.000</td>
+<td>4</td>
+<td>9</td>
+<td>7</td>
+</tr>
+<tr class="row-odd"><td>10.000</td>
+<td>9</td>
+<td>30</td>
+<td>14</td>
+</tr>
+<tr class="row-even"><td>50.000</td>
+<td>45</td>
+<td>156</td>
+<td>83</td>
+</tr>
+<tr class="row-odd"><td>100.000</td>
+<td>100</td>
+<td>205</td>
+<td>163</td>
+</tr>
+<tr class="row-even"><td>300.000</td>
+<td>550</td>
+<td>989</td>
+<td>701</td>
+</tr>
+</tbody>
+</table>
+<p>The performance test took place on regular Ubuntu 16.04 with 64 bit on a laptop with
+Intel® Core™ i5-2520M CPU &#64; 2.50GHz × 4,
+and 3,7 GiB RAM and
+a HDD.</p>
 </div>
 </div>
 
@@ -80,6 +172,8 @@ of tokens in different images comparable.</p>
 <li><a class="reference internal" href="#normalization-2-position-in-scritte-bounding-box">Normalization 2: Position in scritte (bounding box)</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#normalization-3-bounding-box-centered">Normalization 3: Bounding box centered</a></li>
+<li><a class="reference internal" href="#performance">Performance</a></li>
 </ul>
 </li>
 </ul>

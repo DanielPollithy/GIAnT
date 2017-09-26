@@ -1,0 +1,1082 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Guides &#8212; GIAnT  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Articles" href="Articles.html" />
+    <link rel="prev" title="GIAnT - Graphical Image Annotation Tool" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="guides">
+<h1>Guides<a class="headerlink" href="#guides" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="feature-overview">
+<h2>Feature overview<a class="headerlink" href="#feature-overview" title="Permalink to this headline">¶</a></h2>
+<p>GIAnT is designed to work on <strong>win32</strong>, <strong>osx</strong> and <strong>linux</strong>.</p>
+<p>It uses the <strong>neo4j database</strong> <a class="reference external" href="https://neo4j.com">https://neo4j.com</a> as graph storage which is <strong>free to use</strong> in the community edition.</p>
+<p>Modelling your annotation use case happens in a graph environment:
+<strong>Think about your data as nodes and edges!</strong></p>
+<p>GIAnT comes with an <strong>Editor</strong> which speeds up the annotation process of your images.</p>
+<img alt="_images/feature_overview.png" src="_images/feature_overview.png" />
+<dl class="docutils">
+<dt>It features:</dt>
+<dd><ul class="first last simple">
+<li>different node types (with positional information and without)</li>
+<li>layers which can be interpreted as chronology</li>
+<li>properties of nodes with auto completion</li>
+<li>copy&#8217;n&#8217;paste and standard image editor features</li>
+<li>meta information (like EXIF data)</li>
+</ul>
+</dd>
+</dl>
+<p>You store all of your images in the so called <strong>Index</strong>.</p>
+<img alt="_images/index.png" src="_images/index.png" />
+<p>Every image has <strong>fragments</strong>: They are based on the same image but store another subgraph.</p>
+<img alt="_images/overview_fragments.png" src="_images/overview_fragments.png" />
+<p>You can add <strong>comments</strong> to fragments and mark them as <strong>done</strong>.</p>
+<p>The <strong>Heatmap Tool</strong> can show you the distribution of the nodes on your annotated images.
+You can use the <strong>CYPHER</strong> graph query language to select the input nodes for the heatmap algorithm.</p>
+<img alt="_images/heatmap_overview.png" src="_images/heatmap_overview.png" />
+<p><strong>Exporting</strong> your data and images is possible.
+The data can be exported to <strong>CSV</strong> and <strong>SQL</strong>.</p>
+<img alt="_images/overview_export.png" src="_images/overview_export.png" />
+<p>The <strong>editor&#8217;s behaviour can be configured</strong> to a certain extend.</p>
+<img alt="_images/overview_settings.png" src="_images/overview_settings.png" />
+<p><strong>Custom behaviour</strong> can be implemented via <strong>javascript</strong>.</p>
+<img alt="_images/overview_custom_js.png" src="_images/overview_custom_js.png" />
+<p><strong>Data integrity</strong> can be assured by using <strong>data constraints</strong>.</p>
+<img alt="_images/overview_constraints.png" src="_images/overview_constraints.png" />
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>GIAnT needs a database connection to neo4j. This can be local (on your machine) or over the internet.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Install Neo4j: <a class="reference external" href="https://neo4j.com/docs/operations-manual/current/installation/">https://neo4j.com/docs/operations-manual/current/installation/</a></li>
+<li>Download GIAnT for your operating system: <a class="reference external" href="https://github.com/DanielPollithy/GIAnT/releases">https://github.com/DanielPollithy/GIAnT/releases</a></li>
+<li>Unzip the downloaded archive and start the <strong>GIAnT</strong></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="login-to-neo4j">
+<h2>Login to neo4j<a class="headerlink" href="#login-to-neo4j" title="Permalink to this headline">¶</a></h2>
+<p>Once you have started the GIAnT you are asked to login to your neo4j database:</p>
+<img alt="_images/login_screen.png" src="_images/login_screen.png" />
+<dl class="docutils">
+<dt>The first box asks for the end point: <strong>bolt://localhost:7687</strong></dt>
+<dd><ul class="first last simple">
+<li><em>bolt://</em> stands for the protocol which is used for the connection</li>
+<li><em>localhost</em> stands for the local machine (you could replace this by an IP-address in order to connect to a server)</li>
+<li><em>:7687</em> is the database port on which the neo4j application is listening on</li>
+</ul>
+</dd>
+</dl>
+<p>The second box asks for the username: <em>default is neo4j</em></p>
+<p>The third box asks for the password: <em>default is neo4j</em>
+<strong>The password is not explicitly stored in the application. Therefore you have to enter it on every login.</strong></p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Now that you are logged in you are able to use the application.
+This guide shows you how to use the application. Don&#8217;t enter any serious data until you came up with
+a scheme for your special purpose!</p>
+<div class="section" id="uploading-an-image">
+<h3>Uploading an image<a class="headerlink" href="#uploading-an-image" title="Permalink to this headline">¶</a></h3>
+<p>Clicking on the index button gets you to a table containing all of your uploaded images.</p>
+<img alt="_images/index_bar.png" src="_images/index_bar.png" />
+<p>At the bottom of the page there is an upload button.</p>
+<p><strong>Attention: You can only upload jpeg files</strong></p>
+<img alt="_images/upload.png" src="_images/upload.png" />
+<p>Once uploaded a line appears in the table. Before that the creation date of the picture and the <strong>GPS location</strong>
+are being extracted and stored in the database.</p>
+<img alt="_images/indexline.png" src="_images/indexline.png" />
+<ul class="simple">
+<li>The <strong>ID</strong> is a unique identifier</li>
+<li>The <strong>Pfad</strong> contains the name of the uploaded image</li>
+<li><strong>Erstellungsdatum</strong> is the EXIF creation date which was stored in the JPEG image</li>
+<li><strong>Fragmente</strong> is a link to the fragments that belong to the image</li>
+<li><strong>Löschen</strong> signifies <em>deletion</em></li>
+</ul>
+<p>You can click on the table headers in order to sort the table by specific columns.</p>
+</div>
+<div class="section" id="creating-a-fragment">
+<h3>Creating a fragment<a class="headerlink" href="#creating-a-fragment" title="Permalink to this headline">¶</a></h3>
+<p>The same procedure can be repeated for the creation of a fragment.</p>
+<img alt="_images/new_frag.png" src="_images/new_frag.png" />
+<p>A fragment has a name for human identification, you can add a comment, mark the fragment <em>ready</em>
+open the <strong>Editor</strong> for the fragment and transfer the specific fragment to the neo4j database.</p>
+<img alt="_images/frag_line.png" src="_images/frag_line.png" />
+</div>
+<div class="section" id="transfer-to-neo4j">
+<h3>Transfer to neo4j<a class="headerlink" href="#transfer-to-neo4j" title="Permalink to this headline">¶</a></h3>
+<p>In order to transfer your data created within the editor you can</p>
+<blockquote>
+<div><ul class="simple">
+<li>use the &#8216;Übertragen&#8217; link in the fragment&#8217;s line</li>
+<li>or click on the &#8216;Batch add&#8217; button in the menu bar</li>
+</ul>
+</div></blockquote>
+<img alt="_images/batch_add.png" src="_images/batch_add.png" />
+<p><strong>The batch add makes use of hash codes.</strong>
+That means: Only fragments that have been changed or are not in
+the database right now are transferred to neo4j.</p>
+</div>
+</div>
+<div class="section" id="using-the-editor">
+<h2>Using the editor<a class="headerlink" href="#using-the-editor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<p>The editor is where your work happens. We implemented some features to improve your productivity.
+But first comes the basics.</p>
+</div>
+<div class="section" id="layers">
+<h3>Layers<a class="headerlink" href="#layers" title="Permalink to this headline">¶</a></h3>
+<p>You start off only with the Background layer. It is not possible to attach any data to this layer (that is why you can&#8217;t change the
+status of the lock icon). The only function it has is the checkbox which switches the visibility of the layer on and off.</p>
+<p>Imagine you already have a quite populated layers on top of the image. Sometimes it can be better (less distraction) to hide the
+background image for a while.</p>
+<img alt="_images/layers.PNG" src="_images/layers.PNG" />
+<p>To start editing you have to click on the &#8216;+&#8217;-Button in order to add a new layer. The name of the layer is no changable on purpose.
+The lock will be open on this layer because you are still editing it. If you want to make sure that no errors occur meanwhile you are
+editing another layer, feel free to lock it.</p>
+<p>The trash icon of course stands for the deletion of the layer. The only sideeffect that can happen here is that gaps in the enumeration
+appear. Say we created 3 layers. Deleted the second one. Now only layer &#8220;1&#8221; and &#8220;3&#8221; remain. The chronology of course is still there.</p>
+<p>If you closed the layers panel by clicking the &#8220;x&#8221; button in the upper right corner,
+you can get the panel by clicking &#8220;View&#8221; -&gt; &#8220;Outline&#8221;.</p>
+</div>
+<div class="section" id="nodes">
+<h3>Nodes<a class="headerlink" href="#nodes" title="Permalink to this headline">¶</a></h3>
+<p>We call every box which is drawn on a layer a node. The different types of boxes can be configured through the settings.
+In general every different entity should have its own node type (box type).</p>
+<img alt="_images/node_types.PNG" src="_images/node_types.PNG" />
+<p>By double clicking on one box you can edit the content of it. This might not be necessary for your use-case but is auxiliary if
+you want to make your annotations easy readable.</p>
+<dl class="docutils">
+<dt>The given box types are divided into to categories:</dt>
+<dd><ul class="first last simple">
+<li>Singular Tokens (positional)</li>
+<li>Group Tokens</li>
+</ul>
+</dd>
+</dl>
+<p>The default setup interprets them as follows:</p>
+<dl class="docutils">
+<dt>The singular tokens contain text or at least a symbole.</dt>
+<dd><ul class="first last simple">
+<li>&#8220;Token&#8221; is a real textual component (maybe a word)</li>
+<li>&#8220;Modification&#8221; is always overlapping a &#8220;Token&#8221; (maybe a strike-through or an overwriting)</li>
+<li>&#8220;Symbol&#8221; is straight-forward a symbole</li>
+</ul>
+</dd>
+<dt>The Group Tokens shall not carry positional information. They are called &#8220;Groups&#8221;.</dt>
+<dd><ul class="first last simple">
+<li>&#8220;Comment&#8221; is a group of singular tokens that relates over one single entity to another group (Imagine to grafitis on neighbouring walls relating to each others)</li>
+<li>&#8220;Frame&#8221; shall carry the psychological framing. The &#8220;Frame&#8221; Group is special because it connects to MetaGroups. (see next paragraph)</li>
+<li>&#8220;Blanco&#8221; is a general purpose group</li>
+</ul>
+</dd>
+</dl>
+<p>Fictional example for comment groups:</p>
+<img alt="_images/comments.PNG" src="_images/comments.PNG" />
+<p>Properties can be attached to tokens. See section &#8220;properties&#8221;.</p>
+</div>
+<div class="section" id="relations">
+<h3>Relations<a class="headerlink" href="#relations" title="Permalink to this headline">¶</a></h3>
+<p>The entities of your image annotations are expressed by tokens.
+GIAnT becomes handy when these tokens interact with each others or the important information lays in &#8220;between&#8221; them.
+(This is also the case where graph databases can serve with their graph query languages.)</p>
+<img alt="_images/book.PNG" src="_images/book.PNG" />
+<dl class="docutils">
+<dt>Different kinds of exemplary relations can be examined:</dt>
+<dd><ul class="first last simple">
+<li>&#8220;part of&#8221; relations: a word is part of a sentence etc.</li>
+<li>&#8220;follows&#8221; relation: a word follows another word</li>
+<li>&#8220;negates&#8221; relation: an expression negates the related expression</li>
+<li>&#8220;opens frame&#8221; relation: a word or symbole opens a psychological frame</li>
+<li>... (lots of possibilites)</li>
+</ul>
+</dd>
+</dl>
+<p>Properties can be attached to relations. See section &#8220;properties&#8221;.</p>
+</div>
+<div class="section" id="properties">
+<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<p>Properties are attaches to relations and tokens. The stored information is transferred directly into the graph database so it can be used for querying your data.</p>
+<img alt="_images/properties.PNG" src="_images/properties.PNG" />
+<p><strong>Cool Features:</strong>
+Every property you have transferred into the neo4j graph database is used to enhance your experience by providing autocompletion:
+There is autocomletion on:</p>
+<ul class="simple">
+<li>property names and</li>
+<li>property values</li>
+</ul>
+<p>Selecting a new property from the autocompletion.</p>
+<img alt="_images/property_name.PNG" src="_images/property_name.PNG" />
+<p>Selecting a value for the given property from the autocompletion.</p>
+<img alt="_images/property_value.PNG" src="_images/property_value.PNG" />
+<p>The autocompletion is token type, property and relation type sensitive.</p>
+<p>Different tokens need distinct properties. You can configure this with the settings and even give default values and javascript validations. There are a lot of possibilities to model your use-case with this tools.</p>
+</div>
+</div>
+<div class="section" id="data-scheme-in-neo4j">
+<h2>Data scheme in neo4j<a class="headerlink" href="#data-scheme-in-neo4j" title="Permalink to this headline">¶</a></h2>
+<p>The GIAnT can be seen as a Graphical Image Annotation Tool that stores your data in Neo4j. So you get all of the advantages graph databases have.</p>
+<p>Access to your neo4j database is usually at this local url: <a class="reference external" href="http://127.0.0.1:7474">http://127.0.0.1:7474</a></p>
+<p>The boxes and edges you drawn in the editor are reflected by the following scheme in Neo4j.</p>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<p>Every uploaded image is represented by a node. Neo4J label: <code class="code docutils literal"><span class="pre">:Image</span></code></p>
+<p>The following Cypher query retrieves it for you:</p>
+<img alt="_images/1_image.PNG" src="_images/1_image.PNG" />
+<img alt="_images/image.PNG" src="_images/image.PNG" />
+<p>Image properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>File path</td>
+<td><code class="code docutils literal"><span class="pre">file_path</span></code></td>
+</tr>
+<tr class="row-even"><td>The width in pixels</td>
+<td><code class="code docutils literal"><span class="pre">width</span></code></td>
+</tr>
+<tr class="row-odd"><td>The height in pixels</td>
+<td><code class="code docutils literal"><span class="pre">height</span></code></td>
+</tr>
+<tr class="row-even"><td>EXIF date or upload date</td>
+<td><code class="code docutils literal"><span class="pre">upload_date</span></code></td>
+</tr>
+</tbody>
+</table>
+<img alt="_images/image_data.PNG" src="_images/image_data.PNG" />
+<p>By expanding the child relations (lower circle segment button)...</p>
+<img alt="_images/image.PNG" src="_images/image.PNG" />
+</div>
+<div class="section" id="fragments">
+<h3>Fragments<a class="headerlink" href="#fragments" title="Permalink to this headline">¶</a></h3>
+<p>You see that images are connected to fragments. Neo4J label: <code class="code docutils literal"><span class="pre">:Fragment</span></code>
+Fragments are interpretations or multiple areas of one image.
+Explicit: One image relates to many fragments but one fragment only relates to one image. We call this 1-n relationship.</p>
+<p>The Neo4J Label of the relation between Image and Fragment is called <code class="code docutils literal"><span class="pre">:image</span></code>.</p>
+<img alt="_images/image_fragment.PNG" src="_images/image_fragment.PNG" />
+<p>By expanding the Fragment&#8217;s relations we see that the boxes we drew in the Editor are nodes on this hierarchy level.</p>
+<img alt="_images/image_fragment_nodes.PNG" src="_images/image_fragment_nodes.PNG" />
+<p>The Neo4J Label of the relation between Fragment and Token is called <code class="code docutils literal"><span class="pre">:fragment</span></code>. Every fragment is connected to many tokens (1-n relationship).</p>
+<p>Properties of Fragments</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>Fragment name</td>
+<td><code class="code docutils literal"><span class="pre">fragment_name</span></code></td>
+</tr>
+<tr class="row-even"><td>Use with batch-add?</td>
+<td><code class="code docutils literal"><span class="pre">completed</span></code></td>
+</tr>
+<tr class="row-odd"><td>Helps to detect changes</td>
+<td><code class="code docutils literal"><span class="pre">checksum</span></code></td>
+</tr>
+<tr class="row-even"><td>Creation date</td>
+<td><code class="code docutils literal"><span class="pre">upload_date</span></code></td>
+</tr>
+</tbody>
+</table>
+<img alt="_images/fragment_data.PNG" src="_images/fragment_data.PNG" />
+</div>
+<div class="section" id="tokens">
+<h3>Tokens<a class="headerlink" href="#tokens" title="Permalink to this headline">¶</a></h3>
+<p>Tokens are what we also called boxes in the context of the Editor.
+There are two groups:</p>
+<ul class="simple">
+<li>Singular Tokens: they carry positional information</li>
+<li>Group tokens: they group together and stand as an entity for multiple tokens that need to have relations between other groups</li>
+</ul>
+<p>The Neo4j label for singular Tokens is <code class="code docutils literal"><span class="pre">:Token</span></code>.</p>
+<p>The Neo4j label for Group Tokens is <code class="code docutils literal"><span class="pre">:Group</span></code>.</p>
+<p>The following image illustrates how the Groups and Singular Tokens can be seen as distinct hierarchy layers.</p>
+<img alt="_images/hierarchy_4.PNG" src="_images/hierarchy_4.PNG" />
+<ol class="arabic simple">
+<li>Image</li>
+<li>Fragment</li>
+<li>Singular Token (Symbole, Modification, Text)</li>
+<li>Group Token (Comment, Frame, Blanco)</li>
+</ol>
+</div>
+<div class="section" id="singular-tokens">
+<h3>Singular Tokens<a class="headerlink" href="#singular-tokens" title="Permalink to this headline">¶</a></h3>
+<p>Interesting Properties of <strong>Singular Tokens</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>width [pixels]</td>
+<td><code class="code docutils literal"><span class="pre">width</span></code></td>
+</tr>
+<tr class="row-even"><td>height [pixels]</td>
+<td><code class="code docutils literal"><span class="pre">height</span></code></td>
+</tr>
+<tr class="row-odd"><td>position [pixels]</td>
+<td><code class="code docutils literal"><span class="pre">x,</span> <span class="pre">y</span></code></td>
+</tr>
+<tr class="row-even"><td>The type of the Token*</td>
+<td><code class="code docutils literal"><span class="pre">:tokenType</span></code></td>
+</tr>
+<tr class="row-odd"><td>The box&#8217;s content**</td>
+<td><code class="code docutils literal"><span class="pre">:value</span></code></td>
+</tr>
+<tr class="row-even"><td>The number of the layer</td>
+<td><code class="code docutils literal"><span class="pre">:hand</span></code></td>
+</tr>
+<tr class="row-odd"><td>All custom properties</td>
+<td>e.g. color, tool, ...</td>
+</tr>
+</tbody>
+</table>
+<p>(*) Possible default tokenTypes are: token, symbol, modification</p>
+<p>(**) The content of the box is what you enter when you double click into the box</p>
+<img alt="_images/token_props.PNG" src="_images/token_props.PNG" />
+</div>
+<div class="section" id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p>Interesting Properties of <strong>Group Tokens</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>The type of the Group*</td>
+<td><code class="code docutils literal"><span class="pre">:groupType</span></code></td>
+</tr>
+<tr class="row-even"><td>The box&#8217;s content**</td>
+<td><code class="code docutils literal"><span class="pre">:value</span></code></td>
+</tr>
+<tr class="row-odd"><td>The number of the layer</td>
+<td><code class="code docutils literal"><span class="pre">:hand</span></code></td>
+</tr>
+<tr class="row-even"><td>All custom properties</td>
+<td>e.g. frame_type...</td>
+</tr>
+</tbody>
+</table>
+<p>(*) Possible default groupTypes are: comment, frame, blanco</p>
+<p>(**) The content of the box is what you enter when you double click into the box</p>
+<img alt="_images/group_props.PNG" src="_images/group_props.PNG" />
+<p><strong>Attention:</strong> The Group Token &#8220;Frame&#8221; introduces another Graph Database Node called <strong>MetaFrame</strong>. The Neo4j label for this is <code class="code docutils literal"><span class="pre">:MetaGroup</span></code>.
+This node is an interconnection of all &#8220;Frames&#8221; with the same name in order to ease graph exploration.</p>
+<p>Example: The Token with text &#8220;Kill&#8221; in one fragment is connected to a Frame called &#8220;Violence&#8221;. In another image&#8217;s fragment there is also
+a Token connected to Frame called &#8220;Violence&#8221;. Both Token Groups &#8220;Frame&#8221; are connected to the MetaGroup &#8220;Violence&#8221; which is created automatically.</p>
+<img alt="_images/hierarchy_5.PNG" src="_images/hierarchy_5.PNG" />
+<p>Interesting Properties of <strong>MetaGroups</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>The type of the Group*</td>
+<td><code class="code docutils literal"><span class="pre">:groupType</span></code></td>
+</tr>
+<tr class="row-even"><td>value</td>
+<td><code class="code docutils literal"><span class="pre">:value</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>(*) Only MetaFrame is possible so far!</p>
+</div>
+<div class="section" id="edges">
+<h3>Edges<a class="headerlink" href="#edges" title="Permalink to this headline">¶</a></h3>
+<p>The tokens are interconneted with multiple edges. This is not a 1-n relationship but a many-to-many relationship (called m-n).
+The Neo4J Label of the relation between Token and Token is called <code class="code docutils literal"><span class="pre">:edge</span></code>.</p>
+<p>Do not confuse this with the relations between Images and Fragments nor Fragments and Tokens!</p>
+<img alt="_images/edge.PNG" src="_images/edge.PNG" />
+<p>Interesting Properties of <strong>Edges</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A unique ID</td>
+<td><code class="code docutils literal"><span class="pre">id</span></code></td>
+</tr>
+<tr class="row-odd"><td>Type of relation</td>
+<td><code class="code docutils literal"><span class="pre">:relation_type</span></code></td>
+</tr>
+<tr class="row-even"><td>All custom properties</td>
+<td>e.g. frame_type...</td>
+</tr>
+</tbody>
+</table>
+<img alt="_images/edge_props.PNG" src="_images/edge_props.PNG" />
+</div>
+<div class="section" id="using-cypher">
+<h3>Using Cypher<a class="headerlink" href="#using-cypher" title="Permalink to this headline">¶</a></h3>
+<p>Now that you know how your data is structured in the graph database you might already have ideas on what kind of information you want to retrieve from your &#8216;corpus&#8217;.</p>
+<p><strong>Using the GIAnT but refusing to use Cypher is a waste of time!</strong>
+Cypher is the SQL oriented query language for neo4j graph databases. <a class="reference external" href="https://neo4j.com/developer/cypher-query-language/">https://neo4j.com/developer/cypher-query-language/</a></p>
+<p>It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.  TODO: Add links to the following resources!</p>
+<p>TODO: Diesen Absatz ausbauen!</p>
+</div>
+</div>
+<div class="section" id="heatmap-tool">
+<h2>Heatmap tool<a class="headerlink" href="#heatmap-tool" title="Permalink to this headline">¶</a></h2>
+<p>The heatmap tool can be used to analyze the positions of tokens.
+It might be interesting to see the density of tokens in a region or the outline they form.
+The input for this tool has to be a Cypher query. It will then only work with the tokens,
+therefore it is recommended to build your query to only return tokens.</p>
+<p>Example query:
+<code class="code docutils literal"><span class="pre">MATCH</span> <span class="pre">(s:Token)</span> <span class="pre">RETURN</span> <span class="pre">s;</span></code></p>
+<p>The query is not analyzed or guarded. This means that any code can be executed.
+As a consequence must this feature kept on a local system and not exposed through a webserver!</p>
+<p>The color scheme of the heatmap reaches from 0 (yellow) to 1 (red).</p>
+<div class="section" id="normalization-techniques">
+<h3>Normalization techniques<a class="headerlink" href="#normalization-techniques" title="Permalink to this headline">¶</a></h3>
+<p>In this context the term normalization refers to an algorithm that makes the positions
+of tokens in different images comparable.</p>
+<p>There are three types of normalizations present:</p>
+</div>
+<div class="section" id="normalization-1-position-in-image">
+<h3>Normalization 1: Position in image<a class="headerlink" href="#normalization-1-position-in-image" title="Permalink to this headline">¶</a></h3>
+<p>All images are normalized to the output size.
+The tokens are scaled accordingly.</p>
+<p>The final result is the distribution of tokens over the images.</p>
+<img alt="_images/n1_example.jpeg" src="_images/n1_example.jpeg" />
+</div>
+<div class="section" id="normalization-2-position-in-scritte-bounding-box">
+<h3>Normalization 2: Position in scritte (bounding box)<a class="headerlink" href="#normalization-2-position-in-scritte-bounding-box" title="Permalink to this headline">¶</a></h3>
+<p>This method fetches the Bounding Box(see below) of every image and scales
+the tokens according to it.</p>
+<p>The bounding box is the rectangle spanned by the lowest coordinate
+to the highest one.</p>
+<p>The result shows the distribution of tokens within the bounding box.</p>
+<img alt="_images/n2_example.jpeg" src="_images/n2_example.jpeg" />
+</div>
+<div class="section" id="normalization-3-bounding-box-centered">
+<h3>Normalization 3: Bounding box centered<a class="headerlink" href="#normalization-3-bounding-box-centered" title="Permalink to this headline">¶</a></h3>
+<p>Here the bounding box is placed into the normalised image.
+But the position is changed: The box&#8217;s center is placed over the normalisation target center.</p>
+<p>As a result, the bounding boxes and by that way the outlines of all scritte are comparable.</p>
+<p>This method could be used to extract the outline of fragments.
+Example: Do they have a horizontal orientation or are they grouped like a
+triangle.</p>
+<img alt="_images/n3_example.jpeg" src="_images/n3_example.jpeg" />
+</div>
+<div class="section" id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
+<p>The heatmap creation process happens as a stream.</p>
+<img alt="_images/flow.jpeg" src="_images/flow.jpeg" />
+<p>Processing every single token means some computation effort. Especially fetching images/bounding boxes
+from the database costs resources, in particulary time.
+The heatmap tool was never designed to be a big data application but rather a medium data application
+that shall work with up to 3000 images containing 1 fragment containing 100 elements.</p>
+<p>Based on this requirement a ram cache was introduced which is not persistent between heatmap generations
+but could be implemented easily.
+The cache prevents unnecessary database request.</p>
+<p>The performance evaluation has shown that it is possible to generate heatmaps in reasonable time.</p>
+<img alt="_images/performance.png" src="_images/performance.png" />
+<p>The most computation intense normalization took 15 minutes with 300.000 elements.
+The data points of this chart are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Total elements</th>
+<th class="head">Normalization #1 [s]</th>
+<th class="head">Norm. #2 [s]</th>
+<th class="head">Norm. #3 [s]</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1.000</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>2.000</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>5.000</td>
+<td>4</td>
+<td>9</td>
+<td>7</td>
+</tr>
+<tr class="row-odd"><td>10.000</td>
+<td>9</td>
+<td>30</td>
+<td>14</td>
+</tr>
+<tr class="row-even"><td>50.000</td>
+<td>45</td>
+<td>156</td>
+<td>83</td>
+</tr>
+<tr class="row-odd"><td>100.000</td>
+<td>100</td>
+<td>205</td>
+<td>163</td>
+</tr>
+<tr class="row-even"><td>300.000</td>
+<td>550</td>
+<td>989</td>
+<td>701</td>
+</tr>
+</tbody>
+</table>
+<p>The performance test took place on regular Ubuntu 16.04 with 64 bit on a laptop with
+Intel® Core™ i5-2520M CPU &#64; 2.50GHz × 4,
+and 3,7 GiB RAM and
+a HDD.</p>
+</div>
+</div>
+<div class="section" id="data-constraints">
+<h2>Data constraints<a class="headerlink" href="#data-constraints" title="Permalink to this headline">¶</a></h2>
+<p>In database context &#8216;check constraints&#8217; are a mean to assure data integrity.</p>
+<p>This application could have varying use cases. From case to case the constraints for the graph
+scheme differ.</p>
+<p>One use case might restrict the number of edges between nodes. Another one the total amount of nodes
+and so on.</p>
+<p>As a result this application does not contain a set of &#8216;hard coded&#8217; constraints but a configuration
+file that contains Cypher queries which will be executed every time a graph was inserted into
+Neo4j.</p>
+<div class="section" id="the-workflow">
+<h3>The workflow<a class="headerlink" href="#the-workflow" title="Permalink to this headline">¶</a></h3>
+<p>GraphEditor -&gt; codec.js -&gt; Neo4j -&gt; constraints.js</p>
+<p>Opposite to usual RDMS Neo4j only comes with a limited set of data integrity constraints.
+Usually these constraints are checked before inserting data into the database.</p>
+<p>This workflow does not do so because we want the user to be able to write Cypher query code.
+In a future version it could be possible that a failing constraint triggers the transaction
+to be rolled back. So far this doesn&#8217;t happen.</p>
+</div>
+<div class="section" id="design-of-the-constraints">
+<h3>Design of the constraints<a class="headerlink" href="#design-of-the-constraints" title="Permalink to this headline">¶</a></h3>
+<p>In the end the constraints have to validate so their output is boolean.</p>
+<p>If all constraints are true -&gt; then the constraint checking succeeded and there is no error</p>
+<p>Else: We hand the error to the user.</p>
+</div>
+<div class="section" id="writing-constraints">
+<h3>Writing constraints<a class="headerlink" href="#writing-constraints" title="Permalink to this headline">¶</a></h3>
+<p>There is an entry in the menu which is called &#8216;Constraints&#8217;.
+In that view you can create three types of constraints:</p>
+<ul class="simple">
+<li>bool constraints: Your query has to return &#8216;true&#8217; to succeed</li>
+<li>count constraints: You write a query and provide a minimum and/or maximum of accepted results to your query</li>
+<li>free constraints: you write javascript code (in detail a Promise: see below for an example)</li>
+</ul>
+</div>
+<div class="section" id="example-for-count-constraint">
+<h3>Example for count constraint<a class="headerlink" href="#example-for-count-constraint" title="Permalink to this headline">¶</a></h3>
+<p>You provide a query like <code class="code docutils literal"><span class="pre">MATCH</span> <span class="pre">(a:Token)-[]-(i:Image)</span> <span class="pre">RETURN</span> <span class="pre">DISTINCT</span> <span class="pre">a;</span></code>
+and the boundaries (lower is contained, upper exluded): [0, 200[</p>
+</div>
+<div class="section" id="example-for-a-free-constraint">
+<h3>Example for a free constraint<a class="headerlink" href="#example-for-a-free-constraint" title="Permalink to this headline">¶</a></h3>
+<p>You can supply any javascript code returning a promise. If it resolves your constraint succeeds.</p>
+<p><strong>Variables handed into the scope</strong></p>
+<p><code class="code docutils literal"><span class="pre">session</span></code> is a neo4j session</p>
+<p><code class="code docutils literal"><span class="pre">session.run(cypher_string)</span></code> returns a Promise. This will be the entry point for most of the free constraints.</p>
+<p>The following example checks whether tokens with the value &#8216;Token&#8217; exist.</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fragment_id&quot;</span><span class="o">:</span> <span class="nx">fragment_id</span><span class="p">};</span>
+        <span class="nx">session</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">&quot;MATCH(f:Fragment)-[]-(t:Token {value: &#39;Token&#39;}) &quot;</span> <span class="o">+</span>
+                    <span class="s2">&quot;WHERE ID(f) = {fragment_id} RETURN t.value as value;&quot;</span><span class="p">,</span> <span class="nx">variables</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
+                <span class="kd">var</span> <span class="nx">value</span><span class="p">;</span>
+                <span class="nx">result</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">){</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">===</span> <span class="s2">&quot;Token2&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">reject</span><span class="p">(</span><span class="s2">&quot;There was a token called Token.&quot;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
+                <span class="nx">resolve</span><span class="p">();</span>
+            <span class="p">}).</span><span class="k">catch</span><span class="p">(</span>
+                <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+                    <span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="security">
+<h3>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h3>
+<p>The cypher queries are checked to not contain <code class="code docutils literal"><span class="pre">CREATE</span></code>, <code class="code docutils literal"><span class="pre">MERGE</span></code>, <code class="code docutils literal"><span class="pre">SET</span></code> or any other operation
+that could change the data while performing the check. If that happens only a message is prompted
+to the user.</p>
+<p>These operations could be in the query willingly so they will still get executed in order to
+enhance the power of the user on the data.</p>
+</div>
+</div>
+<div class="section" id="exporting-your-data">
+<h2>Exporting your data<a class="headerlink" href="#exporting-your-data" title="Permalink to this headline">¶</a></h2>
+<p>It is very likely that you don&#8217;t only want to analyze your data but also take it with you to another application.</p>
+<dl class="docutils">
+<dt>There are three possibilities to export your data:</dt>
+<dd><ul class="first last simple">
+<li>SQL export</li>
+<li>CSV export</li>
+<li>Copy the Neo4J database (see section Migration)</li>
+</ul>
+</dd>
+</dl>
+<p>The SQL and CSV export are structured in order to give the ability to reassemble the graph.</p>
+<dl class="docutils">
+<dt>Both of them are structured into four tables:</dt>
+<dd><ul class="first last simple">
+<li>Nodes table</li>
+<li>Properties of nodes table</li>
+<li>Relations table</li>
+<li>Properties of relations table</li>
+</ul>
+</dd>
+</dl>
+<p>With the following schema (see section data schema for reference):</p>
+<p><strong>Nodes table</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="32%" />
+<col width="22%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Node_ID</th>
+<th class="head">value</th>
+<th class="head">tokenType</th>
+<th class="head">groupType</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>NULL</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>NULL</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Node properties table</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="42%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Node_ID</th>
+<th class="head">key</th>
+<th class="head">value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>file_path</td>
+<td>1234.jpg</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>comment</td>
+<td>fragment#1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relations table</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="32%" />
+<col width="22%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Relation_ID</th>
+<th class="head">relationType</th>
+<th class="head">SourceNode_ID</th>
+<th class="head">TargetNode_ID</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>image</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relation properties table</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="42%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Relation_ID</th>
+<th class="head">key</th>
+<th class="head">value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>label</td>
+<td>image</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="transferring-your-data">
+<h2>Transferring your data<a class="headerlink" href="#transferring-your-data" title="Permalink to this headline">¶</a></h2>
+<p>If you want to take your data to another computer follow these steps.</p>
+<div class="section" id="move-static-files">
+<h3>1. Move static files<a class="headerlink" href="#move-static-files" title="Permalink to this headline">¶</a></h3>
+<p>The folder containing the application contains a folder called &#8216;media&#8217;.
+Compress this folder (e.g. zip it), transport the archive to the new computer
+and uncompress it into the new &#8216;media&#8217; folder.</p>
+<p>This folder contains settings files, the graph editor&#8217;s xmls and the images.</p>
+</div>
+<div class="section" id="relocate-the-neo4j-database">
+<h3>2. Relocate the Neo4j database<a class="headerlink" href="#relocate-the-neo4j-database" title="Permalink to this headline">¶</a></h3>
+<p>We have to move the Neo4j database to the new computer. There are two options:</p>
+<ul class="simple">
+<li>2/a: has not worked in the tests but is recommended by Neo4j -&gt; dump&#8217;n&#8217;load (UNIX)</li>
+<li>2/b: has worked but is a little dangerous -&gt; copy&#8217;n&#8217;paste (WINDOWS)</li>
+</ul>
+</div>
+<div class="section" id="a-dump-and-load-neo4j-unix">
+<h3>2/a Dump and load Neo4j (UNIX)<a class="headerlink" href="#a-dump-and-load-neo4j-unix" title="Permalink to this headline">¶</a></h3>
+<p>According to <a class="reference external" href="https://neo4j.com/docs/operations-manual/current/tools/dump-load/">https://neo4j.com/docs/operations-manual/current/tools/dump-load/</a></p>
+<ul class="simple">
+<li>stop neo4j</li>
+<li>neo4j-admin dump &#8211;database=&lt;database&gt; &#8211;to=&lt;destination-path&gt;</li>
+<li>neo4j-admin load &#8211;from=&lt;archive-path&gt; &#8211;database=&lt;database&gt; [&#8211;force]</li>
+<li>start neo4j</li>
+</ul>
+<p>Example for unix:</p>
+<p>On machine 1</p>
+<ul class="simple">
+<li>sudo service neo4j stop</li>
+<li>neo4j-admin dump &#8211;to=dump.db</li>
+<li>sudo service neo4j start</li>
+</ul>
+<p>On machine 2</p>
+<ul class="simple">
+<li>sudo service neo4j stop</li>
+<li>neo4j-admin load &#8211;from=dump.db &#8211;force</li>
+<li>sudo service neo4j start</li>
+</ul>
+<p>Use the &#8216;force&#8217; option to overwrite existing data</p>
+</div>
+<div class="section" id="b-second-variant-for-neo4j-win">
+<h3>2/b Second variant for neo4j (WIN)<a class="headerlink" href="#b-second-variant-for-neo4j-win" title="Permalink to this headline">¶</a></h3>
+<p>If this doesn&#8217;t work it is possible to copy the whole database directory to the new computer.
+By default the database is called graph.db and is situated under /var/lib/neo4j/data/database/graph.db/.
+Move the whole folder to your new computer and <code class="code docutils literal"><span class="pre">service</span> <span class="pre">neo4j</span> <span class="pre">start</span></code></p>
+<p>Example workflow for UNIX:</p>
+<blockquote>
+<div><ul class="simple">
+<li>sudo service neo4j stop</li>
+<li>zip -r ~/Desktop/dump.zip /var/lib/neo4j/data/databases/graph.db/</li>
+<li>sudo unzip dump.zip -d /</li>
+<li>service neo4j start</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="installing-an-update">
+<h2>Installing an update<a class="headerlink" href="#installing-an-update" title="Permalink to this headline">¶</a></h2>
+<p>If a new version of GIAnT is released you might want to use it depending on the fixes or new tools.</p>
+<div class="section" id="compatibility">
+<h3>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h3>
+<p>It is easy for you to decide whether there will be a conflict installing the new version or not.</p>
+<p>GIAnT uses semantic versioning. This means that the applications version number &#8220;x.y.z&#8221;
+is not only a counter for the changes made to the code but also
+an indicator for what has changed.</p>
+<p><code class="code docutils literal"><span class="pre">&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</span></code> is the system you might know.</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>If <code class="code docutils literal"><span class="pre">patch</span></code> changes then there was a small security fix or a bug closed. You can install the new</dt>
+<dd>version without breaking anything.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If <code class="code docutils literal"><span class="pre">minor</span></code> was increased then there were big changes made but they are still <strong>backwards compatible</strong>.</dt>
+<dd>You can install the new version without breaking your database but for example a tool of the software might
+have been removed.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If <code class="code docutils literal"><span class="pre">major</span></code> was increased then the new version contains <strong>NOT backwards compatible</strong> changes.</dt>
+<dd>You will have to migrate your data to a new schema.</dd>
+</dl>
+</li>
+</ul>
+<p>If you really want to find out what changed you have to look into the <em>CHANGELIST</em>.</p>
+</div>
+<div class="section" id="how-to">
+<h3>How to<a class="headerlink" href="#how-to" title="Permalink to this headline">¶</a></h3>
+<p>Updating is easy.
+Check your compatibility with the new version.
+And then download the new version and copy your data(next section).</p>
+</div>
+<div class="section" id="keeping-your-data">
+<h3>Keeping your data<a class="headerlink" href="#keeping-your-data" title="Permalink to this headline">¶</a></h3>
+<p>There are two data stores for GIAnT.</p>
+<ul class="simple">
+<li>The Neo4J database</li>
+<li>Your filesystem</li>
+</ul>
+<p>If you updated GIAnT you don&#8217;t have to touch the database.</p>
+<p>What you have to do is copy your files to the new application.</p>
+<p>When you navigate to the folder where GIAnT is located in you will see a directory structure like this:</p>
+<img alt="_images/directories.PNG" src="_images/directories.PNG" />
+<p>Please navigate to &#8216;resources&#8217; -&gt; &#8216;app&#8217;</p>
+<img alt="_images/dirs2.png" src="_images/dirs2.png" />
+<p>The &#8216;media&#8217; folder contains all of your stored files and settings.</p>
+<p><strong>You have to replace the new &#8216;media&#8217; folder by the old &#8216;media&#8217; in order to keep your data.</strong></p>
+</div>
+</div>
+<div class="section" id="accessing-your-data-on-multiple-devices">
+<h2>Accessing your data on multiple devices<a class="headerlink" href="#accessing-your-data-on-multiple-devices" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to synchronize the application&#8217;s data on multiple devices so you can use GIAnT
+on - let&#8217;s say - your laptop and your PC.</p>
+<p>Use one of the many sync-services out there like Google Drive or Dropbox to sync:</p>
+<ul class="simple">
+<li>Your Neo4J database folder</li>
+<li>Your installation&#8217;s &#8216;/media/&#8217; folder which is located under  &#8216;GIAnT/resources/app/media&#8217;</li>
+</ul>
+<p><strong>But please</strong> don&#8217;t use them in parallel. Better safe then sorry. I also recommend to switch off the
+syncing while working on your data.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Guides</a><ul>
+<li><a class="reference internal" href="#feature-overview">Feature overview</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#login-to-neo4j">Login to neo4j</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#uploading-an-image">Uploading an image</a></li>
+<li><a class="reference internal" href="#creating-a-fragment">Creating a fragment</a></li>
+<li><a class="reference internal" href="#transfer-to-neo4j">Transfer to neo4j</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-editor">Using the editor</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#layers">Layers</a></li>
+<li><a class="reference internal" href="#nodes">Nodes</a></li>
+<li><a class="reference internal" href="#relations">Relations</a></li>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-scheme-in-neo4j">Data scheme in neo4j</a><ul>
+<li><a class="reference internal" href="#images">Images</a></li>
+<li><a class="reference internal" href="#fragments">Fragments</a></li>
+<li><a class="reference internal" href="#tokens">Tokens</a></li>
+<li><a class="reference internal" href="#singular-tokens">Singular Tokens</a></li>
+<li><a class="reference internal" href="#groups">Groups</a></li>
+<li><a class="reference internal" href="#edges">Edges</a></li>
+<li><a class="reference internal" href="#using-cypher">Using Cypher</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#heatmap-tool">Heatmap tool</a><ul>
+<li><a class="reference internal" href="#normalization-techniques">Normalization techniques</a></li>
+<li><a class="reference internal" href="#normalization-1-position-in-image">Normalization 1: Position in image</a></li>
+<li><a class="reference internal" href="#normalization-2-position-in-scritte-bounding-box">Normalization 2: Position in scritte (bounding box)</a></li>
+<li><a class="reference internal" href="#normalization-3-bounding-box-centered">Normalization 3: Bounding box centered</a></li>
+<li><a class="reference internal" href="#performance">Performance</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-constraints">Data constraints</a><ul>
+<li><a class="reference internal" href="#the-workflow">The workflow</a></li>
+<li><a class="reference internal" href="#design-of-the-constraints">Design of the constraints</a></li>
+<li><a class="reference internal" href="#writing-constraints">Writing constraints</a></li>
+<li><a class="reference internal" href="#example-for-count-constraint">Example for count constraint</a></li>
+<li><a class="reference internal" href="#example-for-a-free-constraint">Example for a free constraint</a></li>
+<li><a class="reference internal" href="#security">Security</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#exporting-your-data">Exporting your data</a></li>
+<li><a class="reference internal" href="#transferring-your-data">Transferring your data</a><ul>
+<li><a class="reference internal" href="#move-static-files">1. Move static files</a></li>
+<li><a class="reference internal" href="#relocate-the-neo4j-database">2. Relocate the Neo4j database</a></li>
+<li><a class="reference internal" href="#a-dump-and-load-neo4j-unix">2/a Dump and load Neo4j (UNIX)</a></li>
+<li><a class="reference internal" href="#b-second-variant-for-neo4j-win">2/b Second variant for neo4j (WIN)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing-an-update">Installing an update</a><ul>
+<li><a class="reference internal" href="#compatibility">Compatibility</a></li>
+<li><a class="reference internal" href="#how-to">How to</a></li>
+<li><a class="reference internal" href="#keeping-your-data">Keeping your data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#accessing-your-data-on-multiple-devices">Accessing your data on multiple devices</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">GIAnT - Graphical Image Annotation Tool</a></li>
+      <li>Next: <a href="Articles.html" title="next chapter">Articles</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Guides.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Pollithy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Guides.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

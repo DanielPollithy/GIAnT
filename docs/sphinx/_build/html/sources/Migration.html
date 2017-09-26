@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Migration &#8212; GIAnT  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="migration">
+<h1>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h1>
+<p>If you want to take your data to another computer follow these steps.</p>
+<div class="section" id="move-static-files">
+<h2>1. Move static files<a class="headerlink" href="#move-static-files" title="Permalink to this headline">¶</a></h2>
+<p>The folder containing the application contains a folder called &#8216;media&#8217;.
+Compress this folder (e.g. zip it), transport the archive to the new computer
+and uncompress it into the new &#8216;media&#8217; folder.</p>
+<p>This folder contains settings files, the graph editor&#8217;s xmls and the images.</p>
+</div>
+<div class="section" id="relocate-the-neo4j-database">
+<h2>2. Relocate the Neo4j database<a class="headerlink" href="#relocate-the-neo4j-database" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>We have to move the Neo4j database to the new computer. There are two options:</dt>
+<dd><ul class="first last simple">
+<li>2/a: has not worked in the tests but is recommended by Neo4j -&gt; dump&#8217;n&#8217;load</li>
+<li>2/b: has worked but is a little dangerous -&gt; copy&#8217;n&#8217;paste</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="a-dump-and-load-neo4j">
+<h3>2/a Dump and load Neo4j<a class="headerlink" href="#a-dump-and-load-neo4j" title="Permalink to this headline">¶</a></h3>
+<p>According to <a class="reference external" href="https://neo4j.com/docs/operations-manual/current/tools/dump-load/">https://neo4j.com/docs/operations-manual/current/tools/dump-load/</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>stop neo4j</li>
+<li>neo4j-admin dump &#8211;database=&lt;database&gt; &#8211;to=&lt;destination-path&gt;</li>
+<li>neo4j-admin load &#8211;from=&lt;archive-path&gt; &#8211;database=&lt;database&gt; [&#8211;force]</li>
+<li>start neo4j</li>
+</ul>
+</div></blockquote>
+<p>Example for unix:</p>
+<dl class="docutils">
+<dt>On machine 1</dt>
+<dd><ul class="first last simple">
+<li>sudo service neo4j stop</li>
+<li>neo4j-admin dump &#8211;to=dump.db</li>
+<li>sudo service neo4j start</li>
+</ul>
+</dd>
+<dt>On machine 2</dt>
+<dd><ul class="first last simple">
+<li>sudo service neo4j stop</li>
+<li>neo4j-admin load &#8211;from=dump.db &#8211;force</li>
+<li>sudo service neo4j start</li>
+</ul>
+</dd>
+</dl>
+<p>Use the &#8216;force&#8217; option to overwrite existing data</p>
+</div>
+<div class="section" id="b-second-variant-for-neo4j">
+<h3>2/b Second variant for neo4j<a class="headerlink" href="#b-second-variant-for-neo4j" title="Permalink to this headline">¶</a></h3>
+<p>If this doesn&#8217;t work it is possible to copy the whole database directory to the new computer.
+By default the database is called graph.db and is situated under /var/lib/neo4j/data/database/graph.db/.
+Move the whole folder to your new computer and <code class="code docutils literal"><span class="pre">service</span> <span class="pre">neo4j</span> <span class="pre">start</span></code></p>
+<dl class="docutils">
+<dt>Example workflow:</dt>
+<dd><ul class="first last simple">
+<li>sudo service neo4j stop</li>
+<li>zip -r ~/Desktop/dump.zip /var/lib/neo4j/data/databases/graph.db/</li>
+<li>sudo unzip dump.zip -d /</li>
+<li>service neo4j start</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Migration</a><ul>
+<li><a class="reference internal" href="#move-static-files">1. Move static files</a></li>
+<li><a class="reference internal" href="#relocate-the-neo4j-database">2. Relocate the Neo4j database</a><ul>
+<li><a class="reference internal" href="#a-dump-and-load-neo4j">2/a Dump and load Neo4j</a></li>
+<li><a class="reference internal" href="#b-second-variant-for-neo4j">2/b Second variant for neo4j</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/sources/Migration.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Pollithy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/sources/Migration.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

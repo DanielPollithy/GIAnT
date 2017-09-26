@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cypher vs. SQL &#8212; GIAnT  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Technical guides" href="../../Documentations.html" />
+    <link rel="prev" title="Analyzing 3000 graffiti" href="3000graffiti.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cypher-vs-sql">
+<h1>Cypher vs. SQL<a class="headerlink" href="#cypher-vs-sql" title="Permalink to this headline">¶</a></h1>
+<p>This article shows why Cypher is superior to plain SQL for information extraction on graphs.
+We are going to exercise a complete example from storing a graph to retrieving data and calculating some metrics.</p>
+<div class="section" id="example-scenario">
+<h2>Example scenario<a class="headerlink" href="#example-scenario" title="Permalink to this headline">¶</a></h2>
+<p>Imagine someone wrote to the wall &#8216;Lazio merda&#8217;.</p>
+<img alt="../../_images/1.png" src="../../_images/1.png" />
+<p>Now another person came and erased Lazio and wrote above it &#8216;AS ROMA&#8217;</p>
+<img alt="../../_images/2.png" src="../../_images/2.png" />
+<p>And in the last step the &#8216;merda&#8217; was erased.</p>
+<img alt="../../_images/3.png" src="../../_images/3.png" />
+<p>One could suppose that these three steps were the beginning of the fragment on the left side of the following image,
+which is part of Sebastian Lasch&#8217;s corpus:</p>
+<img alt="../../_images/bild.png" src="../../_images/bild.png" />
+</div>
+<div class="section" id="storing-the-graph">
+<h2>Storing the graph<a class="headerlink" href="#storing-the-graph" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="retrieving-some-data">
+<h2>Retrieving some data<a class="headerlink" href="#retrieving-some-data" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="analyzing-the-graph">
+<h2>Analyzing the graph<a class="headerlink" href="#analyzing-the-graph" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cypher vs. SQL</a><ul>
+<li><a class="reference internal" href="#example-scenario">Example scenario</a></li>
+<li><a class="reference internal" href="#storing-the-graph">Storing the graph</a></li>
+<li><a class="reference internal" href="#retrieving-some-data">Retrieving some data</a></li>
+<li><a class="reference internal" href="#analyzing-the-graph">Analyzing the graph</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../Articles.html">Articles</a><ul>
+      <li>Previous: <a href="3000graffiti.html" title="previous chapter">Analyzing 3000 graffiti</a></li>
+      <li>Next: <a href="../../Documentations.html" title="next chapter">Technical guides</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/sources/articles/cypher_vs_sql.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Pollithy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/sources/articles/cypher_vs_sql.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

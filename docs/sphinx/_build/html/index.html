@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to GIAnT’s documentation! &#8212; GIAnT  documentation</title>
+    <title>GIAnT - Graphical Image Annotation Tool &#8212; GIAnT  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Deployment" href="sources/Deployment.html" />
+    <link rel="next" title="Guides" href="Guides.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -42,52 +42,251 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-GIAnT-s-documentation">
-<h1>Welcome to GIAnT&#8217;s documentation!<a class="headerlink" href="#welcome-to-GIAnT-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This is a <strong>technical documentation</strong> of the components and how to use them.
-It powers ~well written &#8220;articles&#8221; on general questions. See <a class="reference internal" href="#articles">Articles</a> section.</p>
-<p>There is also an <strong>API description</strong> here:</p>
-<p><a class="reference external" href="https://danielpollithy.github.io/GIAnT/api/">https://danielpollithy.github.io/GIAnT/api/</a></p>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="giant-graphical-image-annotation-tool">
+<h1>GIAnT - Graphical Image Annotation Tool<a class="headerlink" href="#giant-graphical-image-annotation-tool" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/logo.png" src="_images/logo.png" />
+<p>GIAnT is an open source cross platform desktop application designed
+to aid scientists with graphical image annotation in the process of creating a corpus.</p>
+<p>If you have a set of images, want to make annotations or even analyze how utters interact with each
+other  this application might be useful for your project.</p>
+<p>We built it for analyzing grafitis in Rome. Never the less the application is designed to be adapted for other studies.</p>
+<div class="section" id="video">
+<h2>Video<a class="headerlink" href="#video" title="Permalink to this headline">¶</a></h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4NRxlxq0TEY" frameborder="0" allowfullscreen></iframe></div>
+<div class="section" id="giant-resources">
+<h2>GIAnT resources<a class="headerlink" href="#giant-resources" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">What</th>
+<th class="head">Where</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Download GIAnT</td>
+<td><a class="reference external" href="https://github.com/DanielPollithy/GIAnT/releases">https://github.com/DanielPollithy/GIAnT/releases</a></td>
+</tr>
+<tr class="row-odd"><td>Report a problem</td>
+<td><a class="reference external" href="https://github.com/DanielPollithy/GIAnT/issues">https://github.com/DanielPollithy/GIAnT/issues</a></td>
+</tr>
+<tr class="row-even"><td>Get the code</td>
+<td><a class="reference external" href="https://github.com/DanielPollithy/GIAnT">https://github.com/DanielPollithy/GIAnT</a></td>
+</tr>
+<tr class="row-odd"><td>Check the API</td>
+<td><a class="reference external" href="https://github.com/DanielPollithy/GIAnT/">https://github.com/DanielPollithy/GIAnT/</a></td>
+</tr>
+<tr class="row-even"><td>Automatic win32 tests</td>
+<td><a class="reference external" href="https://ci.appveyor.com/project/DanielPollithy/giant">https://ci.appveyor.com/project/DanielPollithy/giant</a></td>
+</tr>
+<tr class="row-odd"><td>Automatic unix tests</td>
+<td><a class="reference external" href="https://travis-ci.org/DanielPollithy/GIAnT">https://travis-ci.org/DanielPollithy/GIAnT</a></td>
+</tr>
+<tr class="row-even"><td>Code coverage report</td>
+<td><a class="reference external" href="https://coveralls.io/github/DanielPollithy/TransliterationApplication">https://coveralls.io/github/DanielPollithy/TransliterationApplication</a></td>
+</tr>
+<tr class="row-odd"><td>Licenses</td>
+<td><a class="reference external" href="https://github.com/DanielPollithy/GIAnT/blob/master/LICENSES.txt">https://github.com/DanielPollithy/GIAnT/blob/master/LICENSES.txt</a></td>
+</tr>
+</tbody>
+</table>
+<p>This documentation is divided into three sections:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><strong>Guides:</strong> An overview of the features for non-users and explanations to get you started</li>
+<li><strong>Articles</strong> explaining the main features and advantages</li>
+<li><strong>Technical Documentations:</strong> A Technical documentation which enables programmers to extend this application</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="guides">
+<h2>Guides<a class="headerlink" href="#guides" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="sources/Deployment.html">Deployment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sources/Deployment.html#deployment-automation">Deployment automation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sources/Deployment.html#how-to-deploy-manually">How to Deploy manually</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sources/Deployment.html#deployment-on-travis-ci">Deployment on Travis-CI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sources/Deployment.html#deployment-on-appveyor">Deployment on AppVeyor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Guides.html">Guides</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#feature-overview">Feature overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#login-to-neo4j">Login to neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#getting-started">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#uploading-an-image">Uploading an image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#creating-a-fragment">Creating a fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#transfer-to-neo4j">Transfer to neo4j</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sources/Configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sources/Heatmap.html">Heatmap</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sources/Heatmap.html#normalization-techniques">Normalization techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#using-the-editor">Using the editor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#layers">Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#nodes">Nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#relations">Relations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#properties">Properties</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sources/CHANGELOG.html">CHANGELOG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#data-scheme-in-neo4j">Data scheme in neo4j</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#fragments">Fragments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#tokens">Tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#singular-tokens">Singular Tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#edges">Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#using-cypher">Using Cypher</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#heatmap-tool">Heatmap tool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#normalization-techniques">Normalization techniques</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#normalization-1-position-in-image">Normalization 1: Position in image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#normalization-2-position-in-scritte-bounding-box">Normalization 2: Position in scritte (bounding box)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#normalization-3-bounding-box-centered">Normalization 3: Bounding box centered</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#performance">Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#data-constraints">Data constraints</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#the-workflow">The workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#design-of-the-constraints">Design of the constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#writing-constraints">Writing constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#example-for-count-constraint">Example for count constraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#example-for-a-free-constraint">Example for a free constraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#security">Security</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#exporting-your-data">Exporting your data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#transferring-your-data">Transferring your data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#move-static-files">1. Move static files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#relocate-the-neo4j-database">2. Relocate the Neo4j database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#a-dump-and-load-neo4j-unix">2/a Dump and load Neo4j (UNIX)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#b-second-variant-for-neo4j-win">2/b Second variant for neo4j (WIN)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#installing-an-update">Installing an update</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#compatibility">Compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#how-to">How to</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Guides.html#keeping-your-data">Keeping your data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Guides.html#accessing-your-data-on-multiple-devices">Accessing your data on multiple devices</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 <div class="section" id="articles">
-<h1>Articles<a class="headerlink" href="#articles" title="Permalink to this headline">¶</a></h1>
+<h2>Articles<a class="headerlink" href="#articles" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Articles.html">Articles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sources/articles/3000graffiti.html">Analyzing 3000 graffiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sources/articles/cypher_vs_sql.html">Cypher vs. SQL</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sources/articles/cypher_vs_sql.html#example-scenario">Example scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sources/articles/cypher_vs_sql.html#storing-the-graph">Storing the graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sources/articles/cypher_vs_sql.html#retrieving-some-data">Retrieving some data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sources/articles/cypher_vs_sql.html#analyzing-the-graph">Analyzing the graph</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#electron-for-cross-platform-applications">Electron for cross platform applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#developing-a-codec-test-driven-development">Developing a Codec: Test driven development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#neo4j-v-s-relational-database-for-graphs">Neo4j v.s. relational database for graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#future-use-cases-of-the-giant">Future use cases of the GIAnT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#continuous-integration-testing-and-deploying-code">Continuous integration: Testing and deploying code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Articles.html#giant-as-a-service">GIAnT as a service</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="technical-documentation">
+<h2>Technical Documentation<a class="headerlink" href="#technical-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Documentations.html">Technical guides</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#feature-overview">Feature overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#login-to-neo4j">Login to neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#getting-started">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#uploading-an-image">Uploading an image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#creating-a-fragment">Creating a fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#transfer-to-neo4j">Transfer to neo4j</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#using-the-editor">Using the editor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#layers">Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#nodes">Nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#relations">Relations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#data-scheme-in-neo4j">Data scheme in neo4j</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#interpretation-as-a-graph">Interpretation as a graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#advantages-of-graphs">Advantages of graphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#using-cypher">Using Cypher</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#heatmap-tool">Heatmap tool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#normalization-techniques">Normalization techniques</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#custom-queries">Custom queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#data-constraints">Data constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#exporting-your-data">Exporting your data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#sql-and-csv">SQL and CSV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Documentations.html#images">Images</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Documentations.html#making-changes-to-the-codebase">Making changes to the codebase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#how-electron-applications-work">How electron applications work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#how-express-js-is-employed">How express.js is employed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#how-pug-templates-work">How pug templates work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#how-autocompletion-works">How Autocompletion works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Documentations.html#deployment">Deployment</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="faqs">
+<h2>FAQs<a class="headerlink" href="#faqs" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sources/FAQ.html">First question</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="changelog">
+<h2>CHANGELOg<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sources/CHANGELOG.html">v1.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sources/CHANGELOG.html#v1-0-1">v1.0.1</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h1>Articles<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
 <p>The following article list will give you a good insight in all the knowledge about this application.</p>
 <p>It is going to cover</p>
 <blockquote>
 <div><ul class="simple">
 <li>&#8220;Basic data flow description&#8221;</li>
 <li>&#8220;How mxGraph was modded&#8221;,</li>
-<li>&#8220;Codec.js - mxGraph XML -&gt; GraphML -&gt; Neo4J&#8221;,</li>
+<li>&#8220;How Codex works - Codec.js - mxGraph XML -&gt; GraphML -&gt; Neo4J&#8221;,</li>
+<li>&#8220;Codec.js - What is the biggest XML-Graph it can convert to Neo4J?&#8221;</li>
 <li>&#8220;The express.js server&#8221;,</li>
 <li>&#8220;Pug templates&#8221;,</li>
 <li>&#8220;Data storage XML and images&#8221;,</li>
 <li>&#8220;Exif data extraction&#8221;,</li>
-<li>&#8220;Electron application&#8221;,</li>
+<li>&#8220;Electron application - and why&#8221;,</li>
 <li>&#8220;How to build the electron application cross platform&#8221;,</li>
-<li>&#8220;Why Electron&#8221;</li>
 <li>&#8220;Could the server be used as a standalone?&#8221;,</li>
-<li>&#8220;How does the autocomplete function work&#8221;,</li>
+<li>&#8220;How the autocomplete works&#8221;,</li>
+<li>&#8220;Writing custom constraints&#8221;</li>
+<li>&#8220;How the settings work&#8221;</li>
 <li>&#8220;Asynchronous tests with mocha.js and chai.js&#8221;</li>
+<li>&#8220;Testu automation using travis and appveyor&#8221;</li>
 <li>&#8220;About the code coverage&#8221;</li>
 <li>&#8220;Extending the mxGraph Editor&#8221;</li>
 <li>&#8220;What is not implemented&#8221;</li>
@@ -98,7 +297,6 @@ It powers ~well written &#8220;articles&#8221; on general questions. See <a clas
 <dt>Maybe</dt>
 <dd><ul class="first last simple">
 <li>&#8220;App performance struggle: Million of nodes, thousands of images and a lot of properties&#8221;</li>
-<li>&#8220;Codec.js - What is the biggest XML-Graph it can convert to Neo4J?&#8221;</li>
 <li>&#8220;A question of complexity: Cypher vs SQL for transliteration analyzes&#8221;</li>
 <li>&#8220;The use case of this application&#8221;</li>
 </ul>
@@ -122,18 +320,24 @@ It powers ~well written &#8220;articles&#8221; on general questions. See <a clas
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to GIAnT&#8217;s documentation!</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#">GIAnT - Graphical Image Annotation Tool</a><ul>
+<li><a class="reference internal" href="#video">Video</a></li>
+<li><a class="reference internal" href="#giant-resources">GIAnT resources</a></li>
+<li><a class="reference internal" href="#guides">Guides</a></li>
+<li><a class="reference internal" href="#articles">Articles</a></li>
+<li><a class="reference internal" href="#technical-documentation">Technical Documentation</a></li>
+<li><a class="reference internal" href="#faqs">FAQs</a></li>
+<li><a class="reference internal" href="#changelog">CHANGELOg</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#articles">Articles</a></li>
+<li><a class="reference internal" href="#id2">Articles</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="sources/Deployment.html" title="next chapter">Deployment</a></li>
+      <li>Next: <a href="Guides.html" title="next chapter">Guides</a></li>
   </ul></li>
 </ul>
 </div>

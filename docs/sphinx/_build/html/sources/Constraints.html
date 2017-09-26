@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Constraints &#8212; GIAnT  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="constraints">
+<h1>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">¶</a></h1>
+<p>In database context &#8216;check constraints&#8217; are a mean to assure data integrity.</p>
+<p>This application could have varying use cases. From case to case the constraints for the graph
+scheme differ.</p>
+<p>One use case might restrict the number of edges between nodes. Another one the total amount of nodes
+and so on.</p>
+<p>As a result this application does not contain a set of &#8216;hard coded&#8217; constraints but a configuration
+file that contains Cypher queries which will be executed every time a graph was inserted into
+Neo4j.</p>
+<div class="section" id="the-workflow">
+<h2>The workflow<a class="headerlink" href="#the-workflow" title="Permalink to this headline">¶</a></h2>
+<p>GraphEditor -&gt; codec.js -&gt; Neo4j -&gt; constraints.js</p>
+<p>Opposite to usual RDMS Neo4j only comes with a limited set of data integrity constraints.
+Usually these constraints are checked before inserting data into the database.</p>
+<p>This workflow does not do so because we want the user to be able to write Cypher query code.
+In a future version it could be possible that a failing constraint triggers the transaction
+to be rolled back. So far this doesn&#8217;t happen.</p>
+</div>
+<div class="section" id="design-of-the-constraints">
+<h2>Design of the constraints<a class="headerlink" href="#design-of-the-constraints" title="Permalink to this headline">¶</a></h2>
+<p>In the end the constraints have to validate so their output is boolean.</p>
+<p>If all constraints are true -&gt; then the constraint checking succeeded and there is no error</p>
+<p>Else: We hand the error to the user.</p>
+</div>
+<div class="section" id="writing-constraints">
+<h2>Writing constraints<a class="headerlink" href="#writing-constraints" title="Permalink to this headline">¶</a></h2>
+<p>There is an entry in the menu which is called &#8216;Constraints&#8217;.
+In that view you can create two types of constraints:</p>
+<blockquote>
+<div><ul class="simple">
+<li>count constraints: You write a query and provide a minimum and/or maximum of accepted results to your query</li>
+<li>free constraints: you write javascript code (in detail a Promise: see below for an example)</li>
+</ul>
+</div></blockquote>
+<div class="section" id="example-for-count-constraint">
+<h3>Example for count constraint<a class="headerlink" href="#example-for-count-constraint" title="Permalink to this headline">¶</a></h3>
+<p>You provide a query like <code class="code docutils literal"><span class="pre">MATCH</span> <span class="pre">(a:Token)-[]-(i:Image)</span> <span class="pre">RETURN</span> <span class="pre">DISTINCT</span> <span class="pre">a;</span></code>
+and the boundaries (lower is contained, upper exluded): [0, 200[</p>
+</div>
+<div class="section" id="example-for-a-free-constraint">
+<h3>Example for a free constraint<a class="headerlink" href="#example-for-a-free-constraint" title="Permalink to this headline">¶</a></h3>
+<p>&lt;any javascript code returning a promise&gt;</p>
+</div>
+</div>
+<div class="section" id="security">
+<h2>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h2>
+<p>The cypher queries are checked to not contain &#8220;CREATE&#8221;, &#8220;MERGE&#8221;, &#8220;SET&#8221; or any other operation
+that could change the data while performing the check. If that happens only a message is prompted
+to the user.</p>
+<p>These operations could be in the query willingly so they will still get executed in order to
+enhance the power of the user on the data.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Constraints</a><ul>
+<li><a class="reference internal" href="#the-workflow">The workflow</a></li>
+<li><a class="reference internal" href="#design-of-the-constraints">Design of the constraints</a></li>
+<li><a class="reference internal" href="#writing-constraints">Writing constraints</a><ul>
+<li><a class="reference internal" href="#example-for-count-constraint">Example for count constraint</a></li>
+<li><a class="reference internal" href="#example-for-a-free-constraint">Example for a free constraint</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#security">Security</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/sources/Constraints.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Pollithy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/sources/Constraints.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

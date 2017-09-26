@@ -1,5 +1,5 @@
 # GIAnT
-[![Build Status](https://travis-ci.org/DanielPollithy/TransliterationApplication.svg?branch=master)](https://travis-ci.org/DanielPollithy/TransliterationApplication)
+[![Build Status](https://travis-ci.org/DanielPollithy/GIAnT.svg?branch=master)](https://travis-ci.org/DanielPollithy/GIAnT)
 [![Build status](https://ci.appveyor.com/api/projects/status/yvbe57nt8kvpt2e9?svg=true)](https://ci.appveyor.com/project/DanielPollithy/giant)
 [![Documentation Status](https://readthedocs.org/projects/transliterationapplication/badge/?version=latest)](http://transliterationapplication.readthedocs.io/en/latest/?badge=latest)
 [![API Status](https://img.shields.io/badge/API-0.1-brightgreen.svg)](https://danielpollithy.github.io/GIAnT/api/)
