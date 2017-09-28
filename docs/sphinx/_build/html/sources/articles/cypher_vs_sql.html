@@ -61,12 +61,131 @@ which is part of Sebastian Lasch&#8217;s corpus:</p>
 </div>
 <div class="section" id="storing-the-graph">
 <h2>Storing the graph<a class="headerlink" href="#storing-the-graph" title="Permalink to this headline">¶</a></h2>
+<p>Obviously storing a graph in a graph database does not need a lot of setups.</p>
+<p>The basics of neo4j can be found here: <a class="reference external" href="https://neo4j.com/blog/data-modeling-basics/">https://neo4j.com/blog/data-modeling-basics/</a></p>
+<p>Example for adding two connected nodes:</p>
+<p><strong>Cypher</strong>
+<code class="code docutils literal"><span class="pre">CREATE</span> <span class="pre">(a:Token</span> <span class="pre">{text:&quot;Lazio&quot;})-[:follows]-&gt;(b:Token</span> <span class="pre">{name:&quot;Merda&quot;})</span></code></p>
+<p>Under the hood storing a graph in a relational database is not different to the graph database way to do it.
+But the main difference is that every node stores its own relationships. So no other look up is required to
+get from Node 1 to neighbouring Node 2.</p>
+<p>Most of the graph databases also give the ability document oriented databases have that you don&#8217;t have to
+stick to a given schema. So you don&#8217;t have to define exactly at the beginning what attributes a node or an
+edge should have. (Of course reading the schema dynamically is performance downside)</p>
+<p><strong>SQL</strong>
+In SQL you are going to need a basic setup. At least a table with nodes and one with edges.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>CREATE TABLE Nodes (
+    id INT AUTO_INCREMENT,
+    type VARCHAR(20),
+    text VARCHAR(100),
+    PRIMARY KEY(id)
+)
+
+CREATE TABLE Edges (
+    fromNode INT,
+    toNode INT,
+    type VARCHAR(20)
+)
+</pre></div>
+</div>
+<p>Now insert the two nodes connected by one edge.</p>
+<p><code class="code docutils literal"><span class="pre">INSERT</span> <span class="pre">INTO</span> <span class="pre">Nodes</span> <span class="pre">(type,</span> <span class="pre">text)</span> <span class="pre">VALUES</span> <span class="pre">(&quot;Token&quot;,</span> <span class="pre">&quot;Lazio&quot;)</span></code></p>
+<p><code class="code docutils literal"><span class="pre">INSERT</span> <span class="pre">INTO</span> <span class="pre">Nodes</span> <span class="pre">(type,</span> <span class="pre">text)</span> <span class="pre">VALUES</span> <span class="pre">(&quot;Token&quot;,</span> <span class="pre">&quot;Merda&quot;)</span></code></p>
+<p><code class="code docutils literal"><span class="pre">INSERT</span> <span class="pre">INTO</span> <span class="pre">Edges</span> <span class="pre">(type)</span> <span class="pre">VALUES</span> <span class="pre">(&quot;follows&quot;)</span></code></p>
+<p>We stored the same graph in both databases. Of course there are more differences between the two
+database systems but for our example this shows enough of a difference.</p>
 </div>
 <div class="section" id="retrieving-some-data">
 <h2>Retrieving some data<a class="headerlink" href="#retrieving-some-data" title="Permalink to this headline">¶</a></h2>
+<p>In this section comes the big advantage of the graph database. Although relational databases work well on
+lots of data rows the graph databases are well equipped when it comes to retrieving and analyzing graphs.</p>
+<p>Imagine the simple case you just want to get the words that directly follow after &#8220;Lazio&#8221;:</p>
+<p><strong>Cypher</strong>
+<code class="code docutils literal"><span class="pre">MATCH</span> <span class="pre">(a:Token</span> <span class="pre">{text:&quot;Lazio&quot;})-[:follows]-&gt;(b:Token)</span> <span class="pre">RETURN</span> <span class="pre">b.text</span></code></p>
+<p>This will return a list of tokens that followed the nodes called &#8220;Lazio&#8221;.</p>
+<p><strong>SQL</strong></p>
+<p>Imagine a first try for this query. It may take us 2 minutes to write it.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>SELECT text
+FROM Nodes
+WHERE id IN (
+  SELECT toNode
+  FROM Edges
+  WHERE fromNode
+  IN (
+     SELECT id
+      FROM Nodes
+      WHERE text = &quot;Lazio&quot; AND type = &quot;Token&quot;
+  )
+);
+</pre></div>
 </div>
-<div class="section" id="analyzing-the-graph">
-<h2>Analyzing the graph<a class="headerlink" href="#analyzing-the-graph" title="Permalink to this headline">¶</a></h2>
+<p>This is already a quite long statement for such an easy case.
+We try to make it shorter and maybe more readable.</p>
+<p>After 3 minutes we come up with this query:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>SELECT n1.text
+FROM Nodes AS n1
+  INNER JOIN Edges ON n1.id = fromNode
+  INNER JOIN Nodes AS n2 ON toNode = n2.id
+WHERE n1.type = &quot;Token&quot; AND n1.text = &quot;Lazio&quot;;
+</pre></div>
+</div>
+<p>We were able to shorten it but it is still far away from being a one-liner.</p>
+</div>
+<div class="section" id="extending-the-example">
+<h2>Extending the example<a class="headerlink" href="#extending-the-example" title="Permalink to this headline">¶</a></h2>
+<p>Now imagine we would like to model the second step from the example scenario.
+Lazio was overwritten by &#8220;AS ROMA&#8221;.</p>
+<p>Let&#8217;s add the new node and a &#8216;overwritten_by&#8217; relation.</p>
+<p>First in <strong>Cypher</strong>:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>MATCH (a:Token {text:&quot;Lazio&quot;)) WITH a
+CREATE (a)-[:overwritten_by]-&gt;(:Token {name:&quot;AS ROMA&quot;})`
+</pre></div>
+</div>
+<p>Now in <strong>SQL</strong> (notice how it is not really possible to catch the last insertion ID):</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>INSERT INTO Nodes (type, text) VALUES (&quot;Token&quot;, &quot;AS ROMA&quot;);
+INSERT INTO Edges (fromNode, toNode, type) VALUES
+    (   (SELECT id FROM Nodes WHERE type = &quot;Token&quot; AND text = &quot;Lazio&quot;),
+        (SELECT id FROM Nodes WHERE type = &quot;Token&quot; AND text = &quot;AS ROMA&quot;),
+        &quot;overwritten_by&quot;
+    );
+</pre></div>
+</div>
+</div>
+<div class="section" id="querying-just-a-little-more">
+<h2>Querying just a little more<a class="headerlink" href="#querying-just-a-little-more" title="Permalink to this headline">¶</a></h2>
+<p>Now we would like to see what kind of words are followed <strong>visibly</strong> by merda.
+In our example this means that Lazio is not longer the correct answer but AS ROMA is.
+(Attention: overwriting over overwriting is possible but just the highest text shall be returned.)</p>
+<p>After 10 minutes we come up with this.</p>
+<p><strong>Cypher</strong></p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>MATCH (a:Token {value:&quot;Merda&quot;})-[:edge {relation_type:&quot;follows&quot;}]-(b:Token)
+OPTIONAL MATCH r=(b)-[:edge*{relation_type:&quot;grak&quot;}]-(c)
+WITH  LAST(relationships(r))  as relatio, b
+WITH FILTER(rel in [b, relatio] WHERE rel IS NOT null) as relations
+WITH  LAST(relations) as relation
+WITH relation ORDER BY relation.hand DESC LIMIT 1
+MATCH ()-[relation]-&gt;(t:Token)
+RETURN t;`
+</pre></div>
+</div>
+<p>This query is not too simple but the problem is neither. Actually to solve such a problem recursive functions
+are necessary. Take a look at the second row: the asterisk stands for a variable number of hops.
+This is a powerful feature of neo4j. You can easily match recursive relations or others by adding only an
+asterisk.</p>
+<p><strong>SQL</strong></p>
+<p>In SQL we really have to program SQL now. We could write a CTE (common table expression)
+<a class="reference external" href="https://technet.microsoft.com/en-us/library/ms186243(v=sql.105).aspx">https://technet.microsoft.com/en-us/library/ms186243(v=sql.105).aspx</a>
+that provides recursion for that one special query we need.</p>
+<p>Or we have a database that supports <code class="code docutils literal"><span class="pre">CONNECT</span> <span class="pre">BY</span></code>.
+<a class="reference external" href="https://en.wikipedia.org/wiki/Hierarchical_and_recursive_queries_in_SQL">https://en.wikipedia.org/wiki/Hierarchical_and_recursive_queries_in_SQL</a></p>
+<p>We would really have to get a programmer here to get the analysis going.</p>
+</div>
+<div class="section" id="result">
+<h2>Result<a class="headerlink" href="#result" title="Permalink to this headline">¶</a></h2>
+<p>We modeled a small graph example in SQL and neo4j. We tried to get some data out of it.</p>
+<p>RDMS (relational database management systems) and graph databases are concurring in this field.
+RDMS are much broader, proven to work and really established.</p>
+<p>But as we have seen there are cases in which it makes sense to switch to a GraphDB.</p>
 </div>
 </div>
 
@@ -82,7 +201,9 @@ which is part of Sebastian Lasch&#8217;s corpus:</p>
 <li><a class="reference internal" href="#example-scenario">Example scenario</a></li>
 <li><a class="reference internal" href="#storing-the-graph">Storing the graph</a></li>
 <li><a class="reference internal" href="#retrieving-some-data">Retrieving some data</a></li>
-<li><a class="reference internal" href="#analyzing-the-graph">Analyzing the graph</a></li>
+<li><a class="reference internal" href="#extending-the-example">Extending the example</a></li>
+<li><a class="reference internal" href="#querying-just-a-little-more">Querying just a little more</a></li>
+<li><a class="reference internal" href="#result">Result</a></li>
 </ul>
 </li>
 </ul>

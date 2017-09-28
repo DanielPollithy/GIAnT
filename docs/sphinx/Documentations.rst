@@ -1,74 +1,35 @@
 Technical guides
 ================
 
-Feature overview
-----------------
+chain promises
 
-Installation
-------------
+how to verify the codec?
 
-Login to neo4j
---------------
+How the batch add works
 
-Getting started
----------------
+How the heatmap works
 
-Uploading an image
-..................
+Code coverage
 
-Creating a fragment
-...................
+asynchronous testing with mocha and chai
 
-Transfer to neo4j
-.................
+Travis Appveyor
 
-Using the editor
-----------------
+Code coverage
 
-Overview
-........
+Sphinx
 
-Layers
-......
+Autocomplete functions
 
-Nodes
-.....
+Exif data extraction
 
-Relations
-.........
+Where are which files - case of crash
 
-Data scheme in neo4j
---------------------
+express.js and pug
 
-Interpretation as a graph
-.........................
+What is mxGraph and how was it overwritten?
 
-Advantages of graphs
-....................
 
-Using Cypher
-............
-
-Heatmap tool
-------------
-
-Normalization techniques
-........................
-
-Custom queries
-..............
-
-Data constraints
-----------------
-
-Exporting your data
--------------------
-
-SQL and CSV
-...........
-
-Images
-......
 
 
 Making changes to the codebase
