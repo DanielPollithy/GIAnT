@@ -6,6 +6,9 @@
 [![API Status](https://img.shields.io/badge/Test_Coverage--brightgreen.svg)](https://danielpollithy.github.io/GIAnT/coverage/lcov-report/index.html)
 [![Coverage Status](https://coveralls.io/repos/github/DanielPollithy/TransliterationApplication/badge.svg?branch=master)](https://coveralls.io/github/DanielPollithy/TransliterationApplication?branch=master)
 
+## Network
+[![Network](https://img.shields.io/badge/QDA_networked_with-openQDA-blue.svg)](https://github.com/barichello/openQDA)
+
 **Youtube Video**
 
 [![Application Screencast](https://img.youtube.com/vi/4NRxlxq0TEY/0.jpg)](https://www.youtube.com/watch?v=4NRxlxq0TEY)
