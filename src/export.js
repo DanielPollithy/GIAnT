@@ -54,6 +54,11 @@ var path = require('path');
 var zlib = require('zlib');
 var archiver = require('archiver');
 var database = require('./database');
+var readline = require('readline');
+var exif_utils = require('./exif_utils');
+var sizeOf = require('image-size');
+var codec = require('./codec');
+
 
 
 
@@ -600,6 +605,228 @@ Export.to_csv = function () {
             reject(e);
         }
     });
+};
+
+Export._get_images_and_fragments_from_relations_csv = function(relations_fn) {
+    return new Promise(function(resolve, reject){
+        var images = {};
+        var lineReader = readline.createInterface({
+          input: fs.createReadStream(relations_fn)
+        });
+        var line_counter = 0;
+        var splitted_line, relation_id, relation_type, source, target;
+        lineReader.on('line', function (line) {
+            if (line_counter > 0) {
+                splitted_line = line.split(',');
+                relation_id = splitted_line[0];
+                relation_type = splitted_line[1].substring(1, splitted_line[1].length-1);
+                source = splitted_line[2];
+                target = splitted_line[3];
+                if (relation_type == 'image') {
+                    // the node is an image
+                    if (images[target] === undefined) {
+                        images[target] = {};
+                    }
+                    images[target][source] = {};
+                }
+            }
+            line_counter++;
+        });
+        lineReader.on('close', function(){
+            resolve(images);
+        });
+        lineReader.on('error', function(err){
+            reject(err);
+        });
+    })
+};
+
+Export._get_properties_from_csv = function(node_props_fn, relations_fn) {
+    return new Promise(function(resolve, reject) {
+        Export._get_images_and_fragments_from_relations_csv(relations_fn)
+            .then(function(images){
+                var lineReader = readline.createInterface({
+                    input: fs.createReadStream(node_props_fn)
+                });
+                var line_counter = 0;
+                var splitted_line, id_, key, value, image_id;
+                lineReader.on('line', function (line) {
+                    if (line_counter > 0) {
+                        splitted_line = line.split(',');
+                        id_ = splitted_line[0];
+                        key = splitted_line[1].substring(1, splitted_line[1].length-1);
+                        value = splitted_line[2].substring(1, splitted_line[2].length-1);
+                        if (key == 'file_path') {
+                            // the node is an image
+                            images[id_]['file_path'] = decodeURIComponent(value);
+                        }
+                        if (key == 'fragment_name' || key == 'comment' || key == 'completed') {
+                            // the node is a fragment
+                            image_id = null;
+                            Object.keys(images).forEach(function(image){
+                                Object.keys(images[image]).forEach(function(fragment_id){
+                                    if (fragment_id == id_) {
+                                        image_id = image;
+                                    }
+                                });
+                            });
+                            if (image_id) {
+                                images[image_id][id_][key] = decodeURIComponent(value);
+                            }
+                        }
+                    }
+                    line_counter++;
+                });
+                lineReader.on('close', function(){
+                    return resolve(images);
+                });
+                lineReader.on('error', function(err){
+                    return reject(err);
+                });
+            });
+    });
+};
+
+Export._rebuild_image = function(image_path) {
+    return new Promise(function(resolve, reject){
+        var new_image_path = path.join(__dirname, '..', 'media', 'uploaded_images', image_path);
+        exif_utils.get_exif_from_image(new_image_path, function (exif_err, exif_data) {
+                if (exif_err) {
+                    log.warn('REBUILD: There was an error reading exif from image: ' + new_image_path);
+                    exif_data = null;
+                }
+                if (!exif_data) {
+                    sizeOf(new_image_path, function (err, dimensions) {
+                        if (err) {
+                            log.error("REBUILD: "+err);
+                            return reject(err);
+                        }
+
+                        var alternative_meta = {
+                            'exif': {
+                                'ExifImageWidth': dimensions.width,
+                                'ExifImageHeight': dimensions.height
+                            }
+                        };
+                        database.add_image(image_path, alternative_meta).then(function (record) {
+                            log.info('REBUILD: Added image: ' + new_image_path);
+                            var image_id = record.get('ident').toString();
+                            return resolve(image_id);
+
+                        }, function (err) {
+                            log.error('REBUILD: Error on adding an image to the database: ' + new_image_path);
+                            return reject(err);
+                        });
+                    })
+                } else {
+                    database.add_image(image_path, exif_data).then(function (record) {
+                        if (record.name == "Neo4jError") {
+                            return reject(record.message);
+                        }
+                        log.info('REBUILD: Added image: ' + new_image_path);
+                        var image_id = record.get('ident').toString();
+                        return resolve(image_id);
+                    }, function (err) {
+                        log.error('REBUILD: Error on adding an image to the database: ' + new_image_path);
+                        return reject(err);
+                    });
+                }
+            });
+        });
+};
+
+Export._copy_xmls = function(fragment_mapping) {
+    // fragment_mapping is old_fragment_id -> new_fragment_id
+    var all_promises = [];
+    Object.keys(fragment_mapping).forEach(function(old_fragment_id) {
+        var new_fragment_id = fragment_mapping[old_fragment_id];
+        var old_path = path.join(__dirname, '..', 'media', 'uploaded_xmls', old_fragment_id+'.xml');
+        var old_path_backup = path.join(__dirname, '..', 'media', 'uploaded_xmls', old_fragment_id+'.backup.xml');
+        var new_path = path.join(__dirname, '..', 'media', 'uploaded_xmls', new_fragment_id+'.xml');
+
+        all_promises.push(new Promise(function(resolve, reject){
+            var read = fs.createReadStream(old_path);
+            var write = fs.createWriteStream(old_path_backup);
+            write.on('error', reject);
+            write.on('close', resolve);
+            read.pipe(write);
+        }));
+
+        all_promises.push(new Promise(function(resolve, reject){
+            var read = fs.createReadStream(old_path);
+            var write = fs.createWriteStream(new_path);
+            write.on('error', reject);
+            write.on('close', resolve);
+            read.pipe(write);
+        }));
+
+    });
+    return Promise.all(all_promises);
+};
+
+Export.rebuild_database = function(relations_fn, node_props_fn) {
+    return Export._get_properties_from_csv(node_props_fn, relations_fn)
+        .then(function(images){
+            // fragment_mapping: old_fragment_id -> new_fragment_id
+            var fragment_mapping = {};
+            var image_promises = [];
+            Object.keys(images).forEach(function(image_id){
+                var image = images[image_id];
+                var file_path = image['file_path'];
+                if (file_path != undefined) {
+                    var p = Export._rebuild_image(file_path)
+                        .then(function(db_image_id){
+                            // create all fragments
+                            var fragment_promises = [];
+                            Object.keys(image).forEach(function(fragment_id){
+                                if (fragment_id != 'file_path') {
+                                    var fragment_name = images[image_id][fragment_id]['fragment_name'];
+                                    var comment = images[image_id][fragment_id]['comment'];
+                                    if (comment == 'UL') {comment = ''}
+                                    var completed = images[image_id][fragment_id]['completed'];
+                                    // Attention: is NULL stands in the cell it is shortened to a UL
+                                    if (completed == "UL") {completed = undefined}
+                                    if (fragment_name == undefined) {
+                                        log.error('REBUILD: Missing fragment_name of fragment_id='+fragment_id);
+                                        fragment_name = '';
+                                    }
+                                    var fp = database.add_fragment(db_image_id, fragment_name, comment, completed)
+                                        .then(function(record){
+                                            var db_fragment_id = record.get('ident').toString();
+                                            var overwrite_xml = '../media/uploaded_xmls/' + fragment_id + '.xml';
+                                            return codec.mxgraph_to_neo4j(db_image_id, db_fragment_id, overwrite_xml).then(function (data) {
+                                                fragment_mapping[fragment_id] = db_fragment_id;
+                                                return Promise.resolve();
+                                            }).catch(function(err){
+                                                log.error(err);
+                                                return Promise.reject(err);
+                                            });
+                                        }).catch(function(err) {
+                                            log.error('REBUILD: Error creating fragment fragment_id='+fragment_id);
+                                            log.error('REBUILD: ' + err);
+                                        });
+                                    fragment_promises.push(fp);
+                                }
+                            });
+                            return Promise.all(fragment_promises);
+                        }).catch(function(err){
+                            log.error('REBUILD: image ' + image_id + ' error creating: ' + err);
+                        });
+                    image_promises.push(p);
+                } else {
+                    log.error('REBUILD: image ' + image_id + ' has no file_path');
+                }
+            });
+            return Promise.all(image_promises)
+                .then(function(){
+                    log.info('REBUILD: images were added successfully.');
+                    return Export._copy_xmls(fragment_mapping);
+                })
+                .catch(function(err){
+                    log.error('REBUILD: there was an error adding the images and fragment.');
+                    log.error(err);
+                });
+        })
 };
 
 module.exports = Export;

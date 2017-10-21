@@ -475,16 +475,18 @@ Database.remove_image_by_id = function (id_) {
  * @param fragment_name The identifier for the fragment
  * @return {Promise}
  */
-Database.add_fragment = function(image_id, fragment_name) {
+Database.add_fragment = function(image_id, fragment_name, comment, completed) {
+    if (comment == undefined) { comment = '' }
+    if (completed == undefined) { completed = false } else { completed = true}
     var session = this._get_session();
     var d = new Date();
     var upload_date = Math.round(d.getTime());
     return session.run("MATCH (i:Image) " +
         "WHERE ID(i) = toInteger({image_id}) " +
         "WITH i " +
-        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:false, comment:{comment}})-[:image]->(i) " +
+        "CREATE (f:Fragment {fragment_name: {fragment_name}, upload_date: {upload_date}, completed:{completed}, comment:{comment}})-[:image]->(i) " +
         "RETURN ID(f) as ident, ID(i) AS image_ident;",
-        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: ''})
+        {fragment_name: fragment_name, upload_date: upload_date, image_id: Number(image_id), comment: comment, completed: completed})
         .then(function(result){
             session.close();
             var records = [];

@@ -10,3 +10,22 @@ block content
     b= '' + message
     form(method='post', action='/db-drop')
       input(type='submit', value='drop connection')
+    br
+    br
+    h1= 'Rebuild data from filesystem'
+    p= 'If your database got corrupted (for example because you used a sync client).'
+    p= 'Step 1) Export your data as CSV. Backup the <Giant-App>/resources/app/media/uploaded_xmls/ folder.'
+    p= 'Step 2) Stop GIAnT, stop Neo4j, create a new database for neo4j, start it and restart GIAnT'
+    p= 'Step 3) Your data is located here: <Giant-App>/resources/app/media/'
+    p= 'Make sure uploaded_xmls/ contains your xmls, uploaded_images/ your images and settings/ your settings'
+    p= 'If that\'s not the case copy them to these locations.'
+
+    form(method='post', action='rebuild-database', enctype='multipart/form-data')
+        p= 'Step 4) Upload the dumped CSV files'
+        p= 'Relations: csv-relations-*.csv'
+        input(type='file', name='edges')
+        br
+        p= 'Node properties: csv-nodeprops-*.csv'
+        input(type='file', name='node_props')
+        p= 'Attention: This script will overwrite the current active neo4j database. Ok?'
+        input(type='submit', value='Rebuild database from filesystem')

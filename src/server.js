@@ -199,6 +199,31 @@ app.post('/', function (req, res) {
     });
 });
 
+app.post('/rebuild-database', function (req, res) {
+    if (!req.files || !req.files.edges  || !req.files.node_props) {
+        log.warn('Tried to rebuild database without uploading the dump files');
+        return res.redirect('/?e=' + encodeURIComponent('You have to attach the exported files.'))
+    }
+
+    var edges = req.files.edges;
+    var node_props = req.files.node_props;
+
+    var edges_fn = path.join(__dirname, '..', 'media', 'export', 'recover_relations.csv');
+    var node_props_fn = path.join(__dirname, '..', 'media', 'export', 'recover_node_props.csv');
+
+    var promises = [edges.mv(edges_fn), node_props.mv(node_props_fn)];
+
+    Promise.all(promises).then(function(){
+        exp.rebuild_database(edges_fn, node_props_fn).then(function(){
+            res.redirect('/?i=' + encodeURIComponent('Good luck with the recovered database.'))
+        }).catch(function(err){
+            res.redirect('/?e=' + encodeURIComponent(err))
+        })
+    }).catch(function(err){
+        return res.redirect('/?e=' + encodeURIComponent(err));
+    });
+});
+
 app.get('/autocomplete/:token_type/values', function (req, res) {
     var token_type = utils.token_type_mapping(req.params.token_type);
     if (!token_type) {
