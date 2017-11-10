@@ -74,12 +74,20 @@ The following urls are called to retrieve the keys and values:
  * :code:`/autocomplete/:token_type/values`
  * :code:`/autocomplete/:token_type/keys`
 
-Where :code:`:token_type` has to be one of the hard coded strings: 'modification', 'token', 'symbol', 'comment', 'frame', 'blanco'
+Where :code:`:token_type` has to be one of the hard coded strings:
+
+ - 'modification',
+ - 'token',
+ - 'symbol',
+ - 'comment',
+ - 'frame',
+ - 'blanco'
+
 If you are using this application and the hard coded terminology is bothering you feel free to contact me.
 
 The query to get all property keys looks like this:
 
-.. code-block::none
+.. code-block:: none
 
     MATCH (p:Label {...})  WITH DISTINCT keys(p) AS keys
     UNWIND keys AS keyslisting WITH DISTINCT keyslisting AS allfields
@@ -177,7 +185,7 @@ The database with its methods are well described with the YUIDocs API descriptio
 
 .. image:: sources/images/codecomment.png
 
-.. code-block::none
+.. code-block:: none
 
     // get the database singleton
     var database = require('../src/database');
