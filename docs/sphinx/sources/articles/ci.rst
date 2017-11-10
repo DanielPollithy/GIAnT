@@ -97,7 +97,7 @@ Now the build triggers automatically the deployment to github releases.
 After some minutes there is a new release on the GitHub-Page with the zipped applications attached.
 
 How to Deploy manually
-----------------------
+......................
 
 If you made a change to the code and want to ship this change in an electron app
 follow this procedure
@@ -116,7 +116,7 @@ follow this procedure
 
 
 Deployment on Travis-CI
------------------------
+.......................
 
 This is an explanation of the configuration and how the workflow works.
 If you know Travis-CI this will be boring.
@@ -214,7 +214,7 @@ your with ease.
 
 
 Deployment on AppVeyor
-----------------------
+......................
 
 AppVeyor provides a similar service to Travis-CI but is focused on windows.
 So they provide a **Power shell** on a win32 host system you can configure.

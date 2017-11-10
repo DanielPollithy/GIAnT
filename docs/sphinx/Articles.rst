@@ -10,7 +10,6 @@ Articles
    sources/articles/ci.rst
    sources/articles/codec.rst
    sources/articles/electron.rst
-   sources/articles/future.rst
 
 
 

@@ -374,9 +374,9 @@ Interesting Properties of **Singular Tokens**
 +--------------------------+-------------------------+
 | The type of the Token*   | :code:`:tokenType`      |
 +--------------------------+-------------------------+
-| The box's content**      | :code:`:value`          |
+| The box's content**      | :code:`value`           |
 +--------------------------+-------------------------+
-| The number of the layer  | :code:`:hand`           |
+| The number of the layer  | :code:`hand`            |
 +--------------------------+-------------------------+
 | All custom properties    | e.g. color, tool, ...   |
 +--------------------------+-------------------------+
@@ -399,9 +399,9 @@ Interesting Properties of **Group Tokens**
 +--------------------------+-------------------------+
 | The type of the Group*   | :code:`:groupType`      |
 +--------------------------+-------------------------+
-| The box's content**      | :code:`:value`          |
+| The box's content**      | :code:`value`           |
 +--------------------------+-------------------------+
-| The number of the layer  | :code:`:hand`           |
+| The number of the layer  | :code:`hand`            |
 +--------------------------+-------------------------+
 | All custom properties    | e.g. frame_type...      |
 +--------------------------+-------------------------+
@@ -432,7 +432,7 @@ Interesting Properties of **MetaGroups**
 +--------------------------+-------------------------+
 | The type of the Group*   | :code:`:groupType`      |
 +--------------------------+-------------------------+
-| value                    | :code:`:value`          |
+| value                    | :code:`value`           |
 +--------------------------+-------------------------+
 
 (*) Only MetaFrame is possible so far!
@@ -469,9 +469,7 @@ Now that you know how your data is structured in the graph database you might al
 **Using the GIAnT but refusing to use Cypher is a waste of time!**
 Cypher is the SQL oriented query language for neo4j graph databases. https://neo4j.com/developer/cypher-query-language/
 
-It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.  TODO: Add links to the following resources!
-
-TODO: Diesen Absatz ausbauen!
+It can really help you to find quickly what you are looking for but you have to get into it a little bit and design your corpus accordingly.
 
 Heatmap tool
 ------------
@@ -776,24 +774,24 @@ We have to move the Neo4j database to the new computer. There are two options:
 
 According to https://neo4j.com/docs/operations-manual/current/tools/dump-load/
 
-- stop neo4j
-- neo4j-admin dump --database=<database> --to=<destination-path>
-- neo4j-admin load --from=<archive-path> --database=<database> [--force]
-- start neo4j
+- :code:`stop neo4j`
+- :code:`neo4j-admin dump --database=<database> --to=<destination-path>`
+- :code:`neo4j-admin load --from=<archive-path> --database=<database> [--force]`
+- :code:`start neo4j`
 
 Example for unix:
 
 On machine 1
 
-- sudo service neo4j stop
-- neo4j-admin dump --to=dump.db
-- sudo service neo4j start
+- :code:`sudo service neo4j stop`
+- :code:`neo4j-admin dump --to=dump.db`
+- :code:`sudo service neo4j start`
 
 On machine 2
 
-- sudo service neo4j stop
-- neo4j-admin load --from=dump.db --force
-- sudo service neo4j start
+- :code:`sudo service neo4j stop`
+- :code:`neo4j-admin load --from=dump.db --force`
+- :code:`sudo service neo4j start`
 
 Use the 'force' option to overwrite existing data
 
@@ -806,10 +804,10 @@ Move the whole folder to your new computer and :code:`service neo4j start`
 
 Example workflow for UNIX:
 
- - sudo service neo4j stop
- - zip -r ~/Desktop/dump.zip /var/lib/neo4j/data/databases/graph.db/
- - sudo unzip dump.zip -d /
- - service neo4j start
+ - :code:`sudo service neo4j stop`
+ - :code:`zip -r ~/Desktop/dump.zip /var/lib/neo4j/data/databases/graph.db/`
+ - :code:`sudo unzip dump.zip -d /`
+ - :code:`service neo4j start`
 
 
 

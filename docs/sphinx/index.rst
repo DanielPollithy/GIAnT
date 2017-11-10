@@ -23,6 +23,10 @@ Video
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/4NRxlxq0TEY" frameborder="0" allowfullscreen></iframe>
 
+This video shows v1.0.0 of the application GIAnT in action.
+
+https://www.youtube.com/embed/4NRxlxq0TEY
+
 GIAnT resources
 ---------------
 
@@ -101,39 +105,6 @@ CHANGELOg
 
    sources/CHANGELOG
 
-Articles
-========
-
-The following article list will give you a good insight in all the knowledge about this application.
-
-It is going to cover
-
- - "Basic data flow description"
- - "How mxGraph was modded",
- - "How Codex works - Codec.js - mxGraph XML -> GraphML -> Neo4J",
- - "Codec.js - What is the biggest XML-Graph it can convert to Neo4J?"
- - "The express.js server",
- - "Pug templates",
- - "Data storage XML and images",
- - "Exif data extraction",
- - "Electron application - and why",
- - "How to build the electron application cross platform",
- - "Could the server be used as a standalone?",
- - "How the autocomplete works",
- - "Writing custom constraints"
- - "How the settings work"
- - "Asynchronous tests with mocha.js and chai.js"
- - "Testu automation using travis and appveyor"
- - "About the code coverage"
- - "Extending the mxGraph Editor"
- - "What is not implemented"
- - "Next steps"
-
-Maybe
- - "App performance struggle: Million of nodes, thousands of images and a lot of properties"
-
- - "A question of complexity: Cypher vs SQL for transliteration analyzes"
- - "The use case of this application"
 
 Indices and tables
 ==================
