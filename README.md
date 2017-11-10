@@ -14,85 +14,70 @@
 [![Application Screencast](https://img.youtube.com/vi/4NRxlxq0TEY/0.jpg)](https://www.youtube.com/watch?v=4NRxlxq0TEY)
 
 
-# Interesting for users
+GIAnT - Graphical Image Annotation Tool
+=======================================
 
-The first part of the README is dedicated to users who want to work with the application.
+.. image:: sources/images/logo.png
 
-## GIAnT - Primary use case
+GIAnT is an open source cross platform desktop application designed
+to aid scientists with graphical image annotation in the process of creating a corpus.
 
-You want to analyze text on pictures, how authors interact (overwrite, annotate, comment) with each others, 
-the positional distributions of selected words.
+If you have a set of images, want to make annotations or even analyze how utters interact with each
+other  this application might be useful for your project.
 
-This application enables you to build a graph database for your corpus. With the advantage of a graph database query your
-analyzations could become easier (see [Comparison of relationals v.s. graph database in corpus analytics]).
+We built it for analyzing graffiti in Rome. Never the less the application is designed to be adapted for other studies.
 
-The outline of the project for that I built this application looked like this:
-1. Pictures with GPS originated in the metropol region of Rome
-2. Install GIAnT on Windows
-3. Connect the GIAnT to a Neo4J-Node in the Digital Humanities cloud 
-(http://dhvlab.gwi.uni-muenchen.de/index.php/Main_Page)
-4. REPEAT 3000 times: 
- 4.1 Insert picture
- 4.2 Create region (called fragment) on picture (as many as you want)
- 4.3 Open the GraphicalEditor for the fragment
- 4.4 Add a layer for every author that 'collaborated'
- 4.5 Drag rectangles onto the layer, annotate the image, the political opinion, the color, the language...
- The user can add an endless amount of not predefined properties to the rectangles
- 4.6 Connect the rectangles according to their interactions (e.g. rectangle R1 overwrites rectangle R2, R3 follows R4, 
- R5 is a positive comment to R3... (endless possibilites)
- 4.7 Call the save-button in the GraphicalEditor to store the current state
- 4.8 Transmit the fragment with all its layers, nodes and edges into the graph database (-> enables autocomplete functions)
-5. Transport the locally stored images into the Digital Humanities Cloud in order to build an online map web app for the corpus
-6. Analyze the corpus
- 6.1 Commentary relation between text blocks can be realized far easier than with SQL
- 6.2 Heatmap analysis costs the same effort as with SQL
- 6.3 Quantitative analysis for selected words (how often comes word A after word B)
-7. Export the graph data for relational database system (MySQL)
+GIAnT resources
+---------------
 
-## Example workflow
+<table>
+<colgroup>
+<col width="25%" />
+<col width="74%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Download GIAnT</td>
+<td><a href="https://github.com/DanielPollithy/GIAnT/releases" class="uri">https://github.com/DanielPollithy/GIAnT/releases</a></td>
+</tr>
+<tr class="even">
+<td>Report a problem</td>
+<td><a href="https://github.com/DanielPollithy/GIAnT/issues" class="uri">https://github.com/DanielPollithy/GIAnT/issues</a></td>
+</tr>
+<tr class="odd">
+<td>Get the code</td>
+<td><a href="https://github.com/DanielPollithy/GIAnT" class="uri">https://github.com/DanielPollithy/GIAnT</a></td>
+</tr>
+<tr class="even">
+<td>Check the API</td>
+<td><a href="https://github.com/DanielPollithy/GIAnT/" class="uri">https://github.com/DanielPollithy/GIAnT/</a></td>
+</tr>
+<tr class="odd">
+<td>Automatic win32 tests</td>
+<td><a href="https://ci.appveyor.com/project/DanielPollithy/giant" class="uri">https://ci.appveyor.com/project/DanielPollithy/giant</a></td>
+</tr>
+<tr class="even">
+<td>Automatic unix tests</td>
+<td><a href="https://travis-ci.org/DanielPollithy/GIAnT" class="uri">https://travis-ci.org/DanielPollithy/GIAnT</a></td>
+</tr>
+<tr class="odd">
+<td>Code coverage report</td>
+<td><a href="https://coveralls.io/github/DanielPollithy/TransliterationApplication" class="uri">https://coveralls.io/github/DanielPollithy/TransliterationApplication</a></td>
+</tr>
+<tr class="even">
+<td>Licenses</td>
+<td><a href="https://github.com/DanielPollithy/GIAnT/blob/master/LICENSES.txt" class="uri">https://github.com/DanielPollithy/GIAnT/blob/master/LICENSES.txt</a></td>
+</tr>
+</tbody>
+</table>
 
-<img src="https://danielpollithy.github.io/GIAnT/images/sota-opt.gif">
 
-## user interface tutorial
-
-insert a link here
-
-## installation instruction
-
-# Interesting for developers
-
-This part is intended to give developers some entry points.
-
-## Architecture
-
-This is a nodejs client server application wrappend into an electron app.
-The server is expressjs powered and **currently not suitable for public exposure**.
-The server stores data in a neo4j community edition that needs to be installed locally or accessible remotely.
-
-The frontend is a bunch of pug templates rendered by the expressjs server.
-The editor is an adaption of the mxgraph draw editor. Explicit changes are marked with 'DANIEL'. A diff-view will be provided.
-The custom.js adds necessary custom logic for the autocomplete, backgroundimage and so on.
-
-### Storage process
-The editor is called with GET params for
- - image: contains the location of the background image (/media/uploaded_images/something.jpg)
- - image_id: the ID(image) from neo4j
- - xml_file: same for the xml file (/media/uploaded_xmls/1.xml)
-
-The editor calls /save_xml with the POST params
- - filename (xml_file.split('/')[-1] in words the name of the xml file from the GET params)
- - in the body an xml file by name 'xml'
-
-The server overwrites any existing xml with the same name in media/uploaded_xmls/
-
-### mxgraph to neo4j
-If the user wants to transport the mxgraph xml to neo4j she or he has to press the 'Übertrag' link
-
-The server.js invokes codec.js
- 1. removes the fragment
- 2. calls mxgraph_to_neo4j(image_id, fragment_id)
-
-For details how the conversion is done see the technical documentation.
 
 ## npm commands
 

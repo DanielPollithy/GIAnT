@@ -1,13 +1,13 @@
 {
     "styles": {
         "defaultVertex": {
-            "fontSize": "60"
+            "fontSize": "30"
         }
     },
     "defaultEdgeStyle": {
         "edgeStyle": "orthogonalEdgeStyle",
         "curved": "1",
-        "strokeWidth": "5"
+        "strokeWidth": "10"
     },
     "constraints": {
         "count_constraints": [
