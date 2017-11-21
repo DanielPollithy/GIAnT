@@ -1,7 +1,7 @@
 {
   "name": "giant",
   "productName": "GIAnT",
-  "version": "0.0.3",
+  "version": "1.1.1",
   "description": "A graphical image annotation tool based on mxgraph, neo4j and electron",
   "main": "src/atom.js",
   "directories": {

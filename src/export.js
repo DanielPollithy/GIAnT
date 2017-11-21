@@ -58,6 +58,7 @@ var readline = require('readline');
 var exif_utils = require('./exif_utils');
 var sizeOf = require('image-size');
 var codec = require('./codec');
+var utils = require('./utils');
 
 
 
@@ -737,14 +738,23 @@ Export._rebuild_image = function(image_path) {
 
 Export._copy_xmls = function(fragment_mapping) {
     // fragment_mapping is old_fragment_id -> new_fragment_id
-    var all_promises = [];
+    var backup_folder_name = 'backup_' + this._get_time();
+    var backup_folder = path.join(__dirname, '..', 'media', 'uploaded_xmls', backup_folder_name);
+    if (!fs.existsSync(backup_folder)) {
+        fs.mkdirSync(backup_folder, 0744);
+        log.info("Created folder: " + backup_folder)
+    }
+
     Object.keys(fragment_mapping).forEach(function(old_fragment_id) {
         var new_fragment_id = fragment_mapping[old_fragment_id];
         var old_path = path.join(__dirname, '..', 'media', 'uploaded_xmls', old_fragment_id+'.xml');
-        var old_path_backup = path.join(__dirname, '..', 'media', 'uploaded_xmls', old_fragment_id+'.backup.xml');
+        var old_path_backup = path.join(backup_folder, old_fragment_id+'.xml');
         var new_path = path.join(__dirname, '..', 'media', 'uploaded_xmls', new_fragment_id+'.xml');
 
-        all_promises.push(new Promise(function(resolve, reject){
+        fs.copyFileSync(old_path, old_path_backup);
+        fs.copyFileSync(old_path, new_path);
+
+        /*all_promises.push(new Promise(function(resolve, reject){
             var read = fs.createReadStream(old_path);
             var write = fs.createWriteStream(old_path_backup);
             write.on('error', reject);
@@ -758,10 +768,14 @@ Export._copy_xmls = function(fragment_mapping) {
             write.on('error', reject);
             write.on('close', resolve);
             read.pipe(write);
-        }));
+        }));*/
 
     });
-    return Promise.all(all_promises);
+
+    var mapping_backup_file = path.join(backup_folder, 'fragment_mapping.json');
+    fs.writeFileSync(mapping_backup_file, JSON.stringify(fragment_mapping));
+
+    return Promise.resolve();
 };
 
 Export.rebuild_database = function(relations_fn, node_props_fn) {
@@ -770,54 +784,65 @@ Export.rebuild_database = function(relations_fn, node_props_fn) {
             // fragment_mapping: old_fragment_id -> new_fragment_id
             var fragment_mapping = {};
             var image_promises = [];
+            var promise_function;
             Object.keys(images).forEach(function(image_id){
                 var image = images[image_id];
                 var file_path = image['file_path'];
                 if (file_path != undefined) {
-                    var p = Export._rebuild_image(file_path)
-                        .then(function(db_image_id){
-                            // create all fragments
-                            var fragment_promises = [];
-                            Object.keys(image).forEach(function(fragment_id){
-                                if (fragment_id != 'file_path') {
-                                    var fragment_name = images[image_id][fragment_id]['fragment_name'];
-                                    var comment = images[image_id][fragment_id]['comment'];
-                                    if (comment == 'UL') {comment = ''}
-                                    var completed = images[image_id][fragment_id]['completed'];
-                                    // Attention: is NULL stands in the cell it is shortened to a UL
-                                    if (completed == "UL") {completed = undefined}
-                                    if (fragment_name == undefined) {
-                                        log.error('REBUILD: Missing fragment_name of fragment_id='+fragment_id);
-                                        fragment_name = '';
-                                    }
-                                    var fp = database.add_fragment(db_image_id, fragment_name, comment, completed)
-                                        .then(function(record){
-                                            var db_fragment_id = record.get('ident').toString();
-                                            var overwrite_xml = '../media/uploaded_xmls/' + fragment_id + '.xml';
-                                            return codec.mxgraph_to_neo4j(db_image_id, db_fragment_id, overwrite_xml).then(function (data) {
-                                                fragment_mapping[fragment_id] = db_fragment_id;
-                                                return Promise.resolve();
-                                            }).catch(function(err){
-                                                log.error(err);
-                                                return Promise.reject(err);
+                    promise_function = function() {
+                        log.info('Now working at ' + file_path);
+                        return Export._rebuild_image(file_path)
+                            .then(function (db_image_id) {
+                                // create all fragments
+                                var fragment_promises = [];
+                                Object.keys(image).forEach(function (fragment_id) {
+                                    if (fragment_id != 'file_path') {
+                                        var fragment_name = images[image_id][fragment_id]['fragment_name'];
+                                        var comment = images[image_id][fragment_id]['comment'];
+                                        if (comment == 'UL') {
+                                            comment = ''
+                                        }
+                                        var completed = images[image_id][fragment_id]['completed'];
+                                        // Attention: is NULL stands in the cell it is shortened to a UL
+                                        if (completed == "UL") {
+                                            completed = undefined
+                                        }
+                                        if (fragment_name == undefined) {
+                                            log.error('REBUILD: Missing fragment_name of fragment_id=' + fragment_id);
+                                            fragment_name = '';
+                                        }
+                                        var fp = database.add_fragment(db_image_id, fragment_name, comment, completed)
+                                            .then(function (record) {
+                                                var db_fragment_id = record.get('ident').toString();
+                                                var overwrite_xml = '../media/uploaded_xmls/' + fragment_id + '.xml';
+                                                return codec.mxgraph_to_neo4j(db_image_id, db_fragment_id, overwrite_xml).then(function (data) {
+                                                    fragment_mapping[fragment_id] = db_fragment_id;
+                                                    return Promise.resolve();
+                                                }).catch(function (err) {
+                                                    log.error(err);
+                                                    return Promise.reject(err);
+                                                });
+                                            }).catch(function (err) {
+                                                log.error('REBUILD: Error creating fragment fragment_id=' + fragment_id);
+                                                log.error('REBUILD: ' + err);
                                             });
-                                        }).catch(function(err) {
-                                            log.error('REBUILD: Error creating fragment fragment_id='+fragment_id);
-                                            log.error('REBUILD: ' + err);
-                                        });
-                                    fragment_promises.push(fp);
-                                }
+                                        fragment_promises.push(fp);
+                                    }
+                                });
+                                return Promise.all(fragment_promises);
+                            }).catch(function (err) {
+                                log.error('REBUILD: image ' + image_id + ' error creating: ' + err);
                             });
-                            return Promise.all(fragment_promises);
-                        }).catch(function(err){
-                            log.error('REBUILD: image ' + image_id + ' error creating: ' + err);
-                        });
-                    image_promises.push(p);
-                } else {
+                    };
+                    image_promises.push(promise_function);
+                }
+                else {
                     log.error('REBUILD: image ' + image_id + ' has no file_path');
                 }
             });
-            return Promise.all(image_promises)
+
+
+            return utils.chain_promises(image_promises)
                 .then(function(){
                     log.info('REBUILD: images were added successfully.');
                     return Export._copy_xmls(fragment_mapping);

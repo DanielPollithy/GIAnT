@@ -268,7 +268,7 @@ Codec.mxgraph_to_layered_object = function(filename) {
 Codec.mxgraph_to_flattened_object = function(filename) {
     return Codec.mxgraph_to_layered_object(filename).then(function (graph) {
         if (!(graph && graph.mxGraphModel)) {
-            return Promise.reject('Graph is empty');
+            return Promise.reject('Graph is empty '+filename);
         }
         graph.mxGraphModel.data = graph.mxGraphModel.root[0].mxCell[0].children;
 
@@ -456,12 +456,12 @@ Codec.mxgraph_to_graphml = function(filename) {
  * @return {Promise}
 */
 Codec.add_all_completed_fragments_to_neo4j = function() {
-    var all_promises = [];
     var num_changed = 0;
     var num_not_changed = 0;
     var p = new Promise(function(resolve, reject){
         database.get_all_completed_fragments().then(
             function(records) {
+                var promise_chain = [];
                 records.forEach(function(record){
                     var image_id = record.get('image_id');
                     var fragment_id = record.get('fragment_id');
@@ -471,15 +471,18 @@ Codec.add_all_completed_fragments_to_neo4j = function() {
                         num_not_changed++;
                     } else {
                         num_changed++;
-                        database.remove_fragment(image_id, fragment_id, true).then(function (success) {
-                            all_promises.push(Codec.mxgraph_to_neo4j(image_id, fragment_id));
-                        }, function (err) {
-                            log.error(err);
-                            reject(err);
-                        });
+                        var promise_function = function() {
+                            return database.remove_fragment(image_id, fragment_id, true).then(function (success) {
+                                return Codec.mxgraph_to_neo4j(image_id, fragment_id);
+                            }, function (err) {
+                                log.error(err);
+                                reject(err);
+                            });
+                        };
+                        promise_chain.push(promise_function);
                     }
                 });
-                Promise.all(all_promises).then(function(all) {
+                utils.chain_promises(promise_chain).then(function(all) {
                     resolve({'num_changed':num_changed, 'num_not_changed':num_not_changed});
                 }).catch(function(err) {
                     reject(err);

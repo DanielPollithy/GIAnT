@@ -1,0 +1,2 @@
+- empty xml files after restore (refactor the restore logic concerning files)
+- Den Kanten fehlen automatische Attribute, wenn man sie nicht per Copy-n-connect in der ersten Hand erstellt hat

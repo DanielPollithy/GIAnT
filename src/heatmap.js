@@ -47,7 +47,7 @@ var BOUNDING_BOX_CACHE = BOUNDING_BOX_CACHE || {
 */
 function clean_caches() {
     // cache all images with their tokens
-    IMAGE_FRAGMENT_CACHE = IMAGE_FRAGMENT_CACHE || {
+    IMAGE_FRAGMENT_CACHE = {
         images: {
             // image_id -> image
         },
@@ -557,7 +557,6 @@ function normalization_on_bounding_box_centered(token, normalization, target_wid
                 'height': normalized.height
             };
 
-
             return new_normalized;
         }, function (err) {
             log.error(err)
@@ -694,9 +693,11 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                                     num_errors++;
                                 } else {
                                     // calcalute all point spanned by the rects x,y,width,height
-                                    for (var x_ = normalized.x; x_ < normalized.x + normalized.width; x_++) {
-                                        for (var y_ = normalized.y; y_ < normalized.y + normalized.height; y_++) {
-                                            // log.log(x_, y_);
+                                    for (var x_ = (normalized.x >= 0)? normalized.x:0; x_ < normalized.x + normalized.width && x_ < width; x_++) {
+                                        for (var y_ = (normalized.y >= 0)? normalized.y:0; y_ < normalized.y + normalized.height && y_ < height; y_++) {
+                                            if (x_ >= 160 || x_ < 0) {
+                                                a = 3;
+                                            }
                                             heat_map[x_][y_]++;
                                         }
                                     }
@@ -719,20 +720,29 @@ function process_heatmap_query(query, normalization, width, height, pixel_size) 
                         log.info("Normalize the output matrix...");
 
                         // calculate the maximum entry of the matrix
-                        var max = 0;
+                        var max = -Infinity;
+                        var min = Infinity;
                         for (var x = 0; x < heat_map.length; x++) {
                             for (var y = 0; y < heat_map[0].length; y++) {
                                 if (heat_map[x][y] > max) {
                                     max = heat_map[x][y];
                                 }
+                                if (heat_map[x][y] < min) {
+                                    min = heat_map[x][y];
+                                }
                             }
                         }
+
+                        // maximum distance
+                        var interval = (max - min) * 1.0;
+                        log.log("interval")
+                        log.log(interval)
 
                         // transform the values of the matrix into the interval [0;1]
                         // by dividing every entry by max
                         for (var x = 0; x < heat_map.length; x++) {
                             for (var y = 0; y < heat_map[0].length; y++) {
-                                heat_map[x][y] = heat_map[x][y] / max;
+                                heat_map[x][y] = (heat_map[x][y] - min) / interval;
                             }
                         }
                         var d3js_heat_map = format_heat_map_to_d3js(heat_map);
